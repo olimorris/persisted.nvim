@@ -2,7 +2,7 @@
 
 **Persisted** is a simple lua plugin for automated session management within Neovim.
 
-The plugin was forked from the fantastic [Persistence.nvim](https://github.com/folke/persistence.nvim) as active development had paused.
+The plugin was forked from the fantastic [Persistence.nvim](https://github.com/folke/persistence.nvim) as active development seems to have been paused and there were some useful pull requests.
 
 ## ✨ Features
 
@@ -55,22 +55,26 @@ Persisted comes with the following defaults:
 {
   dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
-  options = { "buffers", "curdir", "tabpages", "winsize" }, -- sessionoptions used for saving
+  autosave = true, -- automatically save session files
+  options = { "buffers", "curdir", "tabpages", "winsize" }, -- session options used for saving
 }
 ```
 
 ## 🚀 Usage
 
-**Persisted** works well with plugins like `startify` or `dashboard`. It will never restore a session automatically,
-but you can of course write an autocmd that does exactly that if you want.
+**Persisted** works well with plugins like `startify` or `dashboard`. It will never restore a session automatically, but you can of course write an autocmd that does exactly that.
 
+Some example keybindings are contained below:
 ```lua
 -- restore the session for the current directory
-vim.api.nvim_set_keymap("n", "<leader>qs", [[<cmd>lua require("persisted").load()<cr>]])
+vim.api.nvim_set_keymap("n", "<leader>qr", [[<cmd>lua require("persisted").load()<cr>]])
 
 -- restore the last session
 vim.api.nvim_set_keymap("n", "<leader>ql", [[<cmd>lua require("persisted").load({ last = true })<cr>]])
 
--- stop Persistence => session won't be saved on exit
-vim.api.nvim_set_keymap("n", "<leader>qd", [[<cmd>lua require("persisted").stop()<cr>]])
+-- start persisted => if autosave is set to false
+vim.api.nvim_set_keymap("n", "<leader>qs", [[<cmd>lua require("persisted").start()<cr>]])
+
+-- stop persisted => session won't be saved on exit
+vim.api.nvim_set_keymap("n", "<leader>qx", [[<cmd>lua require("persisted").stop()<cr>]])
 ```
