@@ -2,7 +2,7 @@ local M = {}
 
 ---@class PersistedOptions
 local defaults = {
-  dir = vim.fn.expand(vim.fn.stdpath("config") .. "/sessions/"), -- directory where session files are saved
+  dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
   options = { "buffers", "curdir", "tabpages", "winsize" }, -- sessionoptions used for saving
 }
