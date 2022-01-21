@@ -66,7 +66,7 @@ Persisted comes with the following defaults:
 
 Some example keybindings are contained below:
 ```lua
--- restore the session for the current directory
+-- restore the session for the current directory and current branch (if `git_use_branch` is enabled)
 vim.api.nvim_set_keymap("n", "<leader>qr", [[<cmd>lua require("persisted").load()<cr>]])
 
 -- restore the last session
@@ -77,4 +77,10 @@ vim.api.nvim_set_keymap("n", "<leader>qs", [[<cmd>lua require("persisted").start
 
 -- stop persisted => session won't be saved on exit
 vim.api.nvim_set_keymap("n", "<leader>qx", [[<cmd>lua require("persisted").stop()<cr>]])
+
+-- toggle persisted => toggle a session
+vim.api.nvim_set_keymap("n", "<leader>qt", [[<cmd>lua require("persisted").toggle()<cr>]])
 ```
+
+### Helpers
+**Persisted** sets a global variable, `vim.g.persisting`, which is set to `true` when the plugin is enabled. The author uses this to display an icon in their [statusline](https://github.com/olimorris/dotfiles/blob/0cdaee183c64f872778952f90f62b9366851101c/.config/nvim/lua/Oli/plugins/statusline.lua#L257).
