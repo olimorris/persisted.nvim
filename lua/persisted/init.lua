@@ -71,6 +71,12 @@ function M.save()
   vim.g.persisting = true
 end
 
+function M.delete()
+  local session = M.get_current()
+  if session and vim.loop.fs_stat(session) ~= 0 then
+    M.stop()
+    vim.fn.system("rm " .. e(session))
+  end
 end
 
 function M.load(opt)
