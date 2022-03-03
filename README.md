@@ -6,9 +6,10 @@ The plugin was forked from the fantastic [Persistence.nvim](https://github.com/f
 
 ## ✨ Features
 
-- Automatically saves the active session under `.config/nvim/sessions` on exit
+- Automatically saves the active session under `.local/share/nvim/sessions` on exit
 - Simple API to restore the current or last session
 - Make use of sessions per git branch
+- Specify custom directory to save sessions
 
 ## ⚡️ Requirements
 
@@ -64,7 +65,7 @@ Persisted comes with the following defaults:
 
 **Persisted** works well with plugins like `startify` or `dashboard`. It will never restore a session automatically, but you can of course write an autocmd that does exactly that.
 
-Some example keybindings are contained below:
+Some example keybindings for the plugins functions are contained below:
 ```lua
 -- restore the session for the current directory and current branch (if `git_use_branch` is enabled)
 vim.api.nvim_set_keymap("n", "<leader>qr", [[<cmd>lua require("persisted").load()<cr>]])
@@ -78,7 +79,10 @@ vim.api.nvim_set_keymap("n", "<leader>qs", [[<cmd>lua require("persisted").start
 -- stop persisted => session won't be saved on exit
 vim.api.nvim_set_keymap("n", "<leader>qx", [[<cmd>lua require("persisted").stop()<cr>]])
 
--- toggle persisted => toggle a session
+-- delete persisted => delete the current session
+vim.api.nvim_set_keymap("n", "<leader>qd", [[<cmd>lua require("persisted").delete()<cr>]])
+
+-- toggle persisted => determines whether to load, start or stop a session
 vim.api.nvim_set_keymap("n", "<leader>qt", [[<cmd>lua require("persisted").toggle()<cr>]])
 ```
 
