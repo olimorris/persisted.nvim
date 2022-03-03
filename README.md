@@ -66,6 +66,7 @@ Persisted comes with the following defaults:
 **Persisted** works well with plugins like `startify` or `dashboard`. It will never restore a session automatically, but you can of course write an autocmd that does exactly that.
 
 Some example keybindings for the plugins functions are contained below:
+
 ```lua
 -- restore the session for the current directory and current branch (if `git_use_branch` is enabled)
 vim.api.nvim_set_keymap("n", "<leader>qr", [[<cmd>lua require("persisted").load()<cr>]])
@@ -87,4 +88,5 @@ vim.api.nvim_set_keymap("n", "<leader>qt", [[<cmd>lua require("persisted").toggl
 ```
 
 ### Helpers
+
 **Persisted** sets a global variable, `vim.g.persisting`, which is set to `true` when the plugin is enabled. The author uses this to display an icon in their [statusline](https://github.com/olimorris/dotfiles/blob/0cdaee183c64f872778952f90f62b9366851101c/.config/nvim/lua/Oli/plugins/statusline.lua#L257).
