@@ -64,11 +64,15 @@ function M.stop()
 end
 
 function M.save()
+  config.options.before_save()
+
   local tmp = vim.o.sessionoptions
   vim.o.sessionoptions = table.concat(config.options.options, ",")
   vim.cmd("mks! " .. e(M.get_current()))
   vim.o.sessionoptions = tmp
   vim.g.persisting = true
+
+  config.options.after_save()
 end
 
 function M.delete()

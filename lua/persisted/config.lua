@@ -6,6 +6,8 @@ local defaults = {
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
   autosave = true, -- automatically save session files
   options = { "buffers", "curdir", "tabpages", "winsize" }, -- session options used for saving
+  before_save = function() end, -- function to run before the session is saved to disk
+  after_save = function() end, -- function to run after the session is saved to disk
 }
 
 ---@type PersistedOptions
