@@ -6,11 +6,11 @@ The plugin was forked from the fantastic [Persistence.nvim](https://github.com/f
 
 ## ✨ Features
 
-- Automatically saves the active session under `.local/share/nvim/sessions` on exit
+- Automatically saves the active session under `.local/share/nvim/sessions` on exiting Neovim
 - Simple API to restore the current or last session
 - Support for sessions across git branches
 - Specify custom directory to save sessions
-- Stop or even delete the current sessions
+- Stop or even delete the current session
 
 ## ⚡️ Requirements
 
@@ -49,7 +49,7 @@ EOF
 
 ## ⚙️ Configuration
 
-Persisted comes with the following defaults:
+The plugin comes with the following defaults:
 
 ```lua
 {
@@ -64,15 +64,13 @@ Persisted comes with the following defaults:
 
 ## 🚀 Usage
 
-**Persisted** works well with plugins like `startify` or `dashboard`. It will never restore a session automatically, but you can of course write an autocmd that does exactly that.
-
-The plugin's functions, alongside some example keybindings, are contained below:
+The plugin works well with others like [vim-startify](https://github.com/mhinz/vim-startify) or [dashboard](https://github.com/glepnir/dashboard-nvim). It will never restore a session automatically but the commands below, or a custom autocmd, may be used.
 
 ### Commands
 
-- `SessionStart` - Start a session. Useful if `autosave` is set to false
+- `SessionStart` - Start a session. Useful if `autosave = false`
 - `SessionStop` - Stop recording a session
-- `SessionLoad` - Load the session for the current directory and current branch if `git_use_branch` is enabled
+- `SessionLoad` - Load the session for the current directory and current branch if `git_use_branch = true`
 - `SessionLoadLast` - Load the last session
 - `SessionDelete` - Delete the current session
 - `SessionToggle` - Determines whether to load, start or stop a session
@@ -85,8 +83,10 @@ The plugin allows for _before_ and _after_ callbacks to be executed relative to 
 
 ### Lazy loading
 
-To lazy load the plugin, consider adding the `module = "persisted"` option if you're using packer. The commands may then be called with `<cmd>lua require("persisted").toggle()<cr>` for example. The only command which differs is `SessionLoadLast` which is called with `<cmd>lua require("persisted").load({ last = true })<cr>`.
+To lazy load the plugin, consider adding the `module = "persisted"` option if you're using packer. The commands may then be called with `<cmd>lua require("persisted").toggle()<cr>` for example. The only command which is nuanced is `SessionLoadLast` which is called with `<cmd>lua require("persisted").load({ last = true })<cr>`.
 
 ### Helpers
 
-**Persisted** sets a global variable, `vim.g.persisting`, which is set to `true` when the plugin is enabled. The author uses this to display an icon in their [statusline](https://github.com/olimorris/dotfiles/blob/0cdaee183c64f872778952f90f62b9366851101c/.config/nvim/lua/Oli/plugins/statusline.lua#L257).
+The plugin sets a global variable, `vim.g.persisting`, which is set to `true` when a session is started. The author uses this to display an icon in their [statusline](https://github.com/olimorris/dotfiles/blob/0cdaee183c64f872778952f90f62b9366851101c/.config/nvim/lua/Oli/plugins/statusline.lua#L257).
+
+A list of saved sessions can be returned by executing `<cmd>lua require("persisted").list()<cr>`.
