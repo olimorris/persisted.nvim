@@ -8,8 +8,9 @@ The plugin was forked from the fantastic [Persistence.nvim](https://github.com/f
 
 - Automatically saves the active session under `.local/share/nvim/sessions` on exit
 - Simple API to restore the current or last session
-- Make use of sessions per git branch
+- Support for sessions across git branches
 - Specify custom directory to save sessions
+- Stop or even delete the current sessions
 
 ## ⚡️ Requirements
 
@@ -25,8 +26,6 @@ Install the plugin with your preferred package manager:
 -- Lua
 use({
   "olimorris/persisted.nvim",
-  event = "BufReadPre", -- this will only start session saving when an actual file was opened
-  module = "persisted",
   config = function()
     require("persisted").setup()
   end,
@@ -58,6 +57,8 @@ Persisted comes with the following defaults:
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
   autosave = true, -- automatically save session files
   options = { "buffers", "curdir", "tabpages", "winsize" }, -- session options used for saving
+  before_save = function() end, -- function to run before the session is saved to disk
+  after_save = function() end, -- function to run after the session is saved to disk
 }
 ```
 
@@ -65,27 +66,26 @@ Persisted comes with the following defaults:
 
 **Persisted** works well with plugins like `startify` or `dashboard`. It will never restore a session automatically, but you can of course write an autocmd that does exactly that.
 
-Some example keybindings for the plugins functions are contained below:
+The plugin's functions, alongside some example keybindings, are contained below:
 
-```lua
--- restore the session for the current directory and current branch (if `git_use_branch` is enabled)
-vim.api.nvim_set_keymap("n", "<leader>qr", [[<cmd>lua require("persisted").load()<cr>]])
+### Commands
 
--- restore the last session
-vim.api.nvim_set_keymap("n", "<leader>ql", [[<cmd>lua require("persisted").load({ last = true })<cr>]])
+- `SessionStart` - Start a session. Useful if `autosave` is set to false
+- `SessionStop` - Stop recording a session
+- `SessionLoad` - Load the session for the current directory and current branch if `git_use_branch` is enabled
+- `SessionLoadLast` - Load the last session
+- `SessionDelete` - Delete the current session
+- `SessionToggle` - Determines whether to load, start or stop a session
 
--- start persisted => if autosave is set to false
-vim.api.nvim_set_keymap("n", "<leader>qs", [[<cmd>lua require("persisted").start()<cr>]])
+### Callbacks
 
--- stop persisted => session won't be saved on exit
-vim.api.nvim_set_keymap("n", "<leader>qx", [[<cmd>lua require("persisted").stop()<cr>]])
+The plugin allows for _before_ and _after_ callbacks to be executed relative to the session. This is achieved via the `before_save` and `after_save` configuration options.
 
--- delete persisted => delete the current session
-vim.api.nvim_set_keymap("n", "<leader>qd", [[<cmd>lua require("persisted").delete()<cr>]])
+> **Note:** The author uses a _before_ callback to ensure that [minimap.vim](https://github.com/wfxr/minimap.vim) is not written into the session. Its presence prevents the exact buffer and cursor position from being restored when loading a session.
 
--- toggle persisted => determines whether to load, start or stop a session
-vim.api.nvim_set_keymap("n", "<leader>qt", [[<cmd>lua require("persisted").toggle()<cr>]])
-```
+### Lazy loading
+
+To lazy load the plugin, consider adding the `module = "persisted"` option if you're using packer. The commands may then be called with `<cmd>lua require("persisted").toggle()<cr>` for example. The only command which differs is `SessionLoadLast` which is called with `<cmd>lua require("persisted").load({ last = true })<cr>`.
 
 ### Helpers
 
