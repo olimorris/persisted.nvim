@@ -4,6 +4,17 @@ local M = {}
 
 local e = vim.fn.fnameescape
 
+local function setup_commands()
+  vim.cmd([[
+    command! SessionStart :lua require("persisted").start()
+    command! SessionStop :lua require("persisted").stop()
+    command! SessionLoad :lua require("persisted").load()
+    command! SessionLoadLast :lua require("persisted").load({ last = true })
+    command! SessionDelete :lua require("persisted").delete()
+    command! SessionToggle :lua require("persisted").toggle()
+  ]])
+end
+
 function M.get_current()
   local pattern = "/"
   if vim.fn.has("win32") == 1 then
@@ -40,6 +51,7 @@ end
 
 function M.setup(opts)
   config.setup(opts)
+  setup_commands()
   if config.options.autosave then
     M.start()
   end
