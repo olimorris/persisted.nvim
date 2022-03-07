@@ -8,6 +8,7 @@ local function setup_commands()
   vim.cmd([[
     command! SessionStart :lua require("persisted").start()
     command! SessionStop :lua require("persisted").stop()
+    command! SessionSave :lua require("persisted").save()
     command! SessionLoad :lua require("persisted").load()
     command! SessionLoadLast :lua require("persisted").load({ last = true })
     command! SessionDelete :lua require("persisted").delete()
