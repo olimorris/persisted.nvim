@@ -53,6 +53,9 @@ end
 function M.setup(opts)
   config.setup(opts)
   setup_commands()
+  if config.options.autoload then
+    M.load()
+  end
   if config.options.autosave then
     M.start()
   end
