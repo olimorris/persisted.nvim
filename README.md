@@ -7,14 +7,14 @@ The plugin was forked from the fantastic [Persistence.nvim](https://github.com/f
 ## ✨ Features
 
 - Automatically saves the active session under `.local/share/nvim/sessions` on exiting Neovim
-- Simple API to restore the current or last session
+- Supports auto saving and loading of sessions with allowed/ignored directories
+- Simple API to save/stop/restore/delete/list the current session(s)
 - Support for sessions across git branches
-- Specify custom directory to save sessions
-- Stop or even delete the current session
+- Specify custom directory to save/load sessions from
 
 ## ⚡️ Requirements
 
-- Neovim >= 0.5.0
+- Neovim >= 0.6.0
 
 ## 📦 Installation
 
@@ -55,9 +55,11 @@ The plugin comes with the following defaults:
 {
   dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
-  autosave = true, -- automatically save session files
-  autoload = false, -- automatically load the current session on Neovim startup
+  autosave = true, -- automatically save session files when exiting Neovim
+  autoload = false, -- automatically load the session for the cwd on Neovim startup
   options = { "buffers", "curdir", "tabpages", "winsize" }, -- session options used for saving
+  allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
+  ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
   before_save = function() end, -- function to run before the session is saved to disk
   after_save = function() end, -- function to run after the session is saved to disk
 }
@@ -65,19 +67,25 @@ The plugin comes with the following defaults:
 
 These can be overwritten by calling the `setup` method and passing in the appropriate value.
 
+> **Note:** `autosave` and `autoload` may not work if you've lazy loaded the plugin.
+
 ## 🚀 Usage
 
-The plugin works well with others like [vim-startify](https://github.com/mhinz/vim-startify) or [dashboard](https://github.com/glepnir/dashboard-nvim). It will never restore a session automatically but the commands below, or a custom autocmd, may be used.
+The plugin is designed to work with startup screens like [vim-startify](https://github.com/mhinz/vim-startify) or [dashboard](https://github.com/glepnir/dashboard-nvim) out of the box. It will never load a session automatically by default.
+
+To use the plugin, the commands below may be used:
 
 ### Commands
 
-- `SessionStart` - Start a session. Useful if `autosave = false`
+- `SessionStart` - Start recording a session. Useful if `autosave = false`
 - `SessionStop` - Stop recording a session
 - `SessionSave` - Save the current session
 - `SessionLoad` - Load the session for the current directory and current branch if `git_use_branch = true`
 - `SessionLoadLast` - Load the last session
 - `SessionDelete` - Delete the current session
 - `SessionToggle` - Determines whether to load, start or stop a session
+
+> **Note:** The author only binds `SessionToggle` to a keymap for simplicity.
 
 ### Callbacks
 
