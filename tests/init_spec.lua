@@ -11,7 +11,7 @@ describe("With default settings", function()
 
   it("saves a session", function()
     -- Edit a buffer
-    vim.cmd(":e tests/data/test.txt")
+    vim.cmd(":e tests/stubs/test.txt")
     vim.cmd(":w")
 
     -- Save the session
@@ -19,7 +19,7 @@ describe("With default settings", function()
 
     -- Check that it is written to disk
     assert.equals(vim.g.persisting, true)
-    assert.equals(vim.fn.system("ls tests/data | wc -l"), "2\n")
+    assert.equals(vim.fn.system("ls tests/data | wc -l"), "1\n")
   end)
 
   it("loads a session", function()
