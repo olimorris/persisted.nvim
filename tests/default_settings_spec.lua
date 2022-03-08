@@ -4,12 +4,15 @@ require("persisted").setup({
   dir = session_dir
 })
 
-describe("With default settings", function()
+describe("With default settings:", function()
   after_each(function()
     -- vim.fn.system("rm -rf " .. e(session_dir))
   end)
 
   it("saves a session", function()
+    -- Check no file exists
+    assert.equals(vim.fn.system("ls tests/data | wc -l"), "0\n")
+
     -- Edit a buffer
     vim.cmd(":e tests/stubs/test.txt")
     vim.cmd(":w")
@@ -17,7 +20,7 @@ describe("With default settings", function()
     -- Save the session
     require("persisted").save()
 
-    -- Check that it is written to disk
+    -- Check that the session is written to disk
     assert.equals(vim.g.persisting, true)
     assert.equals(vim.fn.system("ls tests/data | wc -l"), "1\n")
   end)
@@ -30,6 +33,6 @@ describe("With default settings", function()
     local content = vim.fn.getline(1, '$')
 
     assert.equals(content[1], "This is a test file")
+    assert.equals(vim.g.persisting, true)
   end)
-
 end)
