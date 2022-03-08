@@ -35,4 +35,30 @@ describe("With default settings:", function()
     assert.equals(content[1], "This is a test file")
     assert.equals(vim.g.persisting, true)
   end)
+
+  it("stops a session", function()
+    require("persisted").stop()
+
+    assert.equals(vim.g.persisting, false)
+  end)
+
+  it("starts a session", function()
+    require("persisted").start()
+
+    assert.equals(vim.g.persisting, true)
+  end)
+
+  it("lists sessions", function()
+    local sessions = require("persisted").list()
+    local path = require("plenary.path"):new(sessions[1])
+
+    assert.equals(path:is_path(), true)
+  end)
+
+  it("deletes a session", function()
+    require("persisted").delete()
+
+    assert.equals(vim.fn.system("ls tests/data | wc -l"), "0\n")
+  end)
+
 end)
