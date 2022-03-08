@@ -1,5 +1,7 @@
 # 💾 Persisted
 
+![MIT License](https://img.shields.io/github/license/olimorris/persisted.nvim) [![Tests](https://github.com/olimorris/persisted.nvim/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/olimorris/persisted.nvim/actions/workflows/ci.yml)
+
 **Persisted** is a simple lua plugin for automated session management within Neovim.
 
 The plugin was forked from the fantastic [Persistence.nvim](https://github.com/folke/persistence.nvim) as active development seems to have been paused and there were some useful pull requests.
@@ -102,3 +104,7 @@ To lazy load the plugin, consider adding the `module = "persisted"` option if yo
 The plugin sets a global variable, `vim.g.persisting`, which is set to `true` when a session is started. The author uses this to display an icon in their [statusline](https://github.com/olimorris/dotfiles/blob/0cdaee183c64f872778952f90f62b9366851101c/.config/nvim/lua/Oli/plugins/statusline.lua#L257).
 
 A table of saved sessions can be returned by the `lua require("persisted").list()` command. The author uses this to display a list of sessions in their [config](https://github.com/olimorris/dotfiles/blob/9e06f00a878710aefc8c28904d2322ea46e3eaea/.config/nvim/lua/Oli/core/functions.lua#L3).
+
+## :page_with_curl: License
+
+[MIT](https://github.com/olimorris/persisted.nvim/blob/main/LICENSE)
