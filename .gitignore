@@ -1,1 +1,3 @@
+plenary.nvim/
+tests/data/
 .luarc.json
