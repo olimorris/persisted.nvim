@@ -73,9 +73,9 @@ These can be overwritten by calling the `setup` method and passing in the approp
 
 ## 🚀 Usage
 
-The plugin is designed to work with startup screens like [vim-startify](https://github.com/mhinz/vim-startify) or [dashboard](https://github.com/glepnir/dashboard-nvim) out of the box. It will never load a session automatically by default.
+The plugin is designed to work with startup screens like [vim-startify](https://github.com/mhinz/vim-startify) or [dashboard](https://github.com/glepnir/dashboard-nvim) out of the box. It will never load a session automatically by default. However, if you are using a startup screen plugin, consider lazy loading the plugin (see the **Helpers** section). This prevents unintentional session auto-saves when on the startup screen.
 
-To use the plugin, the commands below may be used:
+To use the plugin, the commands below are available:
 
 ### Commands
 
@@ -97,7 +97,7 @@ The plugin allows for _before_ and _after_ callbacks to be executed relative to 
 
 ### Lazy loading
 
-To lazy load the plugin, consider adding the `module = "persisted"` option if you're using packer. The commands may then be called with `<cmd>lua require("persisted").toggle()<cr>` for example. The only command which is nuanced is `SessionLoadLast` which is called with `<cmd>lua require("persisted").load({ last = true })<cr>`.
+To lazy load the plugin, consider adding the `module = "persisted"` option if you're using packer. The commands may then be called with `<cmd>lua require("persisted").start()<cr>` for example. The only command which is nuanced is `SessionLoadLast` which is called with `<cmd>lua require("persisted").load({ last = true })<cr>`.
 
 ### Helpers
 
