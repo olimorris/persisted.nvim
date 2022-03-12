@@ -28,6 +28,7 @@ Install the plugin with your preferred package manager:
 -- Lua
 use({
   "olimorris/persisted.nvim",
+  --module = "persisted", -- Consider lazy loading if you use a dashboard or startup screen
   config = function()
     require("persisted").setup()
   end,
@@ -88,10 +89,11 @@ To use the plugin, the commands below are available:
 - `SessionToggle` - Determines whether to load, start or stop a session
 
 > **Note:** The author only binds `SessionToggle` to a keymap for simplicity.
+> **Remember:** These will not work out of the box if you're lazy loading.
 
 ### Callbacks
 
-The plugin allows for _before_ and _after_ callbacks to be executed relative to the session. This is achieved via the `before_save` and `after_save` configuration options.
+The plugin allows for _before_ and _after_ callbacks to be executed relative to the session being saved. This is achieved via the `before_save` and `after_save` configuration options.
 
 > **Note:** The author uses a _before_ callback to ensure that [minimap.vim](https://github.com/wfxr/minimap.vim) is not written into the session. Its presence prevents the exact buffer and cursor position from being restored when loading a session.
 

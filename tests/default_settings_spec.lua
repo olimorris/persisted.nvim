@@ -1,4 +1,3 @@
-local e = vim.fn.fnameescape
 local session_dir = vim.fn.getcwd() .. "/tests/data/"
 require("persisted").setup({
   dir = session_dir
