@@ -1,3 +1,4 @@
 plenary.nvim/
-tests/data/
+tests/default_data/
+tests/custom_data/
 .luarc.json

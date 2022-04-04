@@ -1,4 +1,4 @@
-local session_dir = vim.fn.getcwd() .. "/tests/data/"
+local session_dir = vim.fn.getcwd() .. "/tests/default_data/"
 require("persisted").setup({
   dir = session_dir
 })
@@ -10,7 +10,7 @@ describe("With default settings:", function()
 
   it("saves a session", function()
     -- Check no file exists
-    assert.equals(vim.fn.system("ls tests/data | wc -l"), "0\n")
+    assert.equals(vim.fn.system("ls tests/default_data | wc -l"), "0\n")
 
     -- Edit a buffer
     vim.cmd(":e tests/stubs/test.txt")
@@ -21,7 +21,7 @@ describe("With default settings:", function()
 
     -- Check that the session is written to disk
     assert.equals(vim.g.persisting, true)
-    assert.equals(vim.fn.system("ls tests/data | wc -l"), "1\n")
+    assert.equals(vim.fn.system("ls tests/default_data | wc -l"), "1\n")
   end)
 
   it("loads a session", function()
@@ -57,7 +57,7 @@ describe("With default settings:", function()
   it("deletes a session", function()
     require("persisted").delete()
 
-    assert.equals(vim.fn.system("ls tests/data | wc -l"), "0\n")
+    assert.equals(vim.fn.system("ls tests/default_data | wc -l"), "0\n")
   end)
 
 end)
