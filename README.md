@@ -60,7 +60,6 @@ The plugin comes with the following defaults:
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
   autosave = true, -- automatically save session files when exiting Neovim
   autoload = false, -- automatically load the session for the cwd on Neovim startup
-  options = { "buffers", "curdir", "tabpages", "winsize" }, -- session options used for saving
   allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
   ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
   before_save = function() end, -- function to run before the session is saved to disk
@@ -69,6 +68,8 @@ The plugin comes with the following defaults:
 ```
 
 These can be overwritten by calling the `setup` method and passing in the appropriate value.
+
+> **Note:** The plugin uses the `vim.o.sessionoptions` value to determine what to write into the session. Please see `:h sessionoptions` for more information.
 
 > **Note:** `autosave` and `autoload` may not work if you've lazy loaded the plugin.
 
