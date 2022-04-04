@@ -86,6 +86,7 @@ local function get_branch()
     for s in branch:gmatch("[^\r\n]+") do
       table.insert(lines, "_" .. s)
     end
+
     return lines[2]:gsub("/", "%%")
   end
 
@@ -163,10 +164,7 @@ end
 function M.save()
   config.options.before_save()
 
-  local tmp = vim.o.sessionoptions
-  vim.o.sessionoptions = table.concat(config.options.options, ",")
   vim.cmd("mks! " .. e(get_current()))
-  vim.o.sessionoptions = tmp
   vim.g.persisting = true
 
   config.options.after_save()
