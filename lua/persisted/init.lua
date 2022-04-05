@@ -87,7 +87,7 @@ local function get_branch()
       table.insert(lines, "_" .. s)
     end
 
-    return lines[2]:gsub("/", "%%")
+    return lines[#lines]:gsub("/", "%%")
   end
 
   return ""
