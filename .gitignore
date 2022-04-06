@@ -1,3 +1,5 @@
 plenary.nvim/
 !tests/**/*
 .luarc.json
+
+tests/.DS_Store
