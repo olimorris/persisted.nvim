@@ -7,13 +7,13 @@ require("persisted").setup({
   allowed_dirs = { vim.fn.getcwd() },
 })
 
-describe("With custom settings:", function()
+describe("Autoloading", function()
 
   -- after_each(function()
   --   vim.fn.system("rm -rf " .. e(session_dir))
   -- end)
 
-  it("autoloads a file with allowed_dirs", function()
+  it("autoloads a file with allowed_dirs config option present", function()
     local content = vim.fn.getline(1, '$')
     assert.equals(content[1], "If you're reading this, I guess auto-loading works")
   end)
