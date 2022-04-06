@@ -8,4 +8,7 @@ set noswapfile
 set noundofile
 
 runtime plugin/plenary.vim
-command Test PlenaryBustedDirectory tests/ {minimal_init = 'tests/minimal.vim'} 
+command Setup PlenaryBustedFile tests/setup/create_sessions_spec.lua
+command TestAutoloading PlenaryBustedDirectory tests/autoload {minimal_init = 'tests/minimal.vim'}
+command Test PlenaryBustedDirectory tests/ {minimal_init = 'tests/minimal.vim'}
+command TearDown PlenaryBustedFile tests/teardown/clean_up_dirs.lua
