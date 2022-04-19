@@ -50,7 +50,7 @@ Install the plugin with your preferred package manager:
 -- Lua
 use({
   "olimorris/persisted.nvim",
-  --module = "persisted", -- Consider lazy loading if you use a dashboard or startup screen
+  --module = "persisted", -- For lazy loading
   config = function()
     require("persisted").setup()
     require("telescope").load_extension("persisted") -- To load the telescope extension
@@ -146,7 +146,7 @@ You may specify a table of directories for which the plugin will autosave and/or
 
 > **Note:** If `allowed_dirs` is left at its default value and `autosave` and/or `autoload` are set to `true`, then the plugin will autoload/autosave from *any* directory
 
-### Ignoring directories
+### Ignored directories
 
 You may specify a table of directories for which the plugin will **never** autosave and/or autoload from. For example:
 
