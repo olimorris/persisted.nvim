@@ -93,7 +93,6 @@ The plugin comes with the following defaults:
     before_source = function(session) end, -- function to run before the session is sourced via telescope
     after_source = function(session) end, -- function to run after the session is sourced via telescope
   },
-
 }
 ```
 
@@ -111,7 +110,7 @@ The location of the saved files for the sessions may be changed by altering the 
 
 ### Git branching
 
-One of the plugin's core features is the ability to have multiple sessions files for a given project, by using git branches To enable git branching, set `use_git_branch = true`.
+One of the plugin's core features is the ability to have multiple sessions files for a given project, by using git branches. To enable git branching, set `use_git_branch = true`.
 
 > **Note:** If git branching is enabled on a non git enabled repo, then `main` will be used as the default branch
 
@@ -119,13 +118,13 @@ One of the plugin's core features is the ability to have multiple sessions files
 
 By default, the plugin will automatically save a Neovim session to disk. This action is only undertaken when the user quits Neovim. This can be turned off by setting `autosave = false`.
 
-Autosaving can be further controlled by specifying `allowed_dirs` and `ignored_dirs`. See the section below for more information.
+Autosaving can be further controlled by specifying `allowed_dirs` and `ignored_dirs`.
 
 ### Autoloading
 
 The plugin can be enabled to automatically load sessions when Neovim is started. Whilst off by default, this can be turned on by setting `autoload = true`.
 
-Autoloading can be further controlled by specifying `allowed_dirs` and `ignored_dirs`. See the section below for more information.
+Autoloading can be further controlled by specifying `allowed_dirs` and `ignored_dirs`.
 
 > **Note:** Autoloading will not occur if a user opens Neovim with arguments such as `nvim some_file.rb`
 
@@ -148,7 +147,7 @@ You may specify a table of directories for which the plugin will autosave and/or
 
 ### Ignored directories
 
-You may specify a table of directories for which the plugin will **never** autosave and/or autoload from. For example:
+You may specify a table of directories for which the plugin will **never** autosave and autoload from. For example:
 
 ```lua
 {
@@ -161,7 +160,7 @@ You may specify a table of directories for which the plugin will **never** autos
 
 ### Callbacks
 
-The plugin allows for *before* and *after* callbacks to be executed before a session is saved. This is achieved via the `before_save` and `after_save` configuration options. For example:
+The plugin allows for *before* and *after* callbacks to be executed before and after a session is saved. This is achieved via the `before_save` and `after_save` configuration options. For example:
 
 ```lua
 {
@@ -205,7 +204,7 @@ A *session* table is exposed to the callback functions and has the following pro
 
 ## :rocket: Usage
 
-### Commands
+### Default commands
 The plugin comes with a number of commands:
 
 - `SessionStart` - Start recording a session. Useful if `autosave = false`
@@ -217,6 +216,13 @@ The plugin comes with a number of commands:
 - `SessionToggle` - Determines whether to load, start or stop a session
 
 > **Note:** The author only binds `SessionToggle` to a keymap for simplicity.
+
+### Telescope extension
+
+The Telescope extension may be opened via `:Telescope persisted`.
+
+Once opened, the available keymaps are:
+* `<CR>` - Source the selected session file
 
 ### Lazy loading
 
