@@ -110,10 +110,14 @@ end
 function M.setup(opts)
   config.setup(opts)
   setup_commands()
-  if config.options.autoload and (allow_dir() and not ignore_dir()) then
+  if config.options.autoload and (allow_dir() and not ignore_dir()) and vim.fn.argc() == 0 then
     M.load()
   end
-  if config.options.autosave and (allow_dir() and not ignore_dir() and vim.g.persisting == nil) then
+  if
+    config.options.autosave
+    and (allow_dir() and not ignore_dir() and vim.g.persisting == nil)
+    and vim.fn.argc() == 0
+  then
     M.start()
   end
 end
