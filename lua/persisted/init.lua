@@ -4,6 +4,7 @@ local M = {}
 
 local e = vim.fn.fnameescape
 local echo = vim.api.nvim_echo
+local default_branch = "main"
 
 local echoerr = function(msg, error)
   echo({
@@ -90,17 +91,23 @@ local function get_branch()
     return lines[#lines]:gsub("/", "%%")
   end
 
-  return ""
+  return "_" .. default_branch
+end
+
+---Get the directory pattern based on OS
+---@return string
+local function get_dir_pattern()
+  local pattern = "/"
+  if vim.fn.has("win32") == 1 then
+    pattern = "[\\:]"
+  end
+  return pattern
 end
 
 ---Get the current session for the current working directory and git branch
 ---@return string
 local function get_current()
-  local pattern = "/"
-  if vim.fn.has("win32") == 1 then
-    pattern = "[\\:]"
-  end
-  local name = vim.fn.getcwd():gsub(pattern, "%%")
+  local name = vim.fn.getcwd():gsub(get_dir_pattern(), "%%")
   return config.options.dir .. name .. get_branch() .. ".vim"
 end
 
@@ -187,7 +194,33 @@ end
 ---List all of the sessions in the session directory
 ---@return table
 function M.list()
-  return vim.fn.glob(config.options.dir .. "*.vim", true, true)
+  local utils = require("persisted.utils")
+
+  local session_files = vim.fn.glob(config.options.dir .. "*.vim", true, true)
+
+  local sessions = {}
+  for _, session in pairs(session_files) do
+    local session_name = session
+      :gsub(config.options.dir, "")
+      :gsub("%%", get_dir_pattern())
+      :gsub(vim.fn.expand("~"), get_dir_pattern())
+      :gsub("//", "")
+
+    local branch = utils.get_last_item(utils.split_str(session_name, "_")):gsub(".vim", "")
+
+    local pwd = vim.fn.expand("~") .. get_dir_pattern() .. session_name
+    local branch_name = "_" .. utils.get_last_item(utils.split_str(pwd, "_"))
+    pwd = pwd:gsub(branch_name, "")
+
+    table.insert(sessions, {
+      ["name"] = session_name,
+      ["file_path"] = session,
+      ["branch"] = branch,
+      ["pwd"] = pwd,
+    })
+  end
+
+  return sessions
 end
 
 ---Determines whether to load, start or stop a session
