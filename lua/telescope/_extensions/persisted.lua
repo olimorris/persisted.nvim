@@ -47,7 +47,7 @@ local function search_sessions(opts)
       actions.select_default:replace(function()
         local session = action_state.get_selected_entry()
         actions.close(prompt_bufnr)
-        pcall(require("persisted").stop(), "")
+
         config.telescope.before_source(session)
         pcall(vim.cmd, "source " .. vim.fn.fnameescape(session.file_path))
         config.telescope.after_source(session)
