@@ -25,4 +25,37 @@ function M.get_last_item(table)
   return table[last]
 end
 
+---Check if a target directory exists in a given table
+---@param dir_target string
+---@param dir_table table
+---@return boolean
+function M.dirs_match(dir, dirs_table)
+    local dir = vim.fn.expand(dir)
+    return dirs_table and next(vim.tbl_filter(function(pattern)
+        return dir:match(vim.fn.expand(pattern))
+    end, dirs_table))
+end
+
+---Get the directory pattern based on OS
+---@return string
+function M.get_dir_pattern()
+  local pattern = "/"
+  if vim.fn.has("win32") == 1 then
+    pattern = "[\\:]"
+  end
+  return pattern
+end
+
+---Print an error message
+--@param msg string
+--@param error string
+--@return string
+function M.echoerr(msg, error)
+  vim.api.nvim_echo({
+    { "[persisted.nvim]: ", "ErrorMsg" },
+    { msg, "WarningMsg" },
+    { error, "Normal" },
+  }, true, {})
+end
+
 return M

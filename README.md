@@ -23,7 +23,8 @@ The plugin was forked from the fantastic [Persistence.nvim](https://github.com/f
   - [Callbacks](#callbacks)
   - [Telescope extension](#telescope-extension)
 - [Usage](#rocket-usage)
-  - [Commands](#commands)
+  - [Default commands](#default-commands)
+  - [Telescope](#telescope)
   - [Lazy loading](#lazy-loading)
   - [Helpers](#helpers)
 - [License](#page_with_curl-license)
@@ -135,11 +136,13 @@ You may specify a table of directories for which the plugin will autosave and/or
 ```lua
 {
   allowed_dirs = {
-    "~/Code/Neovim",
-    "~/Code/Projects/Ruby
+    "~/.dotfiles",
+    "~/Code",
   }
 }
 ```
+
+Specifying `~/Code` will autosave and autoload from the that directory as well as all its sub-directories.
 
 > **Note:** If `allowed_dirs` is set, then the plugin will only autosave and/or autoload from the specificed directories
 
@@ -157,6 +160,8 @@ You may specify a table of directories for which the plugin will **never** autos
   }
 }
 ```
+
+Specifying `~/.config` will prevent any autosaving and autoloading from that directory as well as all its sub-directories.
 
 ### Callbacks
 
@@ -217,7 +222,7 @@ The plugin comes with a number of commands:
 
 > **Note:** The author only binds `SessionToggle` to a keymap for simplicity.
 
-### Telescope extension
+### Telescope
 
 The Telescope extension may be opened via `:Telescope persisted`.
 

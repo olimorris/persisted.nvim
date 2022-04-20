@@ -1,18 +1,10 @@
+local utils = require("persisted.utils")
 local config = require("persisted.config")
 
 local M = {}
 
 local e = vim.fn.fnameescape
-local echo = vim.api.nvim_echo
 local default_branch = "main"
-
-local echoerr = function(msg, error)
-  echo({
-    { "[persisted.nvim]: ", "ErrorMsg" },
-    { msg, "WarningMsg" },
-    { error, "Normal" },
-  }, true, {})
-end
 
 ---Setup the plugin's commands
 ---@return nil
@@ -28,19 +20,6 @@ local function setup_commands()
   ]])
 end
 
----Check if a target directory exists in a given table
----@param dir_target string
----@param dir_table table
----@return boolean
-local function dirs_match(dir_target, dir_table)
-  for _, dir in pairs(dir_table) do
-    dir = string.gsub(vim.fn.expand(dir), "/+$", "")
-    if dir_target == dir then
-      return true
-    end
-  end
-  return false
-end
 
 ---Does the current working directory allow for the auto-saving and loading?
 ---@return boolean
@@ -50,7 +29,7 @@ local function allow_dir()
   if allowed_dirs == nil then
     return true
   end
-  return dirs_match(vim.fn.getcwd(), allowed_dirs)
+  return utils.dirs_match(vim.fn.getcwd(), allowed_dirs)
 end
 
 ---Is the current working directory ignored for auto-saving and loading?
@@ -61,7 +40,7 @@ local function ignore_dir()
   if ignored_dirs == nil then
     return false
   end
-  return dirs_match(vim.fn.getcwd(), ignored_dirs)
+  return utils.dirs_match(vim.fn.getcwd(), ignored_dirs)
 end
 
 ---Get the session that was saved last
@@ -94,20 +73,10 @@ local function get_branch()
   return "_" .. default_branch
 end
 
----Get the directory pattern based on OS
----@return string
-local function get_dir_pattern()
-  local pattern = "/"
-  if vim.fn.has("win32") == 1 then
-    pattern = "[\\:]"
-  end
-  return pattern
-end
-
 ---Get the current session for the current working directory and git branch
 ---@return string
 local function get_current()
-  local name = vim.fn.getcwd():gsub(get_dir_pattern(), "%%")
+  local name = vim.fn.getcwd():gsub(utils.get_dir_pattern(), "%%")
   return config.options.dir .. name .. get_branch() .. ".vim"
 end
 
@@ -139,7 +108,7 @@ function M.load(opt)
   if session and vim.fn.filereadable(session) ~= 0 then
     local ok, result = pcall(vim.cmd, "source " .. e(session))
     if not ok then
-      echoerr("Error loading the session! ", result)
+      utils.echoerr("Error loading the session! ", result)
     end
   end
 
@@ -194,21 +163,19 @@ end
 ---List all of the sessions in the session directory
 ---@return table
 function M.list()
-  local utils = require("persisted.utils")
-
   local session_files = vim.fn.glob(config.options.dir .. "*.vim", true, true)
 
   local sessions = {}
   for _, session in pairs(session_files) do
     local session_name = session
       :gsub(config.options.dir, "")
-      :gsub("%%", get_dir_pattern())
-      :gsub(vim.fn.expand("~"), get_dir_pattern())
+      :gsub("%%", utils.get_dir_pattern())
+      :gsub(vim.fn.expand("~"), utils.get_dir_pattern())
       :gsub("//", "")
 
     local branch = utils.get_last_item(utils.split_str(session_name, "_")):gsub(".vim", "")
 
-    local pwd = vim.fn.expand("~") .. get_dir_pattern() .. session_name
+    local pwd = vim.fn.expand("~") .. utils.get_dir_pattern() .. session_name
     local branch_name = "_" .. utils.get_last_item(utils.split_str(pwd, "_"))
     pwd = pwd:gsub(branch_name, "")
 
