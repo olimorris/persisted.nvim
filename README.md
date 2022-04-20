@@ -142,9 +142,7 @@ You may specify a table of directories for which the plugin will autosave and/or
 }
 ```
 
-Specifying `~/Code` will autosave and autoload from the that directory as well as all its sub-directories.
-
-> **Note:** If `allowed_dirs` is set, then the plugin will only autosave and/or autoload from the specificed directories
+Specifying `~/Code` will autosave and autoload from that directory as well as all its sub-directories.
 
 > **Note:** If `allowed_dirs` is left at its default value and `autosave` and/or `autoload` are set to `true`, then the plugin will autoload/autosave from *any* directory
 
