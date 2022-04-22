@@ -3,7 +3,7 @@ local M = {}
 ---@class PersistedOptions
 local defaults = {
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
-  command = "VimLeavePre", -- The autocommand for which the session is saved
+  command = "VimLeavePre", -- the autocommand for which the session is saved
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
   autosave = true, -- automatically save session files when exiting Neovim
   autoload = false, -- automatically load the session for the cwd on Neovim startup
