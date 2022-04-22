@@ -117,15 +117,15 @@ function M.load(opt)
   end
 end
 
----Start recording a session and write it to disk when exiting Neovim
+---Start recording a session and write to disk on a specific autocommand
 ---@return nil
 function M.start()
-  vim.cmd([[
+  vim.cmd(string.format([[
     augroup Persisted
       autocmd!
-      autocmd VimLeavePre * lua require("persisted").save()
+      autocmd %s * lua require("persisted").save()
     augroup end
-  ]])
+  ]], config.options.command))
   vim.g.persisting = true
 end
 
