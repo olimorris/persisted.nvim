@@ -81,7 +81,7 @@ EOF
 The plugin comes with the following defaults:
 
 ```lua
-{
+require("persisted").setup({
   dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
   autosave = true, -- automatically save session files when exiting Neovim
@@ -94,7 +94,7 @@ The plugin comes with the following defaults:
     before_source = function(session) end, -- function to run before the session is sourced via telescope
     after_source = function(session) end, -- function to run after the session is sourced via telescope
   },
-}
+})
 ```
 
 ### Session options
@@ -105,25 +105,50 @@ As the plugin uses Vim's `:mksession` command then you may change the `vim.o.ses
 
 ### Session save location
 
-The location of the saved files for the sessions may be changed by altering the `dir` configuration option. By default, the plugin will save to `~/.local/share/nvim/sessions`.
+The location of the saved files for the sessions may be changed by altering the `dir` configuration option. For example:
+
+```lua
+require("persisted").setup({
+  dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- Resolves to ~/.local/share/nvim/sessions
+})
+```
 
 > **Note:** If you change the `dir` value and try to restore sessions, the plugin will be unable to find existing ones
 
 ### Git branching
 
-One of the plugin's core features is the ability to have multiple sessions files for a given project, by using git branches. To enable git branching, set `use_git_branch = true`.
+One of the plugin's core features is the ability to have multiple sessions files for a given project, by using git branches. To enable git branching:
+
+```lua
+require("persisted").setup({
+  use_git_branch = true,
+})
+```
 
 > **Note:** If git branching is enabled on a non git enabled repo, then `main` will be used as the default branch
 
 ### Autosaving
 
-By default, the plugin will automatically save a Neovim session to disk. This action is only undertaken when the user quits Neovim. This can be turned off by setting `autosave = false`.
+By default, the plugin will automatically save a Neovim session to disk. This action is only undertaken when the user quits Neovim. This can be turned off by:
+
+```lua
+require("persisted").setup({
+  autosave = false,
+})
+```
 
 Autosaving can be further controlled by specifying `allowed_dirs` and `ignored_dirs`.
 
 ### Autoloading
 
-The plugin can be enabled to automatically load sessions when Neovim is started. Whilst off by default, this can be turned on by setting `autoload = true`.
+The plugin can be enabled to automatically load sessions when Neovim is started. Whilst off by default, this can be turned on by:
+
+```lua
+require("persisted").setup({
+  autoload = true,
+})
+```
+
 
 Autoloading can be further controlled by specifying `allowed_dirs` and `ignored_dirs`.
 
@@ -134,12 +159,12 @@ Autoloading can be further controlled by specifying `allowed_dirs` and `ignored_
 You may specify a table of directories for which the plugin will autosave and/or autoload from. For example:
 
 ```lua
-{
+require("persisted").setup({
   allowed_dirs = {
     "~/.dotfiles",
     "~/Code",
-  }
-}
+  },
+})
 ```
 
 Specifying `~/Code` will autosave and autoload from that directory as well as all its sub-directories.
@@ -151,12 +176,12 @@ Specifying `~/Code` will autosave and autoload from that directory as well as al
 You may specify a table of directories for which the plugin will **never** autosave and autoload from. For example:
 
 ```lua
-{
+require("persisted").setup({
   ignored_dirs = {
     "~/.config",
     "~/.local/nvim"
-  }
-}
+  },
+})
 ```
 
 Specifying `~/.config` will prevent any autosaving and autoloading from that directory as well as all its sub-directories.
@@ -166,11 +191,14 @@ Specifying `~/.config` will prevent any autosaving and autoloading from that dir
 The plugin allows for *before* and *after* callbacks to be executed before and after a session is saved. This is achieved via the `before_save` and `after_save` configuration options. For example:
 
 ```lua
-{
+require("persisted").setup({
   before_save = function()
     pcall(vim.cmd, "bw minimap")
   end,
-}
+  after_save = function()
+    -- Do something
+  end,
+})
 ```
 
 > **Note:** The author uses a *before* callback to ensure that [minimap.vim](https://github.com/wfxr/minimap.vim) is not written into the session. Its presence prevents the exact buffer and cursor position from being restored when loading a session
@@ -186,7 +214,7 @@ The plugin contains an extension for [telescope.nvim](https://github.com/nvim-te
 The plugin allows for *before* and *after* callbacks to be used when sourcing a session via *Telescope*. For example:
 
 ```lua
-{
+require("persisted").setup({
   telescope = {
     before_source = function()
       -- Close all open buffers
@@ -196,7 +224,7 @@ The plugin allows for *before* and *after* callbacks to be used when sourcing a 
       print("Session " .. session.name .. " loaded for the " .. session.branch .. " branch")
     end,
   },
-}
+})
 ```
 
 A *session* table is exposed to the callback functions and has the following properties:
