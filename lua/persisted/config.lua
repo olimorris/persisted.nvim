@@ -2,7 +2,7 @@ local M = {}
 
 ---@class PersistedOptions
 local defaults = {
-  dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
+  save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
   command = "VimLeavePre", -- The autocommand for which the session is saved
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
   autosave = true, -- automatically save session files when exiting Neovim
@@ -26,7 +26,10 @@ function M.setup(opts)
     vim.cmd('echohl WarningMsg | echom "Persisted.nvim: The `option` config variable has now been replaced by vim.o.sessionoptions" | echohl NONE')
     vim.cmd('echohl WarningMsg | echom "Persisted.nvim: Please set vim.o.sessionoptions accordingly" | echohl NONE')
   end
-  vim.fn.mkdir(M.options.dir, "p")
+  -- if M.options.dir then
+  --   vim.cmd('echohl WarningMsg | echom "Persisted.nvim: The `dir` config option has now been replaced by `save_dir`. This will continue to be supported for the time being" | echohl NONE')
+  -- end
+  vim.fn.mkdir(M.options.dir or M.options.save_dir, "p")
 end
 
 return M

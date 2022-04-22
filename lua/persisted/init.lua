@@ -77,7 +77,7 @@ end
 ---@return string
 local function get_current()
   local name = vim.fn.getcwd():gsub(utils.get_dir_pattern(), "%%")
-  return config.options.dir .. name .. get_branch() .. ".vim"
+  return (config.options.dir or config.options.save_dir) .. name .. get_branch() .. ".vim"
 end
 
 ---Setup the plugin based on the intersect of the default and the user's config
@@ -163,12 +163,13 @@ end
 ---List all of the sessions in the session directory
 ---@return table
 function M.list()
-  local session_files = vim.fn.glob(config.options.dir .. "*.vim", true, true)
+  local save_dir = config.options.dir or config.options.save_dir
+  local session_files = vim.fn.glob(save_dir .. "*.vim", true, true)
 
   local sessions = {}
   for _, session in pairs(session_files) do
     local session_name = session
-      :gsub(config.options.dir, "")
+      :gsub(save_dir, "")
       :gsub("%%", utils.get_dir_pattern())
       :gsub(vim.fn.expand("~"), utils.get_dir_pattern())
       :gsub("//", "")

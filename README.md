@@ -82,7 +82,7 @@ The plugin comes with the following defaults:
 
 ```lua
 require("persisted").setup({
-  dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
+  save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
   command = "VimLeavePre", -- The autocommand for which the session is saved
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
   autosave = true, -- automatically save session files when exiting Neovim
@@ -106,15 +106,15 @@ As the plugin uses Vim's `:mksession` command then you may change the `vim.o.ses
 
 ### Session save location
 
-The location of the saved files for the sessions may be changed by altering the `dir` configuration option. For example:
+The location of the saved files for the sessions may be changed by altering the `save_dir` configuration option. For example:
 
 ```lua
 require("persisted").setup({
-  dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- Resolves to ~/.local/share/nvim/sessions
+  save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- Resolves to ~/.local/share/nvim/sessions/
 })
 ```
 
-> **Note:** If you change the `dir` value and try to restore sessions, the plugin will be unable to find existing ones
+> **Note:** The plugin may be unable to find existing sessions if the `save_dir` value is changed
 
 ### Autocmd to save session
 
