@@ -6,14 +6,28 @@ local entry_display = require("telescope.pickers.entry_display")
 local action_state = require("telescope.actions.state")
 
 local config = require("persisted.config").options
-local sessions = require("persisted").list()
 
 local function search_sessions(opts)
+  -- Layout borrowed from:
+  ---https://github.com/LinArcX/telescope-env.nvim/blob/master/lua/telescope/_extensions/env.lua
+  local cols = vim.o.columns
+  local telescope_width = conf.width
+    or conf.layout_config.width
+    or conf.layout_config[conf.layout_strategy].width
+    or cols
+
+  if telescope_width < 1 then
+    telescope_width = math.floor(cols * telescope_width)
+  end
+
+  local branch_width = 30
+  local name_width = math.floor(cols * 0.05)
+
   local displayer = entry_display.create({
     separator = " │ ",
     items = {
-      { width = 50 },
-      { width = 10 },
+      { width = telescope_width - branch_width - name_width },
+      { width = branch_width },
       { remaining = true },
     },
   })
@@ -31,7 +45,6 @@ local function search_sessions(opts)
 
       name = item.name,
       branch = item.branch,
-      pwd = item.pwd,
       file_path = item.file_path,
     }
   end
@@ -40,7 +53,7 @@ local function search_sessions(opts)
     prompt_title = "Sessions",
     sorter = conf.generic_sorter(opts),
     finder = finders.new_table({
-      results = sessions,
+      results = require("persisted").list(),
       entry_maker = make_entry,
     }),
     attach_mappings = function(prompt_bufnr)

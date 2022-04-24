@@ -46,7 +46,7 @@ end
 ---Get the session that was saved last
 ---@return string
 local function get_last()
-  local sessions = M.list()
+  local sessions = vim.fn.glob(config.options.dir .. "*.vim", true, true)
   table.sort(sessions, function(a, b)
     return vim.loop.fs_stat(a).mtime.sec > vim.loop.fs_stat(b).mtime.sec
   end)
@@ -160,6 +160,18 @@ function M.delete()
   end
 end
 
+---Determines whether to load, start or stop a session
+---@return function
+function M.toggle()
+  if vim.g.persisting == nil then
+    return M.load()
+  end
+  if vim.g.persisting then
+    return M.stop()
+  end
+  return M.start()
+end
+
 ---List all of the sessions in the session directory
 ---@return table
 function M.list()
@@ -174,33 +186,14 @@ function M.list()
       :gsub(vim.fn.expand("~"), utils.get_dir_pattern())
       :gsub("//", "")
 
-    local branch = utils.get_last_item(utils.split_str(session_name, "_")):gsub(".vim", "")
-
-    local pwd = vim.fn.expand("~") .. utils.get_dir_pattern() .. session_name
-    local branch_name = "_" .. utils.get_last_item(utils.split_str(pwd, "_"))
-    pwd = pwd:gsub(branch_name, "")
-
     table.insert(sessions, {
-      ["name"] = session_name,
+      ["name"] = utils.split_str(session_name, "_")[1],
       ["file_path"] = session,
-      ["branch"] = branch,
-      ["pwd"] = pwd,
+      ["branch"] = utils.split_str(session_name, "_")[2]:gsub(".vim", ""),
     })
   end
 
   return sessions
-end
-
----Determines whether to load, start or stop a session
----@return function
-function M.toggle()
-  if vim.g.persisting == nil then
-    return M.load()
-  end
-  if vim.g.persisting then
-    return M.stop()
-  end
-  return M.start()
 end
 
 return M

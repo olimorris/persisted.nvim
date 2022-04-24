@@ -242,8 +242,7 @@ require("persisted").setup({
 
 A *session* table is exposed to the callback functions and has the following properties:
 * name - The filename of the session.
-* branch - The git branch of the session.
-* pwd - The present working directory of the session; *and*
+* branch - The git branch of the session; *and*
 * file_path - The file path to the session.
 
 ## :rocket: Usage
