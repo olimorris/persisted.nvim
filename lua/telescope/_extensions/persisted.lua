@@ -5,9 +5,9 @@ local conf = require("telescope.config").values
 local entry_display = require("telescope.pickers.entry_display")
 local action_state = require("telescope.actions.state")
 
-local config = require("persisted.config").options
-
 local function search_sessions(opts)
+  local config = require("persisted.config").options
+
   -- Layout borrowed from:
   ---https://github.com/LinArcX/telescope-env.nvim/blob/master/lua/telescope/_extensions/env.lua
   local cols = vim.o.columns
