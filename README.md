@@ -234,7 +234,7 @@ require("persisted").setup({
     end,
     after_source = function(session)
       -- Change the git branch
-      pcall(vim.cmd, "git checkout .." session.branch)
+      pcall(vim.cmd, "git checkout " .. session.branch)
     end,
   },
 })
