@@ -106,7 +106,7 @@ As the plugin uses Vim's `:mksession` command then you may change the `vim.o.ses
 
 ### Session save location
 
-The location of the saved files for the sessions may be changed by altering the `save_dir` configuration option. For example:
+The location of the session files may be changed by altering the `save_dir` configuration option. For example:
 
 ```lua
 require("persisted").setup({
@@ -118,7 +118,7 @@ require("persisted").setup({
 
 ### Autocmd to save session
 
-By default, a session is saved to disk upon the `VimLeavePre` autocommand. This can be modified by:
+By default, a session is saved to disk when the `VimLeavePre` autocommand is triggered. This can be modified by:
 
 ```lua
 require("persisted").setup({
@@ -141,7 +141,7 @@ require("persisted").setup({
 
 ### Autosaving
 
-By default, the plugin will automatically save a Neovim session to disk. This action is only undertaken when the user quits Neovim. This can be turned off by:
+By default, the plugin will automatically save a Neovim session to disk when the `VimLeavePre` autocommand is triggered. Autosaving can be turned off by:
 
 ```lua
 require("persisted").setup({
@@ -149,7 +149,7 @@ require("persisted").setup({
 })
 ```
 
-Autosaving can be further controlled by specifying `allowed_dirs` and `ignored_dirs`.
+Autosaving can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
 ### Autoloading
 
@@ -162,9 +162,9 @@ require("persisted").setup({
 ```
 
 
-Autoloading can be further controlled by specifying `allowed_dirs` and `ignored_dirs`.
+Autoloading can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
-> **Note:** Autoloading will not occur if a user opens Neovim with arguments such as `nvim some_file.rb`
+> **Note:** Autoloading will not occur if a user opens Neovim with arguments. For example: `nvim some_file.rb`
 
 ### Allowed directories
 
@@ -200,7 +200,7 @@ Specifying `~/.config` will prevent any autosaving and autoloading from that dir
 
 ### Callbacks
 
-The plugin allows for *before* and *after* callbacks to be executed before and after a session is saved. This is achieved via the `before_save` and `after_save` configuration options. For example:
+The plugin allows for *before* and *after* callbacks to be executed in relation to a session being saved. This is achieved via the `before_save` and `after_save` configuration options:
 
 ```lua
 require("persisted").setup({
@@ -219,7 +219,11 @@ require("persisted").setup({
 
 > **This feature is still in beta!!**
 
-The plugin contains an extension for [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) which allows the user to list all of the saved session files and source them.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/9512444/164997799-7621d04f-e6fb-4bd3-9bb5-504454380e07.png" alt="Telescope">
+</p>
+
+The plugin contains an extension for [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) which allows the user to list all of the saved session files and source them via `:Telescope persisted`.
 
 #### Telescope callbacks
 
