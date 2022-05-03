@@ -108,8 +108,9 @@ function M.load(opt)
   if session and vim.fn.filereadable(session) ~= 0 then
     local ok, result = pcall(vim.cmd, "source " .. e(session))
     if not ok then
-      utils.echoerr("Error loading the session! ", result)
+      return utils.echoerr("Error loading the session! ", result)
     end
+    vim.cmd("edit")
   end
 
   if config.options.autosave and (allow_dir() and not ignore_dir()) then
