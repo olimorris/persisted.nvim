@@ -11,6 +11,7 @@ local defaults = {
   ignored_dirs = nil, -- table of dirs that are ignored for auto-saving and auto-loading
   before_save = function() end, -- function to run before the session is saved to disk
   after_save = function() end, -- function to run after the session is saved to disk
+  after_source = function() end, -- function to run after the session is sourced
   telescope = { -- options for the telescope extension
     before_source = function(session) end, -- function to run before the session is sourced via telescope
     after_source = function(session) end, -- function to run after the session is sourced via telescope

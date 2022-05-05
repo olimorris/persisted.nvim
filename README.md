@@ -208,12 +208,24 @@ require("persisted").setup({
     pcall(vim.cmd, "bw minimap")
   end,
   after_save = function()
-    -- Do something
+    print("Session was saved!")
   end,
 })
 ```
 
 > **Note:** The author uses a *before* callback to ensure that [minimap.vim](https://github.com/wfxr/minimap.vim) is not written into the session. Its presence prevents the exact buffer and cursor position from being restored when loading a session
+
+The plugin allows for an *after* callback to be executed in relation to a session being sourced:
+
+```lua
+require("persisted").setup({
+  after_source = function()
+    -- Reload the LSP servers
+    vim.lsp.stop_client(vim.lsp.get_active_clients())
+    vim.cmd("edit")
+  end
+})
+```
 
 ### Telescope extension
 

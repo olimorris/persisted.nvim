@@ -110,7 +110,7 @@ function M.load(opt)
     if not ok then
       return utils.echoerr("Error loading the session! ", result)
     end
-    vim.cmd("silent! e %")
+    config.options.after_source()
   end
 
   if config.options.autosave and (allow_dir() and not ignore_dir()) then
