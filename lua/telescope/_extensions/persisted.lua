@@ -5,6 +5,8 @@ local conf = require("telescope.config").values
 local entry_display = require("telescope.pickers.entry_display")
 local action_state = require("telescope.actions.state")
 
+local _actions = require("telescope._extensions.actions")
+
 local function search_sessions(opts)
   local config = require("persisted.config").options
 
@@ -56,7 +58,15 @@ local function search_sessions(opts)
       results = require("persisted").list(),
       entry_maker = make_entry,
     }),
-    attach_mappings = function(prompt_bufnr)
+    attach_mappings = function(prompt_bufnr, map)
+      local refresh_sessions = function()
+        local picker = action_state.get_current_picker(prompt_bufnr)
+        local finder = require("persisted").list()
+        picker:refresh(finder, { reset_prompt = true })
+      end
+
+      map("i", "<c-d>", _actions.delete_session)
+
       actions.select_default:replace(function()
         local session = action_state.get_selected_entry()
         actions.close(prompt_bufnr)
