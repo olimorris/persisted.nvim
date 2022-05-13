@@ -18,6 +18,10 @@ local function search_sessions(opts)
     or conf.layout_config[conf.layout_strategy].width
     or cols
 
+  if type(telescope_width) == "function" then
+    telescope_width = telescope_width(_, cols, _)
+  end
+
   if telescope_width < 1 then
     telescope_width = math.floor(cols * telescope_width)
   end
