@@ -281,7 +281,8 @@ The plugin comes with a number of commands:
 The Telescope extension may be opened via `:Telescope persisted`.
 
 Once opened, the available keymaps are:
-* `<CR>` - Source the selected session file
+* `<CR>` - Source the session file
+* `<C-d>` - Delete the session file
 
 ### Lazy loading
 
