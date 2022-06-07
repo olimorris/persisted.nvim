@@ -87,7 +87,7 @@ function M.setup(opts)
   config.setup(opts)
   setup_commands()
   if config.options.autoload and (allow_dir() and not ignore_dir()) and vim.fn.argc() == 0 then
-    vim.schedule(M.load)
+    M.load()
   end
   if
     config.options.autosave
