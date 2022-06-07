@@ -222,7 +222,6 @@ require("persisted").setup({
   after_source = function()
     -- Reload the LSP servers
     vim.lsp.stop_client(vim.lsp.get_active_clients())
-    vim.cmd("edit")
   end
 })
 ```

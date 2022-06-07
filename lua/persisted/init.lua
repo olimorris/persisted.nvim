@@ -20,7 +20,6 @@ local function setup_commands()
   ]])
 end
 
-
 ---Does the current working directory allow for the auto-saving and loading?
 ---@return boolean
 local function allow_dir()
@@ -106,27 +105,34 @@ function M.load(opt)
   local session = opt.last and get_last() or get_current()
 
   if session and vim.fn.filereadable(session) ~= 0 then
-    local ok, result = pcall(vim.cmd, "source " .. e(session))
-    if not ok then
-      return utils.echoerr("Error loading the session! ", result)
-    end
-    config.options.after_source()
+    vim.schedule(function()
+      local ok, result = pcall(vim.cmd, "source " .. e(session))
+      if not ok then
+        return utils.echoerr("Error loading the session! ", result)
+      end
+      config.options.after_source()
+    end)
   end
 
   if config.options.autosave and (allow_dir() and not ignore_dir()) then
-    M.start()
+    vim.schedule(function()
+      M.start()
+    end)
   end
 end
 
 ---Start recording a session and write to disk on a specific autocommand
 ---@return nil
 function M.start()
-  vim.cmd(string.format([[
+  vim.cmd(string.format(
+    [[
     augroup Persisted
       autocmd!
       autocmd %s * lua require("persisted").save()
     augroup end
-  ]], config.options.command))
+  ]],
+    config.options.command
+  ))
   vim.g.persisting = true
 end
 
