@@ -1,6 +1,6 @@
 local session_dir = vim.fn.getcwd() .. "/tests/default_data/"
 require("persisted").setup({
-  dir = session_dir
+  save_dir = session_dir
 })
 
 describe("With default settings:", function()

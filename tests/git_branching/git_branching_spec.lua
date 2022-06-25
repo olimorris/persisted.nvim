@@ -2,7 +2,7 @@ pcall(vim.fn.system, "rm -rf tests/git_branch_data")
 
 local session_dir = vim.fn.getcwd() .. "/tests/git_branch_data/"
 require("persisted").setup({
-  dir = session_dir,
+  save_dir = session_dir,
   use_git_branch = true,
 })
 

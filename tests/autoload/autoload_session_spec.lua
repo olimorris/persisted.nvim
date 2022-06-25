@@ -4,7 +4,7 @@ local async = require("plenary.async.tests")
 local e = vim.fn.fnameescape
 local session_dir = vim.fn.getcwd() .. "/tests/dummy_data/"
 require("persisted").setup({
-  dir = session_dir,
+  save_dir = session_dir,
   autoload = true,
   autosave = true,
 })
