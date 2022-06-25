@@ -100,13 +100,7 @@ function M.load(opt)
   local session = opt.last and get_last() or get_current()
 
   if session and vim.fn.filereadable(session) ~= 0 then
-    vim.schedule(function()
-      local ok, result = pcall(vim.cmd, "source " .. e(session))
-      if not ok then
-        return utils.echoerr("Error loading the session! ", result)
-      end
-      config.options.after_source()
-    end)
+    utils.load_session(session, _, config.options.after_source())
   end
 
   if config.options.autosave and (allow_dir() and not ignore_dir()) then

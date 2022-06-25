@@ -30,9 +30,10 @@ end
 ---@param dir_table table
 ---@return boolean
 function M.dirs_match(dir, dirs_table)
-    local dir = vim.fn.expand(dir)
-    return dirs_table and next(vim.tbl_filter(function(pattern)
-        return dir:match(vim.fn.expand(pattern))
+  local dir = vim.fn.expand(dir)
+  return dirs_table
+    and next(vim.tbl_filter(function(pattern)
+      return dir:match(vim.fn.expand(pattern))
     end, dirs_table))
 end
 
@@ -56,6 +57,25 @@ function M.echoerr(msg, error)
     { msg, "WarningMsg" },
     { error, "Normal" },
   }, true, {})
+end
+
+---Load the given session
+---@param session table
+---@param before_callback function
+---@param after_callback function
+function M.load_session(session, before_callback, after_callback)
+  vim.schedule(function()
+    if type(before_callback) == "function" then
+      before_callback()
+    end
+    local ok, result = pcall(vim.cmd, "source " .. vim.fn.fnameescape(session))
+    if not ok then
+      return M.echoerr("Error loading the session! ", result)
+    end
+    if type(after_callback) == "function" then
+      after_callback()
+    end
+  end)
 end
 
 return M
