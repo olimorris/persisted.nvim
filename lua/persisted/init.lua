@@ -58,15 +58,10 @@ local function get_branch()
   local git_enabled = (vim.fn.isdirectory(vim.fn.getcwd() .. "/.git") == 1)
 
   if config.options.use_git_branch and git_enabled then
-    local branch = vim.api.nvim_exec([[!git rev-parse --abbrev-ref HEAD 2>/dev/null]], true)
-
-    -- The branch command returns two lines. We only need the second one
-    local lines = {}
-    for s in branch:gmatch("[^\r\n]+") do
-      table.insert(lines, "_" .. s)
+    local branch = vim.fn.systemlist([[git rev-parse --abbrev-ref HEAD 2>/dev/null]])
+    if vim.v.shell_error == 0 then
+      return "_" .. branch[1]:gsub("/", "%%")
     end
-
-    return lines[#lines]:gsub("/", "%%")
   end
 
   return "_" .. default_branch
