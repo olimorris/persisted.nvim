@@ -8,7 +8,7 @@ require("persisted").setup({
 })
 
 describe("As part of the setup", function()
-  it("a session is created to autoload from", function()
+  it("creates a session to autoload from", function()
 
     vim.cmd(":e tests/stubs/test_autoload.txt")
     vim.cmd(":w")
