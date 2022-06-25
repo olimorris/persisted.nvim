@@ -45,7 +45,7 @@ end
 ---Get the session that was saved last
 ---@return string
 local function get_last()
-  local sessions = vim.fn.glob(config.options.dir .. "*.vim", true, true)
+  local sessions = vim.fn.glob(config.options.dir or config.options.save_dir .. "*.vim", true, true)
   table.sort(sessions, function(a, b)
     return vim.loop.fs_stat(a).mtime.sec > vim.loop.fs_stat(b).mtime.sec
   end)
