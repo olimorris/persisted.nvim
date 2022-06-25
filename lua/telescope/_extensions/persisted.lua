@@ -7,6 +7,7 @@ local _actions = require("telescope._extensions.actions")
 local _finders = require("telescope._extensions.finders")
 
 local function search_sessions(opts)
+  local utils = require("persisted.utils")
   local config = require("persisted.config").options
 
   pickers.new(opts, {
@@ -14,7 +15,6 @@ local function search_sessions(opts)
     sorter = conf.generic_sorter(opts),
     finder = _finders.session_finder(require("persisted").list()),
     attach_mappings = function(prompt_bufnr, map)
-
       local refresh_sessions = function()
         local picker = action_state.get_current_picker(prompt_bufnr)
         picker:refresh(_finders.session_finder(require("persisted").list()), { reset_prompt = true })
@@ -28,9 +28,11 @@ local function search_sessions(opts)
         local session = action_state.get_selected_entry()
         actions.close(prompt_bufnr)
 
-        config.telescope.before_source(session)
-        pcall(vim.cmd, "source " .. vim.fn.fnameescape(session.file_path))
-        config.telescope.after_source(session)
+        utils.load_session(session.file_path, function()
+          return config.telescope.before_source(session)
+        end, function()
+          return config.telescope.after_source(session)
+        end)
       end)
       return true
     end,
