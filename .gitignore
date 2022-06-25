@@ -3,3 +3,4 @@ plenary.nvim/
 .luarc.json
 
 tests/.DS_Store
+tests/dummy_data/
