@@ -184,15 +184,9 @@ function M.list()
       :gsub(vim.fn.expand("~"), utils.get_dir_pattern())
       :gsub("//", "")
 
-    -- FIX: how we detect names and branches. May have a repo named "jsonapi_rails" with a "main" branch
-    -- This means the name gets picked up as "jsonapi" and the branch is "rails"
-    local name = utils.split_str(session_name, "_")[1]
-    local branch = utils.split_str(session_name, "_")[2] or nil
-
     table.insert(sessions, {
-      ["name"] = name,
+      ["name"] = session_name,
       ["file_path"] = session,
-      ["branch"] = branch and branch:gsub(".vim", "") or "",
     })
   end
 
