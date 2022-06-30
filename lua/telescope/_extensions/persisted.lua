@@ -28,11 +28,11 @@ local function search_sessions(opts)
         local session = action_state.get_selected_entry()
         actions.close(prompt_bufnr)
 
-        utils.load_session(session.file_path, function()
-          return config.telescope.before_source(session)
-        end, function()
-          return config.telescope.after_source(session)
-        end)
+        utils.load_session(
+          session.file_path,
+          config.telescope.before_source and config.telescope.before_source(session) or _,
+          config.telescope.after_source and config.telescope.after_source(session) or _
+        )
       end)
       return true
     end,

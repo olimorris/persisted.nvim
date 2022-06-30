@@ -102,7 +102,7 @@ function M.load(opt)
   local session = opt.last and get_last() or get_current()
 
   if session and vim.fn.filereadable(session) ~= 0 then
-    utils.load_session(session, _, config.options.after_source())
+    utils.load_session(session, config.options.before_save, config.options.after_save)
   end
 
   if config.options.autosave and (allow_dir() and not ignore_dir()) then
@@ -140,12 +140,16 @@ end
 ---Save the session to disk
 ---@return nil
 function M.save()
-  config.options.before_save()
+  if type(config.options.before_save) == "function" then
+    config.options.before_save()
+  end
 
   vim.cmd("mks! " .. e(get_current()))
   vim.g.persisting = true
 
-  config.options.after_save()
+  if type(config.options.after_save) == "function" then
+    config.options.after_save()
+  end
 end
 
 ---Delete the current session from disk

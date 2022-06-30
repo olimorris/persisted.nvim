@@ -1,4 +1,5 @@
 local M = {}
+local e = vim.fn.fnameescape
 
 --- Split a string into a table
 ---@param input string
@@ -68,7 +69,7 @@ function M.load_session(session, before_callback, after_callback)
     if type(before_callback) == "function" then
       before_callback()
     end
-    local ok, result = pcall(vim.cmd, "source " .. vim.fn.fnameescape(session))
+    local ok, result = pcall(vim.cmd, "source " .. e(session))
     if not ok then
       return M.echoerr("Error loading the session! ", result)
     end

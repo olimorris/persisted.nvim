@@ -89,11 +89,11 @@ require("persisted").setup({
   autoload = false, -- automatically load the session for the cwd on Neovim startup
   allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
   ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
-  before_save = function() end, -- function to run before the session is saved to disk
-  after_save = function() end, -- function to run after the session is saved to disk
+  before_save = nil, -- function to run before the session is saved to disk
+  after_save = nil, -- function to run after the session is saved to disk
   telescope = { -- options for the telescope extension
-    before_source = function(session) end, -- function to run before the session is sourced via telescope
-    after_source = function(session) end, -- function to run after the session is sourced via telescope
+    before_source = nil, -- function to run before the session is sourced via telescope
+    after_source = nil, -- function to run after the session is sourced via telescope
   },
 })
 ```
@@ -243,7 +243,7 @@ The plugin allows for *before* and *after* callbacks to be used when sourcing a 
 ```lua
 require("persisted").setup({
   telescope = {
-    before_source = function()
+    before_source = function(session)
       -- Close all open buffers
       pcall(vim.cmd, "bufdo bwipeout")
     end,
@@ -254,10 +254,8 @@ require("persisted").setup({
   },
 })
 ```
-
-A *session* table is exposed to the callback functions and has the following properties:
+The callbacks must accept a *session* parameter which is a table that has the following properties:
 * name - The filename of the session.
-* branch - The git branch of the session; *and*
 * file_path - The file path to the session.
 
 ## :rocket: Usage
