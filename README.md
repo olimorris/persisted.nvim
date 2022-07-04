@@ -243,18 +243,19 @@ The plugin allows for *before* and *after* callbacks to be used when sourcing a 
 ```lua
 require("persisted").setup({
   telescope = {
-    before_source = function(session)
+    before_source = function()
       -- Close all open buffers
-      pcall(vim.cmd, "bufdo bwipeout")
+      -- Thanks to https://github.com/avently
+      vim.api.nvim_input("<ESC>:%bd<CR>")
     end,
     after_source = function(session)
       -- Change the git branch
-      pcall(vim.cmd, "git checkout " .. session.branch)
+      print("Loaded session " .. session.name)
     end,
   },
 })
 ```
-The callbacks must accept a *session* parameter which is a table that has the following properties:
+The callbacks can accept a *session* parameter which is a table that has the following properties:
 * name - The filename of the session.
 * file_path - The file path to the session.
 
