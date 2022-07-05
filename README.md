@@ -91,6 +91,7 @@ require("persisted").setup({
   ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
   before_save = nil, -- function to run before the session is saved to disk
   after_save = nil, -- function to run after the session is saved to disk
+  after_source = nil, -- function to run after the session is sourced
   telescope = { -- options for the telescope extension
     before_source = nil, -- function to run before the session is sourced via telescope
     after_source = nil, -- function to run after the session is sourced via telescope
@@ -228,17 +229,15 @@ require("persisted").setup({
 
 ### Telescope extension
 
-> **This feature is still in beta!!**
-
 <p align="center">
-<img src="https://user-images.githubusercontent.com/9512444/164997799-7621d04f-e6fb-4bd3-9bb5-504454380e07.png" alt="Telescope">
+<img src="https://user-images.githubusercontent.com/9512444/177375482-3bc9bd0d-42c8-4755-a36c-08ea5f954525.png" alt="Telescope">
 </p>
 
 The plugin contains an extension for [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) which allows the user to list all of the saved session files and source them via `:Telescope persisted`.
 
 #### Telescope callbacks
 
-The plugin allows for *before* and *after* callbacks to be used when sourcing a session via *Telescope*. For example:
+The plugin allows for *before* and *after* callbacks to be used when sourcing a session via Telescope. For example:
 
 ```lua
 require("persisted").setup({
@@ -249,28 +248,27 @@ require("persisted").setup({
       vim.api.nvim_input("<ESC>:%bd<CR>")
     end,
     after_source = function(session)
-      -- Change the git branch
       print("Loaded session " .. session.name)
     end,
   },
 })
 ```
 The callbacks can accept a *session* parameter which is a table that has the following properties:
-* name - The filename of the session.
-* file_path - The file path to the session.
+* `name` - The filename of the session.
+* `file_path` - The file path to the session.
 
 ## :rocket: Usage
 
 ### Default commands
 The plugin comes with a number of commands:
 
+- `SessionToggle` - Determines whether to load, start or stop a session
 - `SessionStart` - Start recording a session. Useful if `autosave = false`
 - `SessionStop` - Stop recording a session
 - `SessionSave` - Save the current session
 - `SessionLoad` - Load the session for the current directory and current branch if `git_use_branch = true`
 - `SessionLoadLast` - Load the last session
 - `SessionDelete` - Delete the current session
-- `SessionToggle` - Determines whether to load, start or stop a session
 
 > **Note:** The author only binds `SessionToggle` to a keymap for simplicity.
 
