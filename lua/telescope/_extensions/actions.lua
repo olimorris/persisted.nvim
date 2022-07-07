@@ -12,14 +12,12 @@ end
 ---Delete the selected session from disk
 --@return string
 M.delete_session = function()
-  -- local session = get_selected_session().file_path
   local session = get_selected_session()
   local path = session.file_path
 
-  local confirm = vim.fn.input("Delete " .. session.name .. "? ", "yes"):lower()
+  local confirm = vim.fn.input("Delete [" .. session.name .. "]?: ", ""):lower()
   if confirm == "yes" or confirm == "y" then
-    os.remove(path)
-    print("Session deleted: " .. path)
+    vim.fn.delete(vim.fn.expand(path))
   end
 end
 
