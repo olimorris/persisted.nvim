@@ -187,6 +187,7 @@ function M.list()
       :gsub("%%", utils.get_dir_pattern())
       :gsub(vim.fn.expand("~"), utils.get_dir_pattern())
       :gsub("//", "")
+      :sub(1, -5)
 
     table.insert(sessions, {
       ["name"] = session_name,
