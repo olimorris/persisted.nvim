@@ -1,10 +1,14 @@
-# :floppy_disk: Persisted
+# Persisted.nvim
 
 ![MIT License](https://img.shields.io/github/license/olimorris/persisted.nvim) [![Tests](https://github.com/olimorris/persisted.nvim/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/olimorris/persisted.nvim/actions/workflows/ci.yml)
 
-**Persisted** is a simple lua plugin for automated session management within Neovim.
-
-The plugin was forked from the fantastic [Persistence.nvim](https://github.com/folke/persistence.nvim) as active development seems to have been paused and there were some useful pull requests.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/9512444/179085825-7c3bc1f7-c86b-4119-96e2-1a581e9bfffc.png" alt="Persisted.nvim" />
+</p>
+<p align="center">
+<b>Persisted.nvim</b> is a simple lua plugin for automated session management within Neovim.<br><br>
+The plugin was forked from the fantastic <a href="https://github.com/folke/persistence.nvim">Persistence.nvim</a> as active development seems to have been paused and there were some useful pull requests.
+</p>
 
 ## :book: Table of Contents
 
