@@ -27,14 +27,14 @@ function M.get_last_item(table)
 end
 
 ---Check if a target directory exists in a given table
----@param dir_target string
----@param dir_table table
+---@param dir string
+---@param dirs_table table
 ---@return boolean
 function M.dirs_match(dir, dirs_table)
-  local dir = vim.fn.expand(dir)
+  dir = vim.fn.expand(dir)
   return dirs_table
-    and next(vim.tbl_filter(function(pattern)
-      return dir:match(vim.fn.expand(pattern))
+    and next(vim.tbl_filter(function(dir_match)
+      return dir == vim.fn.expand(dir_match)
     end, dirs_table))
 end
 
