@@ -34,7 +34,7 @@ function M.dirs_match(dir, dirs_table)
   dir = vim.fn.expand(dir)
   return dirs_table
     and next(vim.tbl_filter(function(dir_match)
-      return dir == dir_match
+      return dir == vim.fn.expand(dir_match)
     end, dirs_table))
 end
 
