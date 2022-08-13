@@ -92,6 +92,7 @@ function M.setup(opts)
   then
     M.start()
   end
+
 end
 
 ---Load a session
@@ -102,7 +103,7 @@ function M.load(opt)
   local session = opt.last and get_last() or get_current()
 
   if session and vim.fn.filereadable(session) ~= 0 then
-    utils.load_session(session, config.options.before_save, config.options.after_save)
+    utils.load_session(session, _, config.options.after_source)
   end
 
   if config.options.autosave and (allow_dir() and not ignore_dir()) then
