@@ -1,6 +1,10 @@
 name: Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 # Cancel any in-progress CI runs for a PR if it is updated
 concurrency:
@@ -18,7 +22,11 @@ jobs:
           - os: ubuntu-20.04
             url: https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
           - os: ubuntu-20.04
+            url: https://github.com/neovim/neovim/releases/download/v0.7.0/nvim-linux64.tar.gz
+          - os: ubuntu-20.04
             url: https://github.com/neovim/neovim/releases/download/v0.6.0/nvim-linux64.tar.gz
+          - os: ubuntu-20.04
+            url: https://github.com/neovim/neovim/releases/download/v0.5.0/nvim-linux64.tar.gz
 
     steps:
       - uses: actions/checkout@v2
