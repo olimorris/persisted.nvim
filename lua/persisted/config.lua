@@ -11,6 +11,7 @@ local defaults = {
   ignored_dirs = nil, -- table of dirs that are ignored for auto-saving and auto-loading
   before_save = nil, -- function to run before the session is saved to disk
   after_save = nil, -- function to run after the session is saved to disk
+  before_source = nil, -- function to run before the session is sourced
   after_source = nil, -- function to run after the session is sourced
   telescope = { -- options for the telescope extension
     before_source = nil, -- function to run before the session is sourced via telescope
