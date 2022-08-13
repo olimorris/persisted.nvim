@@ -9,8 +9,6 @@
 <a href="https://github.com/olimorris/persisted.nvim/actions/workflows/ci.yml"><img src="https://img.shields.io/github/workflow/status/olimorris/persisted.nvim/Tests?label=tests&style=for-the-badge"></a>
 </p>
 
-![MIT License](https://img.shields.io/github/license/olimorris/persisted.nvim) [![Tests](https://github.com/olimorris/persisted.nvim/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/olimorris/persisted.nvim/actions/workflows/ci.yml)
-
 <p align="center">
 <b>Persisted.nvim</b> is a simple lua plugin for automated session management within Neovim.<br>
 Forked from the <a href="https://github.com/folke/persistence.nvim">Persistence.nvim</a> as active development has stopped
