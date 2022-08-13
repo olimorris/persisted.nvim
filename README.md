@@ -10,8 +10,8 @@
 </p>
 
 <p align="center">
-<b>Persisted.nvim</b> is a simple lua plugin for automated session management within Neovim.<br>
-Forked from the <a href="https://github.com/folke/persistence.nvim">Persistence.nvim</a> as active development has stopped
+<b>Persisted.nvim</b> is a simple lua plugin for automated session management within Neovim<br>
+Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim</a> as active development has stopped
 </p>
 
 ## :book: Table of Contents
@@ -19,6 +19,11 @@ Forked from the <a href="https://github.com/folke/persistence.nvim">Persistence.
 - [Features](#sparkles-features)
 - [Requirements](#zap-requirements)
 - [Installation](#package-installation)
+- [Usage](#rocket-usage)
+  - [Default commands](#default-commands)
+  - [Telescope](#telescope)
+  - [Lazy loading](#lazy-loading)
+  - [Helpers](#helpers)
 - [Configuration](#wrench-configuration)
   - [Defaults](#defaults)
   - [Session options](#session-options)
@@ -30,11 +35,6 @@ Forked from the <a href="https://github.com/folke/persistence.nvim">Persistence.
   - [Ignored directories](#ignored-directories)
   - [Callbacks](#callbacks)
   - [Telescope extension](#telescope-extension)
-- [Usage](#rocket-usage)
-  - [Default commands](#default-commands)
-  - [Telescope](#telescope)
-  - [Lazy loading](#lazy-loading)
-  - [Helpers](#helpers)
 - [License](#page_with_curl-license)
 
 ## :sparkles: Features
@@ -81,6 +81,38 @@ lua << EOF
   }
 EOF
 ```
+## :rocket: Usage
+
+### Default commands
+The plugin comes with a number of commands:
+
+- `SessionToggle` - Determines whether to load, start or stop a session
+- `SessionStart` - Start recording a session. Useful if `autosave = false`
+- `SessionStop` - Stop recording a session
+- `SessionSave` - Save the current session
+- `SessionLoad` - Load the session for the current directory and current branch if `git_use_branch = true`
+- `SessionLoadLast` - Load the last session
+- `SessionDelete` - Delete the current session
+
+> **Note:** The author only binds `SessionToggle` to a keymap for simplicity.
+
+### Telescope
+
+The Telescope extension may be opened via `:Telescope persisted`.
+
+Once opened, the available keymaps are:
+* `<CR>` - Source the session file
+* `<C-d>` - Delete the session file
+
+### Lazy loading
+
+The plugin is designed to work with startup screens like [vim-startify](https://github.com/mhinz/vim-startify) or [dashboard](https://github.com/glepnir/dashboard-nvim) out of the box. It will never load a session automatically by default.
+
+However, to lazy load the plugin add the `module = "persisted"` line to packer.
+
+### Helpers
+
+The plugin sets a global variable, `vim.g.persisting`, which is set to `true` when a session is started. The author uses this to display an icon in their [statusline](https://github.com/olimorris/dotfiles/blob/0cdaee183c64f872778952f90f62b9366851101c/.config/nvim/lua/Oli/plugins/statusline.lua#L257).
 
 ## :wrench: Configuration
 
@@ -267,39 +299,6 @@ require("persisted").setup({
 The callbacks can accept a *session* parameter which is a table that has the following properties:
 * `name` - The filename of the session.
 * `file_path` - The file path to the session.
-
-## :rocket: Usage
-
-### Default commands
-The plugin comes with a number of commands:
-
-- `SessionToggle` - Determines whether to load, start or stop a session
-- `SessionStart` - Start recording a session. Useful if `autosave = false`
-- `SessionStop` - Stop recording a session
-- `SessionSave` - Save the current session
-- `SessionLoad` - Load the session for the current directory and current branch if `git_use_branch = true`
-- `SessionLoadLast` - Load the last session
-- `SessionDelete` - Delete the current session
-
-> **Note:** The author only binds `SessionToggle` to a keymap for simplicity.
-
-### Telescope
-
-The Telescope extension may be opened via `:Telescope persisted`.
-
-Once opened, the available keymaps are:
-* `<CR>` - Source the session file
-* `<C-d>` - Delete the session file
-
-### Lazy loading
-
-The plugin is designed to work with startup screens like [vim-startify](https://github.com/mhinz/vim-startify) or [dashboard](https://github.com/glepnir/dashboard-nvim) out of the box. It will never load a session automatically by default.
-
-However, to lazy load the plugin add the `module = "persisted"` line to packer.
-
-### Helpers
-
-The plugin sets a global variable, `vim.g.persisting`, which is set to `true` when a session is started. The author uses this to display an icon in their [statusline](https://github.com/olimorris/dotfiles/blob/0cdaee183c64f872778952f90f62b9366851101c/.config/nvim/lua/Oli/plugins/statusline.lua#L257).
 
 ## :page_with_curl: License
 
