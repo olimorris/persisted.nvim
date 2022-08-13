@@ -1,13 +1,19 @@
-# Persisted.nvim
+<p align="center">
+<img src="https://user-images.githubusercontent.com/9512444/179085825-7c3bc1f7-c86b-4119-96e2-1a581e9bfffc.png" alt="Persisted.nvim" />
+</p>
+
+<h1 align="center">Persisted.nvim</h1>
+
+<p align="center">
+<a href="https://github.com/olimorris/persisted.nvim/blob/main/LICENSE"><img src="https://img.shields.io/github/license/olimorris/persisted.nvim?style=for-the-badge"></a>
+<a href="https://github.com/olimorris/persisted.nvim/actions/workflows/ci.yml"><img src="https://img.shields.io/github/workflow/status/olimorris/persisted.nvim/Tests?label=tests&style=for-the-badge"></a>
+</p>
 
 ![MIT License](https://img.shields.io/github/license/olimorris/persisted.nvim) [![Tests](https://github.com/olimorris/persisted.nvim/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/olimorris/persisted.nvim/actions/workflows/ci.yml)
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/9512444/179085825-7c3bc1f7-c86b-4119-96e2-1a581e9bfffc.png" alt="Persisted.nvim" />
-</p>
-<p align="center">
-<b>Persisted.nvim</b> is a simple lua plugin for automated session management within Neovim.<br><br>
-The plugin was forked from the fantastic <a href="https://github.com/folke/persistence.nvim">Persistence.nvim</a> as active development seems to have been paused and there were some useful pull requests.
+<b>Persisted.nvim</b> is a simple lua plugin for automated session management within Neovim.<br>
+Forked from the <a href="https://github.com/folke/persistence.nvim">Persistence.nvim</a> as active development has stopped
 </p>
 
 ## :book: Table of Contents
