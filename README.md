@@ -22,7 +22,6 @@ Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim
 - [Usage](#rocket-usage)
   - [Default commands](#default-commands)
   - [Telescope](#telescope)
-  - [Lazy loading](#lazy-loading)
   - [Helpers](#helpers)
 - [Configuration](#wrench-configuration)
   - [Defaults](#defaults)
@@ -81,20 +80,27 @@ lua << EOF
   }
 EOF
 ```
+
+### Lazy loading
+
+The plugin is designed to work with startup screens like [vim-startify](https://github.com/mhinz/vim-startify) or [dashboard](https://github.com/glepnir/dashboard-nvim) out of the box. It will never load a session automatically by default.
+
+However, to lazy load the plugin add the `module = "persisted"` line to packer.
+
 ## :rocket: Usage
 
 ### Default commands
 The plugin comes with a number of commands:
 
-- `SessionToggle` - Determines whether to load, start or stop a session
-- `SessionStart` - Start recording a session. Useful if `autosave = false`
-- `SessionStop` - Stop recording a session
-- `SessionSave` - Save the current session
-- `SessionLoad` - Load the session for the current directory and current branch if `git_use_branch = true`
-- `SessionLoadLast` - Load the last session
-- `SessionDelete` - Delete the current session
+- `:SessionToggle` - Determines whether to load, start or stop a session
+- `:SessionStart` - Start recording a session. Useful if `autosave = false`
+- `:SessionStop` - Stop recording a session
+- `:SessionSave` - Save the current session
+- `:SessionLoad` - Load the session for the current directory and current branch if `git_use_branch = true`
+- `:SessionLoadLast` - Load the last session
+- `:SessionDelete` - Delete the current session
 
-> **Note:** The author only binds `SessionToggle` to a keymap for simplicity.
+> **Note:** The author only binds `:SessionToggle` to a keymap for simplicity.
 
 ### Telescope
 
@@ -103,12 +109,6 @@ The Telescope extension may be opened via `:Telescope persisted`.
 Once opened, the available keymaps are:
 * `<CR>` - Source the session file
 * `<C-d>` - Delete the session file
-
-### Lazy loading
-
-The plugin is designed to work with startup screens like [vim-startify](https://github.com/mhinz/vim-startify) or [dashboard](https://github.com/glepnir/dashboard-nvim) out of the box. It will never load a session automatically by default.
-
-However, to lazy load the plugin add the `module = "persisted"` line to packer.
 
 ### Helpers
 
