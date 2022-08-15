@@ -55,7 +55,8 @@ end
 ---Get the current Git branch
 ---@return string
 local function get_branch()
-  local git_enabled = (vim.fn.isdirectory(vim.fn.getcwd() .. "/.git") == 1)
+  vim.fn.system([[git rev-parse 2> /dev/null]])
+  local git_enabled = (vim.v.shell_error == 0)
 
   if config.options.use_git_branch and git_enabled then
     local branch = vim.fn.systemlist([[git rev-parse --abbrev-ref HEAD 2>/dev/null]])
