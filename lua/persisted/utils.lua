@@ -26,6 +26,19 @@ function M.get_last_item(table)
   return table[last]
 end
 
+--- Escape special pattern matching characters in a string
+---@param input string
+---@return string
+function M.escape_pattern(input)
+  local magic_chars = { "%", "(", ")", ".", "+", "-", "*", "?", "[", "^", "$" }
+
+  for _, char in ipairs(magic_chars) do
+    input = input:gsub("%" .. char, "%%" .. char)
+  end
+
+  return input
+end
+
 ---Check if a target directory exists in a given table
 ---@param dir string
 ---@param dirs_table table
@@ -33,8 +46,8 @@ end
 function M.dirs_match(dir, dirs_table)
   dir = vim.fn.expand(dir)
   return dirs_table
-    and next(vim.tbl_filter(function(dir_match)
-      return dir == vim.fn.expand(dir_match)
+    and next(vim.tbl_filter(function(pattern)
+      return dir:find(M.escape_pattern(vim.fn.expand(pattern)))
     end, dirs_table))
 end
 
