@@ -26,10 +26,13 @@ function M.get_last_item(table)
   return table[last]
 end
 
+--- Escape special pattern matching characters in a string
+---@param input string
+---@return string
 function M.escape_pattern(input)
   local magic_chars = { "%", "(", ")", ".", "+", "-", "*", "?", "[", "^", "$" }
 
-  for _, char in pairs(magic_chars) do
+  for _, char in ipairs(magic_chars) do
     input = input:gsub("%" .. char, "%%" .. char)
   end
 
