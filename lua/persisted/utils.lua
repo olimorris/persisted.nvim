@@ -82,10 +82,12 @@ function M.load_session(session, before_callback, after_callback)
     if type(before_callback) == "function" then
       before_callback()
     end
+
     local ok, result = pcall(vim.cmd, "source " .. e(session))
     if not ok then
       return M.echoerr("Error loading the session! ", result)
     end
+
     if type(after_callback) == "function" then
       after_callback()
     end
