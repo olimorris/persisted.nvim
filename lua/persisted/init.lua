@@ -61,11 +61,11 @@ function M.get_branch()
   if config.options.use_git_branch and git_enabled then
     local branch = vim.fn.systemlist([[git rev-parse --abbrev-ref HEAD 2>/dev/null]])
     if vim.v.shell_error == 0 then
-      return "_" .. branch[1]:gsub("/", "%%")
+      return config.options.branch_separator .. branch[1]:gsub("/", "%%")
     end
   end
 
-  return "_" .. default_branch
+  return config.options.branch_separator .. default_branch
 end
 
 ---Get the current session for the current working directory and git branch
