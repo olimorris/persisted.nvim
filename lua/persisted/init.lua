@@ -54,7 +54,7 @@ end
 
 ---Get the current Git branch
 ---@return string
-local function get_branch()
+function M.get_branch()
   vim.fn.system([[git rev-parse 2> /dev/null]])
   local git_enabled = (vim.v.shell_error == 0)
 
@@ -72,7 +72,7 @@ end
 ---@return string
 local function get_current()
   local name = vim.fn.getcwd():gsub(utils.get_dir_pattern(), "%%")
-  return (config.options.dir or config.options.save_dir) .. name .. get_branch() .. ".vim"
+  return (config.options.dir or config.options.save_dir) .. name .. M.get_branch() .. ".vim"
 end
 
 ---Setup the plugin based on the intersect of the default and the user's config
