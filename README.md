@@ -290,15 +290,34 @@ require("persisted").setup({
   telescope = {
     before_source = function()
       -- Close all open buffers
-      -- Thanks to https://github.com/avently
-      vim.api.nvim_input("<ESC>:%bd<CR>")
+      local status_ok, _ = pcall(require, "bufdelete")
+      if status_ok then
+        vim.api.nvim_input("<Esc><Cmd>bufdo Bdelete<CR>")
+      else
+        -- Thanks to https://github.com/avently
+        vim.api.nvim_input("<Esc><Cmd>%bd<CR>")
+      end
     end,
+
     after_source = function(session)
-      print("Loaded session " .. session.name)
+      -- SEE: https://github.com/olimorris/persisted.nvim/issues/24
+      vim.defer_fn(function()
+        local status_ok, notify = pcall(require, "notify")
+        if status_ok then
+          notify(
+            "Loaded session " .. session.name,
+            vim.log.levels.INFO,
+            { title = title }
+          )
+        else
+          print("Loaded session " .. session.name)
+        end
+      end, 0)
     end,
   },
 })
 ```
+
 The callbacks can accept a *session* parameter which is a table that has the following properties:
 * `name` - The filename of the session.
 * `file_path` - The file path to the session.
