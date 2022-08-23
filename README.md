@@ -206,6 +206,17 @@ require("persisted").setup({
 })
 ```
 
+You can also provide a function to run when `autoload = true` but there is no session to be loaded:
+
+```lua
+require("persisted").setup({
+  autoload = true,
+  on_autoload_no_session = function()
+    vim.notify("No existing session to load.")
+  end
+})
+```
+
 
 Autoloading can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
