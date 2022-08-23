@@ -130,6 +130,7 @@ require("persisted").setup({
   branch_separator = "_", -- string used to separate session directory name from branch name
   autosave = true, -- automatically save session files when exiting Neovim
   autoload = false, -- automatically load the session for the cwd on Neovim startup
+  on_autoload_no_session = nil, -- function to run when `autoload = true` but there is no session to load
   allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
   ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
   before_save = nil, -- function to run before the session is saved to disk
@@ -202,6 +203,17 @@ The plugin can be enabled to automatically load sessions when Neovim is started.
 ```lua
 require("persisted").setup({
   autoload = true,
+})
+```
+
+You can also provide a function to run when `autoload = true` but there is no session to be loaded:
+
+```lua
+require("persisted").setup({
+  autoload = true,
+  on_autoload_no_session = function()
+    vim.notify("No existing session to load.")
+  end
 })
 ```
 

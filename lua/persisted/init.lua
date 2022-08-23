@@ -103,9 +103,14 @@ function M.load(opt)
   opt = opt or {}
   local session = opt.last and get_last() or get_current()
 
-  if session and vim.fn.filereadable(session) ~= 0 then
-    utils.load_session(session, config.options.before_source, config.options.after_source)
+  if session then
+    if vim.fn.filereadable(session) ~= 0 then
+      utils.load_session(session, config.options.before_source, config.options.after_source)
+    elseif type(config.options.on_autoload_no_session) == 'function' then
+      config.options.on_autoload_no_session()
+    end
   end
+
 
   if config.options.autosave and (allow_dir() and not ignore_dir()) then
     vim.schedule(function()
