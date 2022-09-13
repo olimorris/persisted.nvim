@@ -77,13 +77,13 @@ end
 ---@param session table
 ---@param before_callback function
 ---@param after_callback function
-function M.load_session(session, before_callback, after_callback)
+function M.load_session(session, before_callback, after_callback, silent)
   vim.schedule(function()
     if type(before_callback) == "function" then
       before_callback()
     end
 
-    local ok, result = pcall(vim.cmd, "source " .. e(session))
+    local ok, result = pcall(vim.cmd, (silent and "silent " or "") .. "source " .. e(session))
     if not ok then
       return M.echoerr("Error loading the session! ", result)
     end

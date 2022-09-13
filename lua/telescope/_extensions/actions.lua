@@ -14,7 +14,8 @@ M.load_session = function(session, config)
   utils.load_session(
     session.file_path,
     config.telescope.before_source and config.telescope.before_source(session) or _,
-    config.telescope.after_source and config.telescope.after_source(session) or _
+    config.telescope.after_source and config.telescope.after_source(session) or _,
+    config.silent
   )
 end
 
