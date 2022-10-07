@@ -105,7 +105,7 @@ function M.load(opt)
   if session then
     if vim.fn.filereadable(session) ~= 0 then
       utils.load_session(session, config.options.before_source, config.options.after_source, config.options.silent)
-    elseif type(config.options.on_autoload_no_session) == 'function' then
+    elseif type(config.options.on_autoload_no_session) == "function" then
       config.options.on_autoload_no_session()
     end
   end
@@ -147,6 +147,13 @@ end
 function M.save()
   if type(config.options.before_save) == "function" then
     config.options.before_save()
+  end
+
+  if
+    (config.options.autosave and type(config.options.should_autosave) == "function")
+    and not config.options.should_autosave()
+  then
+    return
   end
 
   vim.cmd("mks! " .. e(get_current()))

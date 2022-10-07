@@ -130,6 +130,7 @@ require("persisted").setup({
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
   branch_separator = "_", -- string used to separate session directory name from branch name
   autosave = true, -- automatically save session files when exiting Neovim
+  should_autosave = nil, -- function to determine if a session should be autosaved
   autoload = false, -- automatically load the session for the cwd on Neovim startup
   on_autoload_no_session = nil, -- function to run when `autoload = true` but there is no session to load
   allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
@@ -196,6 +197,21 @@ require("persisted").setup({
 ```
 
 Autosaving can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
+
+There may be occasions when you do not wish to autosave; perhaps when a dashboard or terminal are open. To control this,
+a callback function, `should_autosave`, may be specified. This function should return a boolean value.
+
+```lua
+require("persisted").setup({
+  should_autosave = function()
+    -- do not autosave if the alpha dashboard is the current filetype
+    if vim.bo.filetype == "alpha" then
+      return false
+    end
+    return true
+  end,
+})
+```
 
 ### Autoloading
 
