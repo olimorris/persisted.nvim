@@ -10,7 +10,7 @@ describe("With default settings:", function()
 
   it("saves a session", function()
     -- Check no file exists
-    assert.equals(vim.fn.system("ls tests/default_data | wc -l"), "0\n")
+    assert.equals(vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""), "0")
 
     -- Edit a buffer
     vim.cmd(":e tests/stubs/test.txt")
@@ -21,7 +21,7 @@ describe("With default settings:", function()
 
     -- Check that the session is written to disk
     assert.equals(vim.g.persisting, true)
-    assert.equals(vim.fn.system("ls tests/default_data | wc -l"), "1\n")
+    assert.equals(vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""), "1")
   end)
 
   it("loads a session", function()
@@ -57,7 +57,7 @@ describe("With default settings:", function()
   it("deletes a session", function()
     require("persisted").delete()
 
-    assert.equals(vim.fn.system("ls tests/default_data | wc -l"), "0\n")
+    assert.equals(vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""), "0")
   end)
 
 end)

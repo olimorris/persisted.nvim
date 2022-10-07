@@ -11,13 +11,14 @@ describe("Git Branching", function()
     vim.fn.system("mkdir tests/git_branch_data")
     vim.fn.system("cd tests/git_branch_data && git init")
 
-    assert.equals(vim.fn.system("ls tests/git_branch_data | wc -l"), "0\n")
+    assert.equals(vim.fn.system("ls tests/git_branch_data | wc -l"):gsub("%s+", ""), "0")
 
     vim.cmd(":e tests/stubs/test_git_branching.txt")
     vim.cmd(":w tests/git_branch_data/test_git_branching.txt")
 
     require("persisted").save()
-    assert.equals(vim.fn.system("ls tests/git_branch_data | wc -l"), "2\n")
+    assert.equals(vim.fn.system("ls tests/git_branch_data | wc -l"):gsub("%s+", ""), "2")
+
   end)
 
   it("ensures the session has the branch name in", function()
