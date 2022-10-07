@@ -2,12 +2,12 @@ local util = require("plenary.async.util")
 local async = require("plenary.async.tests")
 
 local e = vim.fn.fnameescape
-local session_dir = vim.fn.getcwd() .. "/tests/dummy_data/"
+local session_dir = vim.loop.cwd() .. "/tests/dummy_data/"
 require("persisted").setup({
   save_dir = session_dir,
   autoload = true,
   autosave = true,
-  allowed_dirs = { vim.fn.getcwd() },
+  allowed_dirs = { vim.loop.cwd() },
 })
 
 async.describe("Autoloading", function()
