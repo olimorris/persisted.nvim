@@ -32,6 +32,7 @@ Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim
   - [Git branching](#git-branching)
   - [Autosaving](#autosaving)
   - [Autoloading](#autoloading)
+  - [Following current working directory](#following-current-working-directory)
   - [Allowed directories](#allowed-directories)
   - [Ignored directories](#ignored-directories)
   - [Callbacks](#callbacks)
@@ -235,14 +236,13 @@ require("persisted").setup({
 })
 ```
 
-
 Autoloading can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
 > **Note:** Autoloading will not occur if a user opens Neovim with arguments. For example: `nvim some_file.rb`
 
 ### Following current working directory
 
-The session's name saved into `sessoin_dir` can be determined by the current working directory at save time by:
+The session's name, saved into `session_dir`, can be determined by the current working directory at save time by:
 
 ```lua
 require("persisted").setup({
