@@ -242,16 +242,17 @@ Autoloading can be further controlled for certain directories by specifying `all
 
 ### Following current working directory
 
-The session's name, saved into `session_dir`, can be determined by the current working directory at save time by:
+There may be a need to change the working directory to quickly access files in other directories without changing the current session's name on save. This behavior can be configured with `follow_cwd = false`.
+
+By default, the session name will match the current working directory:
 
 ```lua
 require("persisted").setup({
   follow_cwd = true,
 })
 ```
-Switching to `follow_cwd = false` will keep the session name even as the current working directory is changed until the session recording is stopped, another session is loaded, or vim is quit.
 
-> **Note:** If `follow_cwd = false` the current session name is stored as under the global variable `vim.g.persisting_session`. This variable can be manually adjusted if changes to the session name are desired. Alternatively, `vim.g.persisting_session = nil` if `follow_cwd = true`.
+> **Note:** If `follow_cwd = false` the session name is stored upon loading under the global variable `vim.g.persisting_session`. This variable can be manually adjusted if changes to the session name are needed. Alternatively, if `follow_cwd = true` then `vim.g.persisting_session = nil`.
 
 ### Allowed directories
 
