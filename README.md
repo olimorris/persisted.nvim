@@ -133,6 +133,7 @@ require("persisted").setup({
   should_autosave = nil, -- function to determine if a session should be autosaved
   autoload = false, -- automatically load the session for the cwd on Neovim startup
   on_autoload_no_session = nil, -- function to run when `autoload = true` but there is no session to load
+  follow_cwd = true, -- change session file name to match current working directory if it changes
   allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
   ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
   before_save = nil, -- function to run before the session is saved to disk
@@ -238,6 +239,19 @@ require("persisted").setup({
 Autoloading can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
 > **Note:** Autoloading will not occur if a user opens Neovim with arguments. For example: `nvim some_file.rb`
+
+### Following current working directory
+
+The session's name saved into `sessoin_dir` can be determined by the current working directory at save time by:
+
+```lua
+require("persisted").setup({
+  follow_cwd = true,
+})
+```
+Switching to `follow_cwd = false` will keep the session name even as the current working directory is changed until the session recording is stopped, another session is loaded, or vim is quit.
+
+> **Note:** If `follow_cwd = false` the current session name is stored as under the global variable `vim.g.persisting_session`. This variable can be manually adjusted if changes to the session name are desired. Alternatively, `vim.g.persisting_session = nil` if `follow_cwd = true`.
 
 ### Allowed directories
 
