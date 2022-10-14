@@ -104,6 +104,11 @@ function M.load(opt)
 
   if session then
     if vim.fn.filereadable(session) ~= 0 then
+      if config.options.follow_cwd then
+        vim.g.persisting_session = nil
+      else
+        vim.g.persisting_session = session
+      end
       utils.load_session(session, config.options.before_source, config.options.after_source, config.options.silent)
     elseif type(config.options.on_autoload_no_session) == "function" then
       config.options.on_autoload_no_session()
@@ -140,6 +145,7 @@ function M.stop()
     augroup! Persisted
   ]])
   vim.g.persisting = false
+  vim.g.persisting_session = nil
 end
 
 ---Save the session to disk
@@ -156,7 +162,12 @@ function M.save()
     return
   end
 
-  vim.cmd("mks! " .. e(get_current()))
+  if vim.g.persisting_session == nil then
+    vim.cmd("mks! " .. e(get_current()))
+  else
+    vim.cmd("mks! " .. e(vim.g.persisting_session))
+  end
+
   vim.g.persisting = true
 
   if type(config.options.after_save) == "function" then

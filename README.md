@@ -32,6 +32,7 @@ Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim
   - [Git branching](#git-branching)
   - [Autosaving](#autosaving)
   - [Autoloading](#autoloading)
+  - [Following current working directory](#following-current-working-directory)
   - [Allowed directories](#allowed-directories)
   - [Ignored directories](#ignored-directories)
   - [Callbacks](#callbacks)
@@ -133,6 +134,7 @@ require("persisted").setup({
   should_autosave = nil, -- function to determine if a session should be autosaved
   autoload = false, -- automatically load the session for the cwd on Neovim startup
   on_autoload_no_session = nil, -- function to run when `autoload = true` but there is no session to load
+  follow_cwd = true, -- change session file name to match current working directory if it changes
   allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
   ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
   before_save = nil, -- function to run before the session is saved to disk
@@ -234,10 +236,23 @@ require("persisted").setup({
 })
 ```
 
-
 Autoloading can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
 > **Note:** Autoloading will not occur if a user opens Neovim with arguments. For example: `nvim some_file.rb`
+
+### Following current working directory
+
+There may be a need to change the working directory to quickly access files in other directories without changing the current session's name on save. This behavior can be configured with `follow_cwd = false`.
+
+By default, the session name will match the current working directory:
+
+```lua
+require("persisted").setup({
+  follow_cwd = true,
+})
+```
+
+> **Note:** If `follow_cwd = false` the session name is stored upon loading under the global variable `vim.g.persisting_session`. This variable can be manually adjusted if changes to the session name are needed. Alternatively, if `follow_cwd = true` then `vim.g.persisting_session = nil`.
 
 ### Allowed directories
 
