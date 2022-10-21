@@ -18,7 +18,9 @@ local function search_sessions(opts)
       attach_mappings = function(prompt_bufnr, map)
         local refresh_sessions = function()
           local picker = action_state.get_current_picker(prompt_bufnr)
-          picker:refresh(_finders.session_finder(require("persisted").list()), { reset_prompt = true })
+          picker:refresh(_finders.session_finder(require("persisted").list()), {
+            reset_prompt = config.telescope.reset_prompt_after_deletion
+          })
         end
 
         _actions.delete_session:enhance({ post = refresh_sessions })

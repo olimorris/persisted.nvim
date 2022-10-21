@@ -143,6 +143,7 @@ require("persisted").setup({
   telescope = { -- options for the telescope extension
     before_source = nil, -- function to run before the session is sourced via telescope
     after_source = nil, -- function to run after the session is sourced via telescope
+    reset_prompt_after_deletion = true, -- whether to reset prompt after session deleted
   },
 })
 ```
