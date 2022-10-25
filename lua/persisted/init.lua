@@ -202,6 +202,7 @@ end
 function M.list()
   local save_dir = config.options.dir or config.options.save_dir
   local session_files = vim.fn.glob(save_dir .. "*.vim", true, true)
+  local branch_separator = config.options.branch_separator
 
   local sessions = {}
   for _, session in pairs(session_files) do
@@ -212,9 +213,22 @@ function M.list()
       :gsub("//", "")
       :sub(1, -5)
 
+
+    local branch, dir_path
+
+    if string.find(session_name, branch_separator, 1, true) then
+      local splits = vim.split(session_name, branch_separator, { plain = true })
+      branch = table.remove(splits, #splits)
+      dir_path = vim.fn.join(splits, branch_separator)
+    else
+      dir_path = session_name
+    end
+
     table.insert(sessions, {
       ["name"] = session_name,
       ["file_path"] = session,
+      ["branch"] = branch,
+      ["dir_path"] = dir_path,
     })
   end
 
