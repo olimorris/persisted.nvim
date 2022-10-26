@@ -82,7 +82,7 @@ function M.setup(opts)
   config.setup(opts)
   setup_commands()
 
-  if not opts.branch_separator and config.options.branch_separator == "_" then
+  if opts and not opts.branch_separator and config.options.branch_separator == "_" then
     vim.notify(
       "[Persisted.nvim] We will soon be changing the default `branch_separator` config value to `@@`\n" ..
       "[Persisted.nvim] We notice you're using the current default value of `_`\n" ..
