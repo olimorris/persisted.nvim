@@ -77,6 +77,7 @@ end
 
 ---Setup the plugin based on the intersect of the default and the user's config
 ---@param opts table
+---@param opts? table
 ---@return nil
 function M.setup(opts)
   config.setup(opts)
@@ -125,8 +126,9 @@ end
 ---Start recording a session and write to disk on a specific autocommand
 ---@return nil
 function M.start()
+  vim.api.nvim_create_augroup("Persisted", { clear = true })
   vim.api.nvim_create_autocmd(config.options.command, {
-    group = vim.api.nvim_create_augroup("PersistedGroup", { clear = true }),
+    group = "Persisted",
     callback = function()
       require("persisted").save()
     end,
@@ -138,8 +140,8 @@ end
 ---@return nil
 function M.stop()
   vim.cmd([[
-    autocmd! PersistedGroup
-    augroup! PersistedGroup
+    autocmd! Persisted
+    augroup! Persisted
   ]])
   vim.g.persisting = false
   vim.g.persisting_session = nil
