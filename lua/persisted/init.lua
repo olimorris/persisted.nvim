@@ -45,7 +45,7 @@ end
 ---Get the session that was saved last
 ---@return string
 local function get_last()
-  local sessions = vim.fn.glob(config.options.dir or config.options.save_dir .. "*.vim", true, true)
+  local sessions = vim.fn.glob(config.options.save_dir .. "*.vim", true, true)
   table.sort(sessions, function(a, b)
     return vim.loop.fs_stat(a).mtime.sec > vim.loop.fs_stat(b).mtime.sec
   end)
@@ -72,7 +72,7 @@ end
 ---@return string
 local function get_current()
   local name = vim.fn.getcwd():gsub(utils.get_dir_pattern(), "%%")
-  return (config.options.dir or config.options.save_dir) .. name .. M.get_branch() .. ".vim"
+  return (config.options.save_dir) .. name .. M.get_branch() .. ".vim"
 end
 
 ---Setup the plugin based on the intersect of the default and the user's config
@@ -96,7 +96,7 @@ function M.setup(opts)
 end
 
 ---Load a session
----@param opt table
+---@param opt? table
 ---@return nil
 function M.load(opt)
   opt = opt or {}
@@ -110,8 +110,8 @@ function M.load(opt)
         vim.g.persisting_session = session
       end
       utils.load_session(session, config.options.before_source, config.options.after_source, config.options.silent)
-    elseif type(config.options.on_autoload_no_session) == "function" then
-      config.options.on_autoload_no_session()
+    elseif type(config.options.should_autosave) == "function" then
+      config.options.should_autosave()
     end
   end
 
@@ -183,7 +183,7 @@ function M.delete()
 end
 
 ---Determines whether to load, start or stop a session
----@return function
+---@return nil
 function M.toggle()
   if vim.g.persisting == nil then
     return M.load()
@@ -197,7 +197,7 @@ end
 ---List all of the sessions in the session directory
 ---@return table
 function M.list()
-  local save_dir = config.options.dir or config.options.save_dir
+  local save_dir = config.options.save_dir
   local session_files = vim.fn.glob(save_dir .. "*.vim", true, true)
   local branch_separator = config.options.branch_separator
 

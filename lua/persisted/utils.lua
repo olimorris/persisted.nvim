@@ -74,7 +74,7 @@ function M.echoerr(msg, error)
 end
 
 ---Load the given session
----@param session table
+---@param session string
 ---@param before_callback function
 ---@param after_callback function
 function M.load_session(session, before_callback, after_callback, silent)
