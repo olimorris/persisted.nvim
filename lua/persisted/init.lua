@@ -72,11 +72,10 @@ end
 ---@return string
 local function get_current()
   local name = vim.fn.getcwd():gsub(utils.get_dir_pattern(), "%%")
-  return (config.options.save_dir) .. name .. M.get_branch() .. ".vim"
+  return config.options.save_dir .. name .. M.get_branch() .. ".vim"
 end
 
 ---Setup the plugin based on the intersect of the default and the user's config
----@param opts table
 ---@param opts? table
 ---@return nil
 function M.setup(opts)
