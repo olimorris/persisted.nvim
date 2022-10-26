@@ -1,6 +1,6 @@
 if !isdirectory('plenary.nvim')
   !git clone https://github.com/nvim-lua/plenary.nvim.git plenary.nvim
-  !git -C plenary.nvim reset --hard 4b7e52044bbb84242158d977a50c4cbcd85070c7
+  " !git -C plenary.nvim reset --hard 4b7e52044bbb84242158d977a50c4cbcd85070c7
 endif
 
 set runtimepath+=plenary.nvim,.

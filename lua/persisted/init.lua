@@ -125,15 +125,12 @@ end
 ---Start recording a session and write to disk on a specific autocommand
 ---@return nil
 function M.start()
-  vim.cmd(string.format(
-    [[
-    augroup Persisted
-      autocmd!
-      autocmd %s * lua require("persisted").save()
-    augroup end
-  ]],
-    config.options.command
-  ))
+  vim.api.nvim_create_autocmd(config.options.command, {
+    group = vim.api.nvim_create_augroup("Persisted", { clear = true }),
+    callback = function()
+      require("persisted").save()
+    end,
+  })
   vim.g.persisting = true
 end
 
@@ -212,7 +209,6 @@ function M.list()
       :gsub(vim.fn.expand("~"), utils.get_dir_pattern())
       :gsub("//", "")
       :sub(1, -5)
-
 
     local branch, dir_path
 
