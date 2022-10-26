@@ -110,8 +110,8 @@ function M.load(opt)
         vim.g.persisting_session = session
       end
       utils.load_session(session, config.options.before_source, config.options.after_source, config.options.silent)
-    elseif type(config.options.should_autosave) == "function" then
-      config.options.should_autosave()
+    elseif type(config.options.on_autoload_no_session) == "function" then
+      config.options.on_autoload_no_session()
     end
   end
 
