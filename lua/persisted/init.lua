@@ -126,7 +126,7 @@ end
 ---@return nil
 function M.start()
   vim.api.nvim_create_autocmd(config.options.command, {
-    group = vim.api.nvim_create_augroup("Persisted", { clear = true }),
+    group = vim.api.nvim_create_augroup("PersistedGroup", { clear = true }),
     callback = function()
       require("persisted").save()
     end,
@@ -138,8 +138,8 @@ end
 ---@return nil
 function M.stop()
   vim.cmd([[
-    autocmd! Persisted
-    augroup! Persisted
+    autocmd! PersistedGroup
+    augroup! PersistedGroup
   ]])
   vim.g.persisting = false
   vim.g.persisting_session = nil
