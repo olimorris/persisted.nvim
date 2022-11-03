@@ -129,7 +129,6 @@ require("persisted").setup({
   command = "VimLeavePre", -- the autocommand for which the session is saved
   silent = false, -- silent nvim message when sourcing session file
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
-  branch_separator = "@@", -- string used to separate session directory name from branch name
   autosave = true, -- automatically save session files when exiting Neovim
   should_autosave = nil, -- function to determine if a session should be autosaved
   autoload = false, -- automatically load the session for the cwd on Neovim startup
