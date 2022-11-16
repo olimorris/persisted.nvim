@@ -344,8 +344,9 @@ require("persisted").setup({
 })
 ```
 The callbacks can accept a *session* parameter which is a table that has the following properties:
-* `name` - The filename of the session.
-* `file_path` - The file path to the session.
+* `name` - The filename of the session
+* `file_path` - The file path to the session
+* `branch` - The git branch of the session
 
 ## :page_with_curl: License
 
