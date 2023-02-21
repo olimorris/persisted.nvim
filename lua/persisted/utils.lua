@@ -72,7 +72,7 @@ function M.load_session(session, before_callback, after_callback, silent)
 
     local ok, result = pcall(vim.cmd, (silent and "silent " or "") .. "source " .. e(session))
     if not ok then
-      return echoerr("Error loading the session! ", result)
+      return echoerr("[Persisted.nvim]: Error loading the session! ", result)
     end
 
     if type(after_callback) == "function" then
