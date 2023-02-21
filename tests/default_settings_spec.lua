@@ -1,6 +1,6 @@
 local session_dir = vim.fn.getcwd() .. "/tests/default_data/"
 require("persisted").setup({
-  save_dir = session_dir
+  save_dir = session_dir,
 })
 
 describe("With default settings:", function()
@@ -8,7 +8,7 @@ describe("With default settings:", function()
     -- vim.fn.system("rm -rf " .. e(session_dir))
   end)
 
-  it("saves a session", function()
+  it("it saves a session", function()
     -- Check no file exists
     assert.equals(vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""), "0")
 
@@ -21,40 +21,44 @@ describe("With default settings:", function()
 
     -- Check that the session is written to disk
     assert.equals(vim.g.persisting, true)
-    assert.equals(vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""), "1")
+    assert.equals("1", vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""))
   end)
 
-  it("loads a session", function()
+  it("it loads a session", function()
     -- Load a session
     require("persisted").load()
 
     -- Read the buffers contents
-    local content = vim.fn.getline(1, '$')
+    local content = vim.fn.getline(1, "$")
 
-    assert.equals(content[1], "This is a test file")
+    assert.equals("This is a test file", content[1])
     assert.equals(vim.g.persisting, true)
   end)
 
-  it("stops a session", function()
+  it("it stops a session", function()
     require("persisted").stop()
 
     assert.equals(vim.g.persisting, false)
   end)
 
-  it("starts a session", function()
+  it("it starts a session", function()
     require("persisted").start()
 
     assert.equals(vim.g.persisting, true)
   end)
 
-  it("lists sessions", function()
+  it("it lists sessions", function()
     local sessions = require("persisted").list()
     local path = require("plenary.path"):new(sessions[1])
 
     assert.equals(path:is_path(), true)
+    assert.equals(
+      sessions[1].file_path,
+      vim.fn.getcwd() .. "/tests/default_data/%Users%Oli%Code%Neovim%persisted.nvim@@main.vim"
+    )
   end)
 
-  it("deletes a session", function()
+  it("it deletes a session", function()
     require("persisted").delete()
 
     assert.equals(vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""), "0")
