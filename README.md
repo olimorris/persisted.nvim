@@ -88,6 +88,7 @@ However, to lazy load the plugin add the `module = "persisted"` line to packer o
 ## :rocket: Usage
 
 **Default commands**
+
 The plugin comes with a number of commands:
 
 - `:SessionToggle` - Determines whether to load, start or stop a session
