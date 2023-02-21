@@ -68,6 +68,12 @@ function M.setup(opts)
   config.setup(opts)
 
   if config.options.autoload and (allow_dir() and not ignore_dir()) and vim.fn.argc() == 0 then
+    -- vim.api.nvim_create_autocmd("VimEnter", {
+    --   group = group,
+    --   callback = function()
+    --     M.load()
+    --   end,
+    -- })
     M.load()
   end
 
@@ -85,7 +91,7 @@ end
 ---@return nil
 function M.load(opt)
   opt = opt or {}
-  local session = opt.last and get_last() or get_current()
+  local session = opt.session or (opt.last and get_last() or get_current())
 
   if session then
     if vim.fn.filereadable(session) ~= 0 then

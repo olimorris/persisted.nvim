@@ -22,7 +22,7 @@ Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim
 - Supports sessions across multiple git branches
 - Supports auto saving and loading of sessions with allowed/ignored directories
 - Simple API to save/stop/restore/delete/list the current session(s)
-- Telescope extension to list all sessions
+- Telescope extension to work with saved sessions
 
 ## :zap: Requirements
 
@@ -32,7 +32,18 @@ Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim
 
 Install the plugin with your preferred package manager:
 
-**[packer](https://github.com/wbthomason/packer.nvim)**
+**[Lazy.nvim](https://github.com/folke/lazy.nvim)**
+
+```lua
+-- Lua
+use({
+  "olimorris/persisted.nvim"
+  -- lazy = true, -- For lazy loading
+  config = true
+})
+```
+
+**[Packer](https://github.com/wbthomason/packer.nvim)**
 
 ```lua
 -- Lua
@@ -41,12 +52,11 @@ use({
   --module = "persisted", -- For lazy loading
   config = function()
     require("persisted").setup()
-    require("telescope").load_extension("persisted") -- To load the telescope extension
   end,
 })
 ```
 
-**[vim-plug](https://github.com/junegunn/vim-plug)**
+**[Vim Plug](https://github.com/junegunn/vim-plug)**
 
 ```vim
 " Vim Script
@@ -61,11 +71,19 @@ lua << EOF
 EOF
 ```
 
+### Telescope extension
+
+Ensure that the telescope extension is loaded with:
+
+```lua
+require("telescope").load_extension("persisted")
+```
+
 ### Lazy loading
 
 The plugin is designed to work with startup screens like [vim-startify](https://github.com/mhinz/vim-startify) or [dashboard](https://github.com/glepnir/dashboard-nvim) out of the box. It will never load a session automatically by default.
 
-However, to lazy load the plugin add the `module = "persisted"` line to packer.
+However, to lazy load the plugin add the `module = "persisted"` line to packer or `lazy = true` for Lazy.nvim.
 
 ## :rocket: Usage
 
@@ -77,7 +95,8 @@ The plugin comes with a number of commands:
 - `:SessionStop` - Stop recording a session
 - `:SessionSave` - Save the current session
 - `:SessionLoad` - Load the session for the current directory and current branch if `git_use_branch = true`
-- `:SessionLoadLast` - Load the last session
+- `:SessionLoadLast` - Load the most recent session
+- `:SessionLoadFromPath` - Load a session from a given path
 - `:SessionDelete` - Delete the current session
 
 > **Note:** The author only binds `:SessionToggle` to a keymap for simplicity.
@@ -310,8 +329,6 @@ The plugin allows for *before* and *after* callbacks to be used when sourcing a 
 require("persisted").setup({
   telescope = {
     before_source = function()
-      -- Close all open buffers
-      -- Thanks to https://github.com/avently
       vim.api.nvim_input("<ESC>:%bd<CR>")
     end,
     after_source = function(session)
