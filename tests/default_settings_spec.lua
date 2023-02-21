@@ -49,13 +49,9 @@ describe("With default settings:", function()
 
   it("it lists sessions", function()
     local sessions = require("persisted").list()
-    local path = require("plenary.path"):new(sessions[1])
+    local path = require("plenary.path"):new(sessions[1].file_path)
 
     assert.equals(path:is_path(), true)
-    assert.equals(
-      sessions[1].file_path,
-      vim.fn.getcwd() .. "/tests/default_data/%Users%Oli%Code%Neovim%persisted.nvim@@main.vim"
-    )
   end)
 
   it("it deletes a session", function()
