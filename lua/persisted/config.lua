@@ -1,6 +1,5 @@
 local M = {}
 
----@class PersistedOptions
 local defaults = {
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
   command = "VimLeavePre", -- the autocommand for which the session is saved
@@ -29,7 +28,6 @@ local defaults = {
   },
 }
 
----@type PersistedOptions
 M.options = {}
 
 function M.setup(opts)
