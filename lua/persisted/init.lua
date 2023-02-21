@@ -125,9 +125,8 @@ end
 ---Start recording a session and write to disk on a specific autocommand
 ---@return nil
 function M.start()
-  vim.api.nvim_create_augroup("Persisted", { clear = true })
   vim.api.nvim_create_autocmd(config.options.command, {
-    group = "Persisted",
+    group = vim.api.nvim_create_augroup("Persisted", { clear = true }),
     callback = function()
       require("persisted").save()
     end,
@@ -138,10 +137,7 @@ end
 ---Stop recording a session
 ---@return nil
 function M.stop()
-  vim.cmd([[
-    autocmd! Persisted
-    augroup! Persisted
-  ]])
+  pcall(vim.api.nvim_del_augroup_by_name, "Persisted")
   vim.g.persisting = false
   vim.g.persisting_session = nil
 end
