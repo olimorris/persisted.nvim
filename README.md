@@ -13,31 +13,8 @@
 
 <p align="center">
 <b>Persisted.nvim</b> is a simple lua plugin for automated session management within Neovim<br>
-Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim</a> as active development has stopped
+Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim</a> as active development had stopped
 </p>
-
-## :book: Table of Contents
-
-- [Features](#sparkles-features)
-- [Requirements](#zap-requirements)
-- [Installation](#package-installation)
-- [Usage](#rocket-usage)
-  - [Default commands](#default-commands)
-  - [Telescope](#telescope)
-  - [Helpers](#helpers)
-- [Configuration](#wrench-configuration)
-  - [Defaults](#defaults)
-  - [Session options](#session-options)
-  - [Session save location](#session-save-location)
-  - [Git branching](#git-branching)
-  - [Autosaving](#autosaving)
-  - [Autoloading](#autoloading)
-  - [Following current working directory](#following-current-working-directory)
-  - [Allowed directories](#allowed-directories)
-  - [Ignored directories](#ignored-directories)
-  - [Callbacks](#callbacks)
-  - [Telescope extension](#telescope-extension)
-- [License](#page_with_curl-license)
 
 ## :sparkles: Features
 
@@ -55,7 +32,7 @@ Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim
 
 Install the plugin with your preferred package manager:
 
-### [packer](https://github.com/wbthomason/packer.nvim)
+**[packer](https://github.com/wbthomason/packer.nvim)**
 
 ```lua
 -- Lua
@@ -69,7 +46,7 @@ use({
 })
 ```
 
-### [vim-plug](https://github.com/junegunn/vim-plug)
+**[vim-plug](https://github.com/junegunn/vim-plug)**
 
 ```vim
 " Vim Script
@@ -92,7 +69,7 @@ However, to lazy load the plugin add the `module = "persisted"` line to packer.
 
 ## :rocket: Usage
 
-### Default commands
+**Default commands**
 The plugin comes with a number of commands:
 
 - `:SessionToggle` - Determines whether to load, start or stop a session
@@ -105,7 +82,7 @@ The plugin comes with a number of commands:
 
 > **Note:** The author only binds `:SessionToggle` to a keymap for simplicity.
 
-### Telescope
+**Telescope**
 
 The Telescope extension may be opened via `:Telescope persisted`.
 
@@ -113,7 +90,7 @@ Once opened, the available keymaps are:
 * `<CR>` - Source the session file
 * `<C-d>` - Delete the session file
 
-### Helpers
+**Helpers**
 
 The plugin sets a global variable, `vim.g.persisting`, which is set to `true` when a session is started. The author uses this to display an icon in their [statusline](https://github.com/olimorris/dotfiles/blob/0cdaee183c64f872778952f90f62b9366851101c/.config/nvim/lua/Oli/plugins/statusline.lua#L257).
 
@@ -325,7 +302,7 @@ require("persisted").setup({
 
 The plugin contains an extension for [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) which allows the user to list all of the saved session files and source them via `:Telescope persisted`.
 
-#### Telescope callbacks
+**Telescope callbacks**
 
 The plugin allows for *before* and *after* callbacks to be used when sourcing a session via Telescope. For example:
 
