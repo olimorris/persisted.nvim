@@ -6,20 +6,6 @@ local M = {}
 local e = vim.fn.fnameescape
 local default_branch = "main"
 
----Setup the plugin's commands
----@return nil
-local function setup_commands()
-  vim.cmd([[
-    command! SessionStart :lua require("persisted").start()
-    command! SessionStop :lua require("persisted").stop()
-    command! SessionSave :lua require("persisted").save()
-    command! SessionLoad :lua require("persisted").load()
-    command! SessionLoadLast :lua require("persisted").load({ last = true })
-    command! SessionDelete :lua require("persisted").delete()
-    command! SessionToggle :lua require("persisted").toggle()
-  ]])
-end
-
 ---Does the current working directory allow for the auto-saving and loading?
 ---@return boolean
 local function allow_dir()
@@ -80,7 +66,6 @@ end
 ---@return nil
 function M.setup(opts)
   config.setup(opts)
-  setup_commands()
 
   if config.options.autoload and (allow_dir() and not ignore_dir()) and vim.fn.argc() == 0 then
     M.load()
