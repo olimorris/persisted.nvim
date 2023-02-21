@@ -68,13 +68,7 @@ function M.setup(opts)
   config.setup(opts)
 
   if config.options.autoload and (allow_dir() and not ignore_dir()) and vim.fn.argc() == 0 then
-    -- vim.api.nvim_create_autocmd("VimEnter", {
-    --   group = group,
-    --   callback = function()
-    --     M.load()
-    --   end,
-    -- })
-    M.load()
+    M.load({ autoload = true })
   end
 
   if
@@ -100,7 +94,17 @@ function M.load(opt)
       else
         vim.g.persisting_session = session
       end
-      utils.load_session(session, config.options.before_source, config.options.after_source, config.options.silent)
+
+      if opt.autoload then
+        utils.autoload_session(
+          session,
+          config.options.before_source,
+          config.options.after_source,
+          config.options.silent
+        )
+      else
+        utils.load_session(session, config.options.before_source, config.options.after_source, config.options.silent)
+      end
     elseif type(config.options.on_autoload_no_session) == "function" then
       config.options.on_autoload_no_session()
     end
@@ -117,7 +121,7 @@ end
 ---@return nil
 function M.start()
   vim.api.nvim_create_autocmd(config.options.command, {
-    group = vim.api.nvim_create_augroup("Persisted", { clear = true }),
+    group = vim.api.nvim_create_augroup("Persisted", { clear = false }),
     callback = function()
       require("persisted").save()
     end,

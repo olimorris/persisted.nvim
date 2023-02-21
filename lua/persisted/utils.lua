@@ -31,7 +31,7 @@ end
 ---@return string
 function M.get_last_item(table)
   local last
-  for i, v in pairs(table) do
+  for _, _ in pairs(table) do
     last = #table - 0
   end
   return table[last]
@@ -59,25 +59,50 @@ function M.get_dir_pattern()
   return pattern
 end
 
+--- Load a session between two callbacks
+---@param session string
+---@param before_callback function
+---@param after_callback function
+---@param silent boolean
+local function load_session(session, before_callback, after_callback, silent)
+  if type(before_callback) == "function" then
+    before_callback()
+  end
+
+  local ok, result = pcall(vim.cmd, (silent and "silent " or "") .. "source " .. e(session))
+  if not ok then
+    return echoerr("Error loading the session! ", result)
+  end
+
+  if type(after_callback) == "function" then
+    after_callback()
+  end
+
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSessionLoadPost" })
+end
+
+---Autoload the given session, without scheduling
+---@param session string
+---@param before_callback function
+---@param after_callback function
+---@param silent boolean
+function M.autoload_session(session, before_callback, after_callback, silent)
+  vim.api.nvim_create_autocmd("VimEnter", {
+    group = vim.api.nvim_create_augroup("Persisted", { clear = false }),
+    callback = function()
+      load_session(session, before_callback, after_callback, silent)
+    end,
+  })
+end
 
 ---Load the given session
 ---@param session string
 ---@param before_callback function
 ---@param after_callback function
+---@param silent boolean
 function M.load_session(session, before_callback, after_callback, silent)
   vim.schedule(function()
-    if type(before_callback) == "function" then
-      before_callback()
-    end
-
-    local ok, result = pcall(vim.cmd, (silent and "silent " or "") .. "source " .. e(session))
-    if not ok then
-      return echoerr("[Persisted.nvim]: Error loading the session! ", result)
-    end
-
-    if type(after_callback) == "function" then
-      after_callback()
-    end
+    load_session(session, before_callback, after_callback, silent)
   end)
 end
 
