@@ -31,7 +31,7 @@ end
 ---@return string
 function M.get_last_item(table)
   local last
-  for i, v in pairs(table) do
+  for _, _ in pairs(table) do
     last = #table - 0
   end
   return table[last]
@@ -59,26 +59,27 @@ function M.get_dir_pattern()
   return pattern
 end
 
-
 ---Load the given session
 ---@param session string
 ---@param before_callback function
 ---@param after_callback function
+---@param silent boolean Load the session silently?
+---@return nil|string
 function M.load_session(session, before_callback, after_callback, silent)
-  vim.schedule(function()
-    if type(before_callback) == "function" then
-      before_callback()
-    end
+  if type(before_callback) == "function" then
+    before_callback()
+  end
 
-    local ok, result = pcall(vim.cmd, (silent and "silent " or "") .. "source " .. e(session))
-    if not ok then
-      return echoerr("[Persisted.nvim]: Error loading the session! ", result)
-    end
+  local ok, result = pcall(vim.cmd, (silent and "silent " or "") .. "source " .. e(session))
+  if not ok then
+    return echoerr("Error loading the session! ", result)
+  end
 
-    if type(after_callback) == "function" then
-      after_callback()
-    end
-  end)
+  if type(after_callback) == "function" then
+    after_callback()
+  end
+
+  -- vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSessionLoadPost" })
 end
 
 return M

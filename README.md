@@ -123,7 +123,6 @@ The plugin comes with the following defaults:
 ```lua
 require("persisted").setup({
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
-  command = "VimLeavePre", -- the autocommand for which the session is saved
   silent = false, -- silent nvim message when sourcing session file
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
   autosave = true, -- automatically save session files when exiting Neovim
@@ -162,17 +161,6 @@ require("persisted").setup({
 
 > **Note:** The plugin may be unable to find existing sessions if the `save_dir` value is changed
 
-### Autocmd to save session
-
-By default, a session is saved to disk when the `VimLeavePre` autocommand is triggered. This can be modified by:
-
-```lua
-require("persisted").setup({
-  command = "VimLeavePre",
-})
-```
-
-> **Note:** See `:h autocmds` for more information on possible autocmds
 ### Git branching
 
 One of the plugin's core features is the ability to have multiple sessions files for a given project, by using git branches. To enable git branching:

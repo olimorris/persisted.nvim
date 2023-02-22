@@ -15,8 +15,4 @@ describe("As part of the setup", function()
 
     require("persisted").save()
   end)
-  -- it("autoloads a file", function()
-  --   local content = vim.fn.getline(1, '$')
-  --   assert.equals(content[1], "This is a test file for custom config")
-  -- end)
 end)
