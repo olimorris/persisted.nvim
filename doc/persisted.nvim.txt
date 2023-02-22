@@ -320,41 +320,50 @@ Specifying `~/.config` will prevent any autosaving and autoloading from that
 directory as well as all its sub-directories.
 
 
-CALLBACKS ~
+EVENTS / CALLBACKS ~
 
-The plugin allows for _before_ and _after_ callbacks to be executed in relation
-to a session being saved. This is achieved via the `before_save` and
-`after_save` configuration options:
+The plugin fires events at various points during its lifecycle which users can
+leverage:
+
+
+- `PersistedLoadPre` - For _before_ a session is loaded
+- `PersistedLoadPost` - For _after_ a session is loaded
+- `PersistedTelescopeLoadPre` - For _before_ a session is loaded via Telescope
+- `PersistedTelescopeLoadPost` - For _after_ a session is loaded via Telescope
+- `PersistedSavePre` - For _before_ a session is saved
+- `PersistedSavePost` - For _after_ a session is saved
+
+For example, to ensure that the excellent minimap
+<https://github.com/wfxr/minimap.vim> plugin is not saved into a session, an
+autocommand can be created to hook into the `PersistedSavePre` event:
 
 >lua
-    require("persisted").setup({
-      before_save = function()
+    local group = vim.api.nvim_create_augroup("PersistedHooks", {})
+    
+    vim.api.nvim_create_autocmd({ "User" }, {
+      pattern = "PersistedSavePre",
+      group = group,
+      callback = function()
         pcall(vim.cmd, "bw minimap")
-      end,
-      after_save = function()
-        print("Session was saved!")
       end,
     })
 <
 
-
-  **Note:** The author uses a _before_ callback to ensure that minimap.vim
-  <https://github.com/wfxr/minimap.vim> is not written into the session. Its
-  presence prevents the exact buffer and cursor position from being restored when
-  loading a session
-The plugin allows for _before_ and _after_ callbacks to be executed in relation
-to a session being sourced:
+If you’re using the excellent Legendary.nvim
+<https://github.com/mrjones2014/legendary.nvim> plugin, consider the following
+snippet format:
 
 >lua
-    require("persisted").setup({
-      before_source = function()
-        print("Sourcing...")
-      end,
-      after_source = function()
-        -- Reload the LSP servers
-        vim.lsp.stop_client(vim.lsp.get_active_clients())
-      end
-    })
+    {
+      name = "PersistedHooks",
+      {
+        "User",
+        function(args)
+          print("Loading session!")
+        end,
+        opts = { pattern = "PersistedLoadPre" },
+      },
+    },
 <
 
 
