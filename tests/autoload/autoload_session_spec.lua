@@ -1,16 +1,20 @@
-local util = require("plenary.async.util")
-
-local session_dir = vim.fn.getcwd() .. "/tests/dummy_data/"
-require("persisted").setup({
-  save_dir = session_dir,
-  autoload = true,
-  autosave = true,
-})
-
 describe("Autoloading", function()
   it("autoloads a file", function()
-    util.scheduler()
+    local co = coroutine.running()
+    vim.defer_fn(function()
+      coroutine.resume(co)
+    end, 2000)
+
+    local session_dir = vim.fn.getcwd() .. "/tests/dummy_data/"
+    require("persisted").setup({
+      save_dir = session_dir,
+      autoload = true,
+      autosave = true,
+    })
+
+    coroutine.yield()
+
     local content = vim.fn.getline(1, "$")
-    assert.equals(content[1], "If you're reading this, I guess auto-loading works")
+    assert.equals("If you're reading this, I guess auto-loading works", content[1])
   end)
 end)
