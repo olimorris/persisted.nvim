@@ -90,14 +90,7 @@ function M.load(opt)
       else
         vim.g.persisting_session = session
       end
-
-      utils.load_session(
-        session,
-        config.options.before_source,
-        config.options.after_source,
-        config.options.silent,
-        opt.autoload
-      )
+      utils.load_session(session, config.options.before_source, config.options.after_source, config.options.silent)
     elseif type(config.options.on_autoload_no_session) == "function" then
       config.options.on_autoload_no_session()
     end
@@ -114,7 +107,7 @@ function M.autoload()
   -- Ensure that no arguments have been passed to Neovim
   if config.options.autoload and vim.fn.argc() == 0 then
     if allow_dir() and not ignore_dir() then
-      M.load({ autoload = true })
+      M.load()
     end
   end
 end
