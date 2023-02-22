@@ -10,14 +10,10 @@ require("persisted").setup({
   allowed_dirs = { vim.loop.cwd() },
 })
 
-async.describe("Autoloading", function()
-  -- after_each(function()
-  --   vim.fn.system("rm -rf " .. e(session_dir))
-  -- end)
-
-  async.it("autoloads a file with allowed_dirs config option present", function()
+describe("Autoloading", function()
+  it("autoloads a file with allowed_dirs config option present", function()
     util.scheduler()
     local content = vim.fn.getline(1, "$")
-    assert.equals(content[1], "If you're reading this, I guess auto-loading works")
+    assert.equals("If you're reading this, I guess auto-loading works", content[1])
   end)
 end)

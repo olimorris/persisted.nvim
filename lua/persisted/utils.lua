@@ -78,29 +78,22 @@ local function load_session(session, before_callback, after_callback, silent)
     after_callback()
   end
 
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSessionLoadPost" })
-end
-
----Autoload the given session, without scheduling
----@param session string
----@param before_callback function
----@param after_callback function
----@param silent boolean
-function M.autoload_session(session, before_callback, after_callback, silent)
-  vim.api.nvim_create_autocmd("VimEnter", {
-    group = vim.api.nvim_create_augroup("Persisted", { clear = false }),
-    callback = function()
-      load_session(session, before_callback, after_callback, silent)
-    end,
-  })
+  -- vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSessionLoadPost" })
 end
 
 ---Load the given session
 ---@param session string
 ---@param before_callback function
 ---@param after_callback function
----@param silent boolean
-function M.load_session(session, before_callback, after_callback, silent)
+---@param silent boolean Load the session silently?
+---@param autoload boolean Autoload the session without scheduling?
+---@return nil
+function M.load_session(session, before_callback, after_callback, silent, autoload)
+  if autoload then
+    load_session(session, before_callback, after_callback, silent)
+    return
+  end
+
   vim.schedule(function()
     load_session(session, before_callback, after_callback, silent)
   end)

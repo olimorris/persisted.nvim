@@ -61,15 +61,11 @@ local function get_current()
   return config.options.save_dir .. name .. M.get_branch() .. ".vim"
 end
 
----Setup the plugin based on the intersect of the default and the user's config
+---Setup the plugin
 ---@param opts? table
 ---@return nil
 function M.setup(opts)
   config.setup(opts)
-
-  if config.options.autoload and (allow_dir() and not ignore_dir()) and vim.fn.argc() == 0 then
-    M.load({ autoload = true })
-  end
 
   if
     config.options.autosave
@@ -95,51 +91,52 @@ function M.load(opt)
         vim.g.persisting_session = session
       end
 
-      if opt.autoload then
-        utils.autoload_session(
-          session,
-          config.options.before_source,
-          config.options.after_source,
-          config.options.silent
-        )
-      else
-        utils.load_session(session, config.options.before_source, config.options.after_source, config.options.silent)
-      end
+      utils.load_session(
+        session,
+        config.options.before_source,
+        config.options.after_source,
+        config.options.silent,
+        opt.autoload
+      )
     elseif type(config.options.on_autoload_no_session) == "function" then
       config.options.on_autoload_no_session()
     end
   end
 
   if config.options.autosave and (allow_dir() and not ignore_dir()) then
-    vim.schedule(function()
-      M.start()
-    end)
+    M.start()
   end
 end
 
----Start recording a session and write to disk on a specific autocommand
+---Automatically load the session for the current dir
+---@return nil
+function M.autoload()
+  if config.options.autoload and (allow_dir() and not ignore_dir()) and vim.fn.argc() == 0 then
+    M.load({ autoload = true })
+  end
+end
+
+---Start recording the session
 ---@return nil
 function M.start()
-  vim.api.nvim_create_autocmd(config.options.command, {
-    group = vim.api.nvim_create_augroup("Persisted", { clear = false }),
-    callback = function()
-      require("persisted").save()
-    end,
-  })
   vim.g.persisting = true
 end
 
 ---Stop recording a session
 ---@return nil
 function M.stop()
-  pcall(vim.api.nvim_del_augroup_by_name, "Persisted")
   vim.g.persisting = false
   vim.g.persisting_session = nil
 end
 
----Save the session to disk
+---Save the session
 ---@return nil
 function M.save()
+  -- If the user has stopped the session, then do not save
+  if vim.g.persisting == false then
+    return
+  end
+
   if type(config.options.before_save) == "function" then
     config.options.before_save()
   end
@@ -164,7 +161,7 @@ function M.save()
   end
 end
 
----Delete the current session from disk
+---Delete the current session
 ---@return nil
 function M.delete()
   local session = get_current()
@@ -186,7 +183,7 @@ function M.toggle()
   return M.start()
 end
 
----List all of the sessions in the session directory
+---List all of the sessions
 ---@return table
 function M.list()
   local save_dir = config.options.save_dir
