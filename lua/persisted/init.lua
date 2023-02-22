@@ -90,7 +90,9 @@ function M.load(opt)
       else
         vim.g.persisting_session = session
       end
+      -- TODO: Alter this function call after deprecation notice ends
       utils.load_session(session, config.options.before_source, config.options.after_source, config.options.silent)
+      --
     elseif type(config.options.on_autoload_no_session) == "function" then
       config.options.on_autoload_no_session()
     end
@@ -133,9 +135,13 @@ function M.save()
     return
   end
 
+  --TODO: Remove this after deprecation notice period ends
   if type(config.options.before_save) == "function" then
     config.options.before_save()
   end
+  --
+
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePre" })
 
   if
     (config.options.autosave and type(config.options.should_autosave) == "function")
@@ -143,6 +149,7 @@ function M.save()
   then
     return
   end
+
 
   if vim.g.persisting_session == nil then
     vim.cmd("mks! " .. e(get_current()))
@@ -152,9 +159,13 @@ function M.save()
 
   vim.g.persisting = true
 
+  --TODO: Remove this after deprecation notice period ends
   if type(config.options.after_save) == "function" then
     config.options.after_save()
   end
+  --
+
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePost" })
 end
 
 ---Delete the current session

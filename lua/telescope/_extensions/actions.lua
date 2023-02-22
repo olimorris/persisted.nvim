@@ -10,13 +10,23 @@ local get_selected_session = function()
   return actions_state.get_selected_entry()
 end
 
+---Load the selected session
+---@param session table
+---@param config table
+---@return nil
 M.load_session = function(session, config)
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedTelescopeLoadPre" })
+
+  -- TODO: clean up this function call after deprecation notice ends
   utils.load_session(
     session.file_path,
     config.telescope.before_source and config.telescope.before_source(session) or _,
     config.telescope.after_source and config.telescope.after_source(session) or _,
     config.silent
   )
+  --
+
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedTelescopeLoadPost" })
 end
 
 ---Delete the selected session from disk
