@@ -111,8 +111,11 @@ end
 ---Automatically load the session for the current dir
 ---@return nil
 function M.autoload()
-  if config.options.autoload and (allow_dir() and not ignore_dir()) and vim.fn.argc() == 0 then
-    M.load({ autoload = true })
+  -- Ensure that no arguments have been passed to Neovim
+  if config.options.autoload and vim.fn.argc() == 0 then
+    if allow_dir() and not ignore_dir() then
+      M.load({ autoload = true })
+    end
   end
 end
 
