@@ -1,20 +1,20 @@
-*persisted.nvim.txt*     For Neovim >= 0.7.0     Last change: 2023 February 22
+*persisted.nvim.txt*     For Neovim >= 0.7.0     Last change: 2023 February 23
 
 ==============================================================================
 Table of Contents                           *persisted.nvim-table-of-contents*
 
-  - Features                                     |persisted.nvim-nil-features|
-  - Requirements                             |persisted.nvim-nil-requirements|
-  - Installation                             |persisted.nvim-nil-installation|
-  - Usage                                           |persisted.nvim-nil-usage|
-  - Configuration                           |persisted.nvim-nil-configuration|
-  - License                                       |persisted.nvim-nil-license|
+  - Features                                         |persisted.nvim-features|
+  - Requirements                                 |persisted.nvim-requirements|
+  - Installation                                 |persisted.nvim-installation|
+  - Usage                                               |persisted.nvim-usage|
+  - Configuration                               |persisted.nvim-configuration|
+  - License                                           |persisted.nvim-license|
 Persisted.nvim
 
 
 Persisted.nvim is a simple lua plugin for automated session management within Neovim
 Forked from Persistence.nvim as active development had stopped
-FEATURES                                         *persisted.nvim-nil-features*
+FEATURES                                             *persisted.nvim-features*
 
 
 - Automatically saves the active session under `.local/share/nvim/sessions` on exiting Neovim
@@ -24,13 +24,13 @@ FEATURES                                         *persisted.nvim-nil-features*
 - Telescope extension to work with saved sessions
 
 
-REQUIREMENTS                                 *persisted.nvim-nil-requirements*
+REQUIREMENTS                                     *persisted.nvim-requirements*
 
 
 - Neovim >= 0.7.0
 
 
-INSTALLATION                                 *persisted.nvim-nil-installation*
+INSTALLATION                                     *persisted.nvim-installation*
 
 Install the plugin with your preferred package manager:
 
@@ -94,7 +94,7 @@ However, to lazy load the plugin add the `module = "persisted"` line to packer
 or `lazy = true` for Lazy.nvim.
 
 
-USAGE                                               *persisted.nvim-nil-usage*
+USAGE                                                   *persisted.nvim-usage*
 
 **Default commands**
 
@@ -127,7 +127,7 @@ statusline
 <https://github.com/olimorris/dotfiles/blob/0cdaee183c64f872778952f90f62b9366851101c/.config/nvim/lua/Oli/plugins/statusline.lua#L257>.
 
 
-CONFIGURATION                               *persisted.nvim-nil-configuration*
+CONFIGURATION                                   *persisted.nvim-configuration*
 
 
 DEFAULTS ~
@@ -396,7 +396,7 @@ following properties: `name` - The filename of the session `file_path` - The
 file path to the session `branch` - The git branch of the session
 
 
-LICENSE                                           *persisted.nvim-nil-license*
+LICENSE                                               *persisted.nvim-license*
 
 MIT <https://github.com/olimorris/persisted.nvim/blob/main/LICENSE>
 
