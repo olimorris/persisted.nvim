@@ -387,28 +387,6 @@ The plugin contains an extension for telescope.nvim
 <https://github.com/nvim-telescope/telescope.nvim> which allows the user to
 list all of the saved session files and source them via `:Telescope persisted`.
 
-**Telescope callbacks**
-
-The plugin allows for _before_ and _after_ callbacks to be used when sourcing a
-session via Telescope. For example:
-
->lua
-    require("persisted").setup({
-      telescope = {
-        before_source = function()
-          vim.api.nvim_input("<ESC>:%bd<CR>")
-        end,
-        after_source = function(session)
-          print("Loaded session " .. session.name)
-        end,
-      },
-    })
-<
-
-The callbacks can accept a _session_ parameter which is a table that has the
-following properties: `name` - The filename of the session `file_path` - The
-file path to the session `branch` - The git branch of the session
-
 
 LICENSE                                               *persisted.nvim-license*
 
