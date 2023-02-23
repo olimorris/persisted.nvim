@@ -296,9 +296,11 @@ vim.api.nvim_create_autocmd({ "User" }, {
 })
 ```
 
-Session data is also made available to the callback:
+Session data is also made available to the callbacks:
 
 ```lua
+local group = vim.api.nvim_create_augroup("PersistedHooks", {})
+
 vim.api.nvim_create_autocmd({ "User" }, {
   pattern = "PersistedTelescopeLoadPre",
   group = group,
@@ -307,6 +309,8 @@ vim.api.nvim_create_autocmd({ "User" }, {
   end,
 })
 ```
+
+The session data available differs depending on the events that are hooked into. For non-telescope events, only the session `name` is available (via `session.data.name`). However for telescope events, the `branch`, `name`, `file_path` and `dir_path` are available.
 
 Finaly, if you're using the excellent [Legendary.nvim](https://github.com/mrjones2014/legendary.nvim) plugin, consider the following snippet format:
 
