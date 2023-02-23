@@ -118,6 +118,7 @@ end
 ---@return nil
 function M.start()
   vim.g.persisting = true
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedStateChange" })
 end
 
 ---Stop recording a session
@@ -125,6 +126,7 @@ end
 function M.stop()
   vim.g.persisting = false
   vim.g.persisting_session = nil
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedStateChange" })
 end
 
 ---Save the session
@@ -172,10 +174,14 @@ end
 function M.delete()
   local session = get_current()
   if session and vim.loop.fs_stat(session) ~= 0 then
+    vim.api.nvim_exec_autocmds("User", { pattern = "PersistedDeletePre" })
+
     vim.schedule(function()
       M.stop()
       vim.fn.system("rm " .. e(session))
     end)
+
+    vim.api.nvim_exec_autocmds("User", { pattern = "PersistedDeletePost" })
   end
 end
 
