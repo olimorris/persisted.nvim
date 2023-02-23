@@ -107,12 +107,12 @@ The Telescope extension may be opened via `:Telescope persisted`.
 Once opened, the available keymaps are: `<CR>` - Source the session file
 `<C-d>` - Delete the session file
 
-**Helpers**
+**Statuslines**
 
 The plugin sets a global variable, `vim.g.persisting`, which is set to `true`
-when a session is started. The author uses this to display an icon in their
-statusline
-<https://github.com/olimorris/dotfiles/blob/0cdaee183c64f872778952f90f62b9366851101c/.config/nvim/lua/Oli/plugins/statusline.lua#L257>.
+when a session is started and `false` when it is stopped. Also, the plugin
+offers a `PersistedStateChange` event that can be hooked into via an autocmd
+(see the |persisted.nvim-events/callbacks| section).
 
 
 CONFIGURATION                                   *persisted.nvim-configuration*
@@ -148,7 +148,7 @@ As the plugin uses Vim’s `:mksession` command then you may change the
 Please see `:h sessionoptions` for more information.
 
 
-  **Note:** The author uses `vim.o.sessionoptions =
+  **Note:** The author uses: `vim.o.sessionoptions =
   "buffers,curdir,folds,globals,tabpages,winpos,winsize"`
 
 SESSION SAVE LOCATION ~
@@ -184,7 +184,7 @@ files for a given project, by using git branches. To enable git branching:
 AUTOSAVING ~
 
 By default, the plugin will automatically save a Neovim session to disk when
-the `VimLeavePre` autocommand is triggered. Autosaving can be turned off by:
+the `VimLeavePre` event is triggered. Autosaving can be turned off by:
 
 >lua
     require("persisted").setup({
@@ -321,7 +321,7 @@ hook into:
 
 For example, to ensure that the excellent minimap
 <https://github.com/wfxr/minimap.vim> plugin is not saved into a session, an
-autocommand can be created to hook into the `PersistedSavePre` event:
+autocmd can be created to hook into the `PersistedSavePre` event:
 
 >lua
     local group = vim.api.nvim_create_augroup("PersistedHooks", {})
