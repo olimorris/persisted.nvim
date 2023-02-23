@@ -1,4 +1,4 @@
-*persisted.nvim.txt*     For Neovim >= 0.7.0     Last change: 2023 February 23
+*persisted.nvim.txt*     For Neovim >= 0.8.0     Last change: 2023 February 23
 
 ==============================================================================
 Table of Contents                           *persisted.nvim-table-of-contents*
@@ -27,7 +27,7 @@ FEATURES                                             *persisted.nvim-features*
 REQUIREMENTS                                     *persisted.nvim-requirements*
 
 
-- Neovim >= 0.7.0
+- Neovim >= 0.8.0
 
 
 INSTALLATION                                     *persisted.nvim-installation*
@@ -349,7 +349,19 @@ autocommand can be created to hook into the `PersistedSavePre` event:
     })
 <
 
-If you’re using the excellent Legendary.nvim
+Session data is also made available to the callback:
+
+>lua
+    vim.api.nvim_create_autocmd({ "User" }, {
+      pattern = "PersistedTelescopeLoadPre",
+      group = group,
+      callback = function(session)
+        print(session.data.branch) -- Print the session's branch
+      end,
+    })
+<
+
+Finaly, if you’re using the excellent Legendary.nvim
 <https://github.com/mrjones2014/legendary.nvim> plugin, consider the following
 snippet format:
 
@@ -358,7 +370,7 @@ snippet format:
       name = "PersistedHooks",
       {
         "User",
-        function(args)
+        function()
           print("Loading session!")
         end,
         opts = { pattern = "PersistedLoadPre" },
