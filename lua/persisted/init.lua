@@ -150,7 +150,6 @@ function M.save()
     return
   end
 
-
   if vim.g.persisting_session == nil then
     vim.cmd("mks! " .. e(get_current()))
   else
@@ -173,8 +172,10 @@ end
 function M.delete()
   local session = get_current()
   if session and vim.loop.fs_stat(session) ~= 0 then
-    M.stop()
-    vim.fn.system("rm " .. e(session))
+    vim.schedule(function()
+      M.stop()
+      vim.fn.system("rm " .. e(session))
+    end)
   end
 end
 

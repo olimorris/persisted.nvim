@@ -53,11 +53,16 @@ describe("With default settings:", function()
 
     assert.equals(path:is_path(), true)
   end)
+end)
 
-  it("it deletes a session", function()
+local async = require("plenary.async.tests")
+local util = require("plenary.async.util")
+
+async.describe("With default settings:", function()
+  async.it("it deletes a session", function()
     require("persisted").delete()
+    util.scheduler()
 
-    assert.equals(vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""), "0")
+    assert.equals("0", vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""))
   end)
-
 end)
