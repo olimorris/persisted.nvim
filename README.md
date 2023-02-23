@@ -296,14 +296,26 @@ vim.api.nvim_create_autocmd({ "User" }, {
 })
 ```
 
-If you're using the excellent [Legendary.nvim](https://github.com/mrjones2014/legendary.nvim) plugin, consider the following snippet format:
+Session data is also made available to the callback:
+
+```lua
+vim.api.nvim_create_autocmd({ "User" }, {
+  pattern = "PersistedTelescopeLoadPre",
+  group = group,
+  callback = function(session)
+    print(session.data.branch) -- Print the session's branch
+  end,
+})
+```
+
+Finaly, if you're using the excellent [Legendary.nvim](https://github.com/mrjones2014/legendary.nvim) plugin, consider the following snippet format:
 
 ```lua
 {
   name = "PersistedHooks",
   {
     "User",
-    function(args)
+    function()
       print("Loading session!")
     end,
     opts = { pattern = "PersistedLoadPre" },
