@@ -26,7 +26,7 @@ Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim
 
 ## :zap: Requirements
 
-- Neovim >= 0.7.0
+- Neovim >= 0.8.0
 
 ## :package: Installation
 
