@@ -103,9 +103,9 @@ Once opened, the available keymaps are:
 * `<CR>` - Source the session file
 * `<C-d>` - Delete the session file
 
-**Helpers**
+**Statuslines**
 
-The plugin sets a global variable, `vim.g.persisting`, which is set to `true` when a session is started. The author uses this to display an icon in their [statusline](https://github.com/olimorris/dotfiles/blob/0cdaee183c64f872778952f90f62b9366851101c/.config/nvim/lua/Oli/plugins/statusline.lua#L257).
+The plugin sets a global variable, `vim.g.persisting`, which is set to `true` when a session is started and `false` when it is stopped. Also, the plugin offers a `PersistedStateChange` event that can be hooked into via an autocmd (see the [events/callbacks](#events--callbacks) section).
 
 ## :wrench: Configuration
 
@@ -135,7 +135,8 @@ require("persisted").setup({
 
 As the plugin uses Vim's `:mksession` command then you may change the `vim.o.sessionoptions` value to determine what to write into the session. Please see `:h sessionoptions` for more information.
 
-> **Note:** The author uses `vim.o.sessionoptions = "buffers,curdir,folds,globals,tabpages,winpos,winsize"`
+> **Note:** The author uses:
+> `vim.o.sessionoptions = "buffers,curdir,folds,globals,tabpages,winpos,winsize"`
 
 ### Session save location
 
@@ -163,7 +164,7 @@ require("persisted").setup({
 
 ### Autosaving
 
-By default, the plugin will automatically save a Neovim session to disk when the `VimLeavePre` autocommand is triggered. Autosaving can be turned off by:
+By default, the plugin will automatically save a Neovim session to disk when the `VimLeavePre` event is triggered. Autosaving can be turned off by:
 
 ```lua
 require("persisted").setup({
@@ -272,7 +273,7 @@ The plugin fires events at various points during its lifecycle which users can h
 - `PersistedDeletePost` - For _after_ a session is deleted
 - `PersistedStateChange` - For when a session is _started_ or _stopped_
 
-For example, to ensure that the excellent [minimap](https://github.com/wfxr/minimap.vim) plugin is not saved into a session, an autocommand can be created to hook into the `PersistedSavePre` event:
+For example, to ensure that the excellent [minimap](https://github.com/wfxr/minimap.vim) plugin is not saved into a session, an autocmd can be created to hook into the `PersistedSavePre` event:
 
 ```lua
 local group = vim.api.nvim_create_augroup("PersistedHooks", {})
