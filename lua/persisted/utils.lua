@@ -74,7 +74,7 @@ function M.load_session(session, before_callback, after_callback, silent)
   end
   --
 
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedLoadPre" })
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedLoadPre", data = session })
 
   local ok, result = pcall(vim.cmd, (silent and "silent " or "") .. "source " .. e(session))
   if not ok then
@@ -87,7 +87,7 @@ function M.load_session(session, before_callback, after_callback, silent)
   end
   --
 
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedLoadPost" })
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedLoadPost", data = session })
 end
 
 return M

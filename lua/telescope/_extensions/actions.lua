@@ -15,7 +15,7 @@ end
 ---@param config table
 ---@return nil
 M.load_session = function(session, config)
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedTelescopeLoadPre" })
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedTelescopeLoadPre", data = session })
 
   vim.schedule(function()
     -- TODO: clean up this function call after deprecation notice ends
@@ -28,7 +28,7 @@ M.load_session = function(session, config)
     )
   end)
 
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedTelescopeLoadPost" })
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedTelescopeLoadPost", data = session })
 end
 
 ---Delete the selected session from disk
