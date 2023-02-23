@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-<b>Persisted.nvim</b> is a simple lua plugin for automated session management within Neovim<br>
+<b>Persisted.nvim</b> is a simple lua plugin for working with sessions in Neovim<br>
 Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim</a> as active development had stopped
 </p>
 
@@ -20,8 +20,9 @@ Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim
 
 - Automatically saves the active session under `.local/share/nvim/sessions` on exiting Neovim
 - Supports sessions across multiple git branches
-- Supports auto saving and loading of sessions with allowed/ignored directories
+- Supports autosaving and autoloading of sessions with allowed/ignored directories
 - Simple API to save/stop/restore/delete/list the current session(s)
+- Custom events which users can hook into for greater integration
 - Telescope extension to work with saved sessions
 
 ## :zap: Requirements
@@ -79,12 +80,6 @@ Ensure that the telescope extension is loaded with:
 require("telescope").load_extension("persisted")
 ```
 
-### Lazy loading
-
-The plugin is designed to work with startup screens like [vim-startify](https://github.com/mhinz/vim-startify) or [dashboard](https://github.com/glepnir/dashboard-nvim) out of the box. It will never load a session automatically by default.
-
-However, to lazy load the plugin add the `module = "persisted"` line to Packer or `lazy = true` for Lazy.nvim.
-
 ## :rocket: Usage
 
 **Default commands**
@@ -95,12 +90,10 @@ The plugin comes with a number of commands:
 - `:SessionStart` - Start recording a session. Useful if `autosave = false`
 - `:SessionStop` - Stop recording a session
 - `:SessionSave` - Save the current session
-- `:SessionLoad` - Load the session for the current directory and current branch if `git_use_branch = true`
+- `:SessionLoad` - Load the session for the current directory and current branch (if `git_use_branch = true`)
 - `:SessionLoadLast` - Load the most recent session
 - `:SessionLoadFromPath` - Load a session from a given path
 - `:SessionDelete` - Delete the current session
-
-> **Note:** The author only binds `:SessionToggle` to a keymap for simplicity.
 
 **Telescope**
 
@@ -138,11 +131,11 @@ require("persisted").setup({
 })
 ```
 
-### Session options
+### What's saved in the session?
 
 As the plugin uses Vim's `:mksession` command then you may change the `vim.o.sessionoptions` value to determine what to write into the session. Please see `:h sessionoptions` for more information.
 
-> **Note:** The author uses `vim.o.sessionoptions = "buffers,curdir,folds,winpos,winsize"`
+> **Note:** The author uses `vim.o.sessionoptions = "buffers,curdir,folds,globals,tabpages,winpos,winsize"`
 
 ### Session save location
 
@@ -158,7 +151,7 @@ require("persisted").setup({
 
 ### Git branching
 
-One of the plugin's core features is the ability to have multiple sessions files for a given project, by using git branches. To enable git branching:
+One of the plugin's core features is the ability to have multiple session files for a given project, by using git branches. To enable git branching:
 
 ```lua
 require("persisted").setup({
@@ -180,8 +173,7 @@ require("persisted").setup({
 
 Autosaving can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
-There may be occasions when you do not wish to autosave; perhaps when a dashboard or terminal are open. To control this,
-a callback function, `should_autosave`, may be specified. This function should return a boolean value.
+There may be occasions when you do not wish to autosave; perhaps when a dashboard or a certain buftype is present. To control this, a callback function, `should_autosave`, may be used. This function should return a boolean value.
 
 ```lua
 require("persisted").setup({
@@ -268,7 +260,7 @@ Specifying `~/.config` will prevent any autosaving and autoloading from that dir
 
 ### Events / Callbacks
 
-The plugin fires events at various points during its lifecycle which users can leverage:
+The plugin fires events at various points during its lifecycle which users can hook into:
 
 - `PersistedLoadPre` - For _before_ a session is loaded
 - `PersistedLoadPost` - For _after_ a session is loaded
@@ -305,9 +297,9 @@ vim.api.nvim_create_autocmd({ "User" }, {
 })
 ```
 
-The session data available differs depending on the events that are hooked into. For non-telescope events, only the session `name` is available (via `session.data.name`). However for telescope events, the `branch`, `name`, `file_path` and `dir_path` are available.
+The session data available differs depending on the events that are hooked into. For non-telescope events, only the session's full path is available (via `session.data`). However for telescope events, the `branch`, `name`, `file_path` and `dir_path` are available.
 
-Finaly, if you're using the excellent [Legendary.nvim](https://github.com/mrjones2014/legendary.nvim) plugin, consider the following snippet format:
+Finally, if you're using the excellent [Legendary.nvim](https://github.com/mrjones2014/legendary.nvim) plugin, consider the following snippet format:
 
 ```lua
 {
