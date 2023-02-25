@@ -39,7 +39,6 @@ Install the plugin with your preferred package manager:
 -- Lua
 use({
   "olimorris/persisted.nvim"
-  -- lazy = true, -- For lazy loading
   config = true
 })
 ```
@@ -50,7 +49,6 @@ use({
 -- Lua
 use({
   "olimorris/persisted.nvim",
-  --module = "persisted", -- For lazy loading
   config = function()
     require("persisted").setup()
   end,
@@ -71,6 +69,8 @@ lua << EOF
   }
 EOF
 ```
+
+If you wish to use session _autoloading_ alongside a dashboard plugin, it is recommended that you give this plugin a greater loading priority. With `Packer` the `after` config option can be used and in `Lazy.nvim`, the `priority` property.
 
 ### Telescope extension
 
