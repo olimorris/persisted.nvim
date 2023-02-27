@@ -1,0 +1,129 @@
+name: Bugs or configuration issues
+description: For any potential bugs or issues with configuring the plugin
+title: "[Bug]: "
+labels: ["bug"]
+assignees: olimorris
+
+body:
+    - type: markdown
+      attributes:
+        value: |
+          Thanks for taking the time to fill out this bug report! This form may seem onerous but it makes a resolution much quicker for you and I.
+    - type: markdown
+      attributes:
+        value: |
+          ## Test with a `minimal.lua` file
+          I know the temptation is to skip this step but please don't. With the quantity of plugins you have in your Neovim config, it's like searching for a needle in a haystack.
+
+          Firstly, test and run Neovim with the minimal config below. Be sure to add your Persisted.nvim config, saving to a `minimal.lua` file and adding any additional plugins you may need.
+          ```lua
+          local root = "/tmp/persisted"
+
+          -- Set stdpaths to use root dir
+          for _, name in ipairs({ "config", "data", "state", "cache" }) do
+            vim.env[("XDG_%s_HOME"):format(name:upper())] = root .. "/" .. name
+          end
+
+          -- Bootstrap lazy
+          local lazypath = root .. "/plugins/lazy.nvim"
+          if not vim.loop.fs_stat(lazypath) then
+            vim.fn.system({
+              "git",
+              "clone",
+              "--filter=blob:none",
+              "--single-branch",
+              "https://github.com/folke/lazy.nvim.git",
+              lazypath,
+            })
+          end
+          vim.opt.runtimepath:prepend(lazypath)
+
+          vim.opt.sessionoptions = "buffers,curdir,folds,globals,tabpages,winpos,winsize" -- Session options to store in the session
+
+          -- Install plugins
+          local plugins = {
+            {
+              "olimorris/persisted.nvim",
+              opts = {
+                -- Your custom config here
+              }
+            },
+          }
+          require("lazy").setup(plugins, {
+            root = root .. "/plugins",
+          })
+          ```
+
+          Once you've updated for your config, run Neovim with this command:
+          ```sh
+          nvim --clean -u minimal.lua
+          ```
+
+          Open some buffers and save the session with `SessionSave` and load with `SessionLoad`.
+
+    - type: textarea
+      id: persisted-config
+      attributes:
+        label: Your Persisted.nvim config
+        description: Please paste your specific Persisted.nvim config
+        placeholder: |
+          ```lua
+          -- Your persisted config here
+          ```
+      validations:
+        required: true
+
+    - type: textarea
+      id: errors
+      attributes:
+        label: Error messages
+        description: Please paste any error messages you receive
+        placeholder: |
+          ```lua
+          -- Error messages here
+          ```
+      validations:
+        required: false
+
+    - type: textarea
+      id: bug
+      attributes:
+        label: Describe the bug
+        description: Please describe the bug and include any screenshots
+        placeholder: |
+          ### What I expect to happen
+          [Your text here]
+
+          ### What actually happens
+          [Your text here]
+      validations:
+        required: true
+
+    - type: textarea
+      id: reproduce
+      attributes:
+        label: Reproduce the bug
+        description: Please include the steps to reproduce the bug
+        placeholder: |
+          Steps to reproduce:
+          1.
+          2.
+          3.
+      validations:
+        required: false
+
+    - type: checkboxes
+      id: final-checks
+      attributes:
+        label: Final checks
+        description: |
+          Before you submit, please make sure you have completed the following steps:
+        options:
+          - label: I have made sure this issue exists in the latest version of the plugin
+            required: true
+          - label: I have tested with the `minimal.lua` config file above and still get the issue
+            required: true
+          - label: I have used `SessionSave` to save the session before restarting Neovim and using `SessionLoad`
+            required: true
+          - label: I have made sure this is not a duplicate issue
+            required: true
