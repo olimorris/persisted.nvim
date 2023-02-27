@@ -1,4 +1,4 @@
-*persisted.nvim.txt*     For Neovim >= 0.8.0     Last change: 2023 February 25
+*persisted.nvim.txt*     For Neovim >= 0.8.0     Last change: 2023 February 27
 
 ==============================================================================
 Table of Contents                           *persisted.nvim-table-of-contents*
@@ -73,9 +73,9 @@ Install the plugin with your preferred package manager:
 <
 
 If you wish to use session _autoloading_ alongside a dashboard plugin, it is
-recommended that you give this plugin a greater loading priority. With `Packer`
-the `after` config option can be used and in `Lazy.nvim`, the `priority`
-property.
+recommended that you give this plugin a greater loading priority. With
+**Packer** the `after` config option can be used and in **Lazy.nvim**, the
+`priority` property.
 
 
 TELESCOPE EXTENSION ~
