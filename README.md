@@ -70,7 +70,7 @@ lua << EOF
 EOF
 ```
 
-If you wish to use session _autoloading_ alongside a dashboard plugin, it is recommended that you give this plugin a greater loading priority. With `Packer` the `after` config option can be used and in `Lazy.nvim`, the `priority` property.
+If you wish to use session _autoloading_ alongside a dashboard plugin, it is recommended that you give this plugin a greater loading priority. With **Packer** the `after` config option can be used and in **Lazy.nvim**, the `priority` property.
 
 ### Telescope extension
 
