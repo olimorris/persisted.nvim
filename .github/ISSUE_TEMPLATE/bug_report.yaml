@@ -59,7 +59,15 @@ body:
           nvim --clean -u minimal.lua
           ```
 
-          Open some buffers and save the session with `SessionSave` and load with `SessionLoad`.
+          Open some buffers and save the session with:
+          ```sh
+          :SessionSave
+          ```
+
+          Then re-open neovim and load the session with:
+          ```sh
+          :SessionLoad
+          ```
 
     - type: textarea
       id: persisted-config
