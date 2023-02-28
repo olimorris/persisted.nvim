@@ -202,6 +202,12 @@ function M.toggle()
   return M.start()
 end
 
+local function replace(str, what, with, repl)
+  what = string.gsub(what, "[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1") -- escape pattern
+  with = string.gsub(with, "[%%]", "%%%%") -- escape replacement
+  return string.gsub(str, what, with, repl)
+end
+
 ---List all of the sessions
 ---@return table
 function M.list()
@@ -211,12 +217,20 @@ function M.list()
 
   local sessions = {}
   for _, session in pairs(session_files) do
-    local session_name = session
-      :gsub(save_dir, "")
+    local session_name = replace(session, save_dir, "")
+      -- :gsub(save_dir, "")
       :gsub("%%", utils.get_dir_pattern())
       :gsub(vim.fn.expand("~"), utils.get_dir_pattern())
       :gsub("//", "")
+      :gsub("//", "")
       :sub(1, -5)
+
+    if vim.fn.has("win32") == 1 then
+      -- format drive letter (no trailing separator)
+      session_name = replace(session_name, utils.get_dir_pattern(), ":", 1)
+      -- format filepath separator
+      session_name = replace(session_name, utils.get_dir_pattern(), "\\")
+    end
 
     local branch, dir_path
 
@@ -235,7 +249,6 @@ function M.list()
       ["dir_path"] = dir_path,
     })
   end
-
   return sessions
 end
 
