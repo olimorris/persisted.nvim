@@ -48,6 +48,7 @@ body:
                 -- Your custom config here
               }
             },
+            -- Put any other plugins here
           }
           require("lazy").setup(plugins, {
             root = root .. "/plugins",
