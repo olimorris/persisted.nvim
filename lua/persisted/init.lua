@@ -136,14 +136,6 @@ function M.save(opt)
     return
   end
 
-  --TODO: Remove this after deprecation notice period ends
-  if type(config.options.before_save) == "function" then
-    config.options.before_save()
-  end
-  --
-
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePre" })
-
   -- Autosave config option takes priority unless it's overriden
   if not config.options.autosave and not opt.override then
     return
@@ -152,6 +144,14 @@ function M.save(opt)
   if type(config.options.should_autosave) == "function" and not config.options.should_autosave() then
     return
   end
+
+  --TODO: Remove this after deprecation notice period ends
+  if type(config.options.before_save) == "function" then
+    config.options.before_save()
+  end
+  --
+
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePre" })
 
   vim.cmd("mks! " .. e(vim.g.persisting_session or get_current()))
   vim.g.persisting = true
