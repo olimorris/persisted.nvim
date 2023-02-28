@@ -145,10 +145,11 @@ function M.save()
 
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePre" })
 
-  if
-    (config.options.autosave and type(config.options.should_autosave) == "function")
-    and not config.options.should_autosave()
-  then
+  -- Autosave config option takes priority
+  if not config.options.autosave then
+    return
+  end
+  if type(config.options.should_autosave) == "function" and not config.options.should_autosave() then
     return
   end
 
