@@ -149,6 +149,7 @@ function M.save()
   if not config.options.autosave then
     return
   end
+
   if type(config.options.should_autosave) == "function" and not config.options.should_autosave() then
     return
   end
