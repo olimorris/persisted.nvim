@@ -130,8 +130,11 @@ function M.stop()
 end
 
 ---Save the session
+---@param opt? table
 ---@return nil
-function M.save()
+function M.save(opt)
+  opt = opt or {}
+
   -- If the user has stopped the session, then do not save
   if vim.g.persisting == false then
     return
@@ -145,8 +148,8 @@ function M.save()
 
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePre" })
 
-  -- Autosave config option takes priority
-  if not config.options.autosave then
+  -- Autosave config option takes priority unless it's overriden
+  if not config.options.autosave and not opt.override then
     return
   end
 
