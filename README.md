@@ -155,7 +155,7 @@ require("persisted").setup({
 
 As the plugin uses Vim's `:mksession` command then you may change the `vim.o.sessionoptions` value to determine what to write into the session. Please see `:h sessionoptions` for more information.
 
-> **Note:** The author uses:
+> **Note**: The author uses:
 > `vim.o.sessionoptions = "buffers,curdir,folds,globals,tabpages,winpos,winsize"`
 
 ### Session save location
@@ -168,7 +168,7 @@ require("persisted").setup({
 })
 ```
 
-> **Note:** The plugin may be unable to find existing sessions if the `save_dir` value is changed
+> **Note**: The plugin may be unable to find existing sessions if the `save_dir` value is changed
 
 ### Git branching
 
@@ -180,7 +180,7 @@ require("persisted").setup({
 })
 ```
 
-> **Note:** If git branching is enabled on a non git enabled repo, then `main` will be used as the default branch
+> **Note**: If git branching is enabled on a non git enabled repo, then `main` will be used as the default branch
 
 ### Autosaving
 
@@ -235,7 +235,7 @@ require("persisted").setup({
 
 Autoloading can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
-> **Note:** Autoloading will not occur if a user opens Neovim with arguments. For example: `nvim some_file.rb`
+> **Note**: Autoloading will not occur if a user opens Neovim with arguments. For example: `nvim some_file.rb`
 
 ### Following current working directory
 
@@ -249,7 +249,7 @@ require("persisted").setup({
 })
 ```
 
-> **Note:** If `follow_cwd = false` the session name is stored upon loading under the global variable `vim.g.persisting_session`. This variable can be manually adjusted if changes to the session name are needed. Alternatively, if `follow_cwd = true` then `vim.g.persisting_session = nil`.
+> **Note**: If `follow_cwd = false` the session name is stored upon loading under the global variable `vim.g.persisting_session`. This variable can be manually adjusted if changes to the session name are needed. Alternatively, if `follow_cwd = true` then `vim.g.persisting_session = nil`.
 
 ### Allowed directories
 
@@ -266,7 +266,7 @@ require("persisted").setup({
 
 Specifying `~/Code` will autosave and autoload from that directory as well as all its sub-directories.
 
-> **Note:** If `allowed_dirs` is left at its default value and `autosave` and/or `autoload` are set to `true`, then the plugin will autoload/autosave from _any_ directory
+> **Note**: If `allowed_dirs` is left at its default value and `autosave` and/or `autoload` are set to `true`, then the plugin will autoload/autosave from _any_ directory
 
 ### Ignored directories
 
