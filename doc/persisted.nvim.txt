@@ -1,4 +1,4 @@
-*persisted.nvim.txt*     For Neovim >= 0.8.0     Last change: 2023 February 27
+*persisted.nvim.txt*     For Neovim >= 0.8.0     Last change: 2023 February 28
 
 ==============================================================================
 Table of Contents                           *persisted.nvim-table-of-contents*
@@ -9,11 +9,7 @@ Table of Contents                           *persisted.nvim-table-of-contents*
   - Usage                                               |persisted.nvim-usage|
   - Configuration                               |persisted.nvim-configuration|
   - License                                           |persisted.nvim-license|
-Persisted.nvim
 
-
-Persisted.nvim is a simple lua plugin for working with sessions in Neovim
-Forked from Persistence.nvim as active development had stopped
 FEATURES                                             *persisted.nvim-features*
 
 
@@ -86,6 +82,21 @@ Ensure that the telescope extension is loaded with:
     require("telescope").load_extension("persisted")
 <
 
+The layout can then be customised from within Telescope:
+
+>lua
+    require('telescope').setup({
+      defaults = {
+        …
+      },
+      extensions = {
+        persisted = {
+          layout_config = { width = 0.55, height = 0.55 }
+        }
+      }
+    })
+<
+
 
 USAGE                                                   *persisted.nvim-usage*
 
@@ -107,8 +118,11 @@ The plugin comes with a number of commands:
 
 The Telescope extension may be opened via `:Telescope persisted`.
 
-Once opened, the available keymaps are: `<CR>` - Source the session file
-`<C-d>` - Delete the session file
+Once opened, the available keymaps are:
+
+
+- `<CR>` - Source the session file
+- `<C-d>` - Delete the session file
 
 **Statuslines**
 
