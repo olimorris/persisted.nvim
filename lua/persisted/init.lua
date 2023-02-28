@@ -85,11 +85,7 @@ function M.load(opt)
 
   if session then
     if vim.fn.filereadable(session) ~= 0 then
-      if config.options.follow_cwd then
-        vim.g.persisting_session = nil
-      else
-        vim.g.persisting_session = session
-      end
+      vim.g.persisting_session = config.options.follow_cwd and nil or session
       -- TODO: Alter this function call after deprecation notice ends
       utils.load_session(session, config.options.before_source, config.options.after_source, config.options.silent)
       --
@@ -157,12 +153,7 @@ function M.save(opt)
     return
   end
 
-  if vim.g.persisting_session == nil then
-    vim.cmd("mks! " .. e(get_current()))
-  else
-    vim.cmd("mks! " .. e(vim.g.persisting_session))
-  end
-
+  vim.cmd("mks! " .. e(vim.g.persisting_session or get_current()))
   vim.g.persisting = true
 
   --TODO: Remove this after deprecation notice period ends
