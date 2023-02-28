@@ -194,7 +194,7 @@ require("persisted").setup({
 
 Autosaving can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
-There may be occasions when you do not wish to autosave; perhaps when a dashboard or a certain buftype is present. To control this, a callback function, `should_autosave`, may be used. This function should return a boolean value.
+There may be occasions when you do not wish to autosave; perhaps when a dashboard or a certain buftype is present. To control this, a callback function, `should_autosave`, may be used which should return a boolean value.
 
 ```lua
 require("persisted").setup({
@@ -207,6 +207,10 @@ require("persisted").setup({
   end,
 })
 ```
+
+Of course, if you wish to manually save the session when autosaving is disabled, the `:SessionSave` command can be used.
+
+> **Note**: If `autosave = false` then the `should_autosave` callback will not be executed.
 
 ### Autoloading
 
