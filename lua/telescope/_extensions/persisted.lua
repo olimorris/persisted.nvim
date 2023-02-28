@@ -6,9 +6,11 @@ local action_state = require("telescope.actions.state")
 local _actions = require("telescope._extensions.actions")
 local _finders = require("telescope._extensions.finders")
 
+local telescope_opts = {}
+
 local function search_sessions(opts)
-  local utils = require("persisted.utils")
   local config = require("persisted.config").options
+  opts = vim.tbl_extend('force', telescope_opts, opts or {})
 
   pickers
     .new(opts, {
@@ -39,6 +41,9 @@ local function search_sessions(opts)
 end
 
 return require("telescope").register_extension({
+  setup = function(topts)
+    telescope_opts = topts
+  end,
   exports = {
     persisted = search_sessions,
   },

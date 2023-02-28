@@ -1,3 +1,5 @@
+<!-- panvimdoc-ignore-start -->
+
 <p align="center">
 <img src="https://user-images.githubusercontent.com/9512444/179085825-7c3bc1f7-c86b-4119-96e2-1a581e9bfffc.png" alt="Persisted.nvim" />
 </p>
@@ -15,6 +17,8 @@
 <b>Persisted.nvim</b> is a simple lua plugin for working with sessions in Neovim<br>
 Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim</a> as active development had stopped
 </p>
+
+<!-- panvimdoc-ignore-end -->
 
 ## :sparkles: Features
 
@@ -80,6 +84,21 @@ Ensure that the telescope extension is loaded with:
 require("telescope").load_extension("persisted")
 ```
 
+The layout can then be customised from within Telescope:
+
+```lua
+require('telescope').setup({
+  defaults = {
+    …
+  },
+  extensions = {
+    persisted = {
+      layout_config = { width = 0.55, height = 0.55 }
+    }
+  }
+})
+```
+
 ## :rocket: Usage
 
 **Default commands**
@@ -100,8 +119,9 @@ The plugin comes with a number of commands:
 The Telescope extension may be opened via `:Telescope persisted`.
 
 Once opened, the available keymaps are:
-* `<CR>` - Source the session file
-* `<C-d>` - Delete the session file
+
+- `<CR>` - Source the session file
+- `<C-d>` - Delete the session file
 
 **Statuslines**
 
@@ -242,7 +262,7 @@ require("persisted").setup({
 
 Specifying `~/Code` will autosave and autoload from that directory as well as all its sub-directories.
 
-> **Note:** If `allowed_dirs` is left at its default value and `autosave` and/or `autoload` are set to `true`, then the plugin will autoload/autosave from *any* directory
+> **Note:** If `allowed_dirs` is left at its default value and `autosave` and/or `autoload` are set to `true`, then the plugin will autoload/autosave from _any_ directory
 
 ### Ignored directories
 
@@ -320,9 +340,13 @@ Finally, if you're using the excellent [Legendary.nvim](https://github.com/mrjon
 
 ### Telescope extension
 
+<!-- panvimdoc-ignore-start -->
+
 <p align="center">
 <img src="https://user-images.githubusercontent.com/9512444/177375482-3bc9bd0d-42c8-4755-a36c-08ea5f954525.png" alt="Telescope">
 </p>
+
+<!-- panvimdoc-ignore-end -->
 
 The plugin contains an extension for [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) which allows the user to list all of the saved session files and source them via `:Telescope persisted`.
 
