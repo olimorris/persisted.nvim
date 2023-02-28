@@ -196,14 +196,14 @@ end
 ---Escapes special characters before performing string substitution
 ---@param str string
 ---@param pattern string
----@param repl string|number|table|function
+---@param replace string
 ---@param n? integer
 ---@return string
 ---@return integer count
-local function replace(str, pattern, repl, n)
+local function escape_pattern(str, pattern, replace, n)
   pattern = string.gsub(pattern, "[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1") -- escape pattern
-  repl = string.gsub(repl, "[%%]", "%%%%") -- escape replacement
-  return string.gsub(str, pattern, repl, n)
+  replace = string.gsub(replace, "[%%]", "%%%%") -- escape replacement
+  return string.gsub(str, pattern, replace, n)
 end
 
 ---List all of the sessions
@@ -216,7 +216,7 @@ function M.list()
 
   local sessions = {}
   for _, session in pairs(session_files) do
-    local session_name = replace(session, save_dir, "")
+    local session_name = escape_pattern(session, save_dir, "")
       :gsub("%%", dir_separator)
       :gsub(vim.fn.expand("~"), dir_separator)
       :gsub("//", "")
@@ -224,9 +224,9 @@ function M.list()
 
     if vim.fn.has("win32") == 1 then
       -- format drive letter (no trailing separator)
-      session_name = replace(session_name, dir_separator, ":", 1)
+      session_name = escape_pattern(session_name, dir_separator, ":", 1)
       -- format remaining filepath separator(s)
-      session_name = replace(session_name, dir_separator, "\\")
+      session_name = escape_pattern(session_name, dir_separator, "\\")
     end
 
     local branch, dir_path
