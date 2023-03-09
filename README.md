@@ -151,7 +151,7 @@ require("persisted").setup({
 })
 ```
 
-### What's saved in the session?
+### What is saved in the session?
 
 As the plugin uses Vim's `:mksession` command then you may change the `vim.o.sessionoptions` value to determine what to write into the session. Please see `:h sessionoptions` for more information.
 

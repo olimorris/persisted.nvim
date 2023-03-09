@@ -1,4 +1,4 @@
-*persisted.nvim.txt*     For Neovim >= 0.8.0     Last change: 2023 February 28
+*persisted.nvim.txt*                      Simple session management for Neovim
 
 ==============================================================================
 Table of Contents                           *persisted.nvim-table-of-contents*
@@ -158,7 +158,7 @@ The plugin comes with the following defaults:
 <
 
 
-WHAT’S SAVED IN THE SESSION? ~
+WHAT IS SAVED IN THE SESSION? ~
 
 As the plugin uses Vim’s `:mksession` command then you may change the
 `vim.o.sessionoptions` value to determine what to write into the session.
