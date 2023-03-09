@@ -1,4 +1,4 @@
-*persisted.nvim.txt*                      Simple session management for Neovim
+*persisted.nvim.txt*       For Neovim >= 0.8.0      Last change: 2023 March 09
 
 ==============================================================================
 Table of Contents                           *persisted.nvim-table-of-contents*
