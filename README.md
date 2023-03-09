@@ -327,21 +327,6 @@ vim.api.nvim_create_autocmd({ "User" }, {
 
 The session data available differs depending on the events that are hooked into. For non-telescope events, only the session's full path is available (via `session.data`). However for telescope events, the `branch`, `name`, `file_path` and `dir_path` are available.
 
-Finally, if you're using the excellent [Legendary.nvim](https://github.com/mrjones2014/legendary.nvim) plugin, consider the following snippet format:
-
-```lua
-{
-  name = "PersistedHooks",
-  {
-    "User",
-    function()
-      print("Loading session!")
-    end,
-    opts = { pattern = "PersistedLoadPre" },
-  },
-},
-```
-
 ### Telescope extension
 
 <!-- panvimdoc-ignore-start -->
