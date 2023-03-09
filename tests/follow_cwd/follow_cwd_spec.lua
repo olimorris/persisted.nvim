@@ -4,13 +4,12 @@ local session_dir = vim.fn.getcwd() .. "/tests/dummy_data/"
 
 -- follow_cwd = true
 require("persisted").setup({
-    save_dir = session_dir,
-    follow_cwd = true,
+  save_dir = session_dir,
+  follow_cwd = true,
 })
 
 describe("Follow cwd change", function()
   it("creates two sessions with change in cwd", function()
-
     vim.cmd(":e tests/stubs/test_autoload.txt")
     vim.cmd(":w")
 
@@ -19,7 +18,6 @@ describe("Follow cwd change", function()
     vim.cmd(":w")
     require("persisted").save()
     vim.cmd(":bdelete")
-
   end)
   it("ensures both sessions were created", function()
     local pattern = "/"
@@ -36,13 +34,12 @@ end)
 -- follow_cwd = false
 pcall(vim.fn.system, "rm -rf tests/dummy_data")
 require("persisted").setup({
-    save_dir = session_dir,
-    follow_cwd = false,
+  save_dir = session_dir,
+  follow_cwd = false,
 })
 
 describe("Don't follow cwd change", function()
   it("creates two sessions with change in cwd", function()
-
     vim.cmd(":e tests/stubs/test_autoload.txt")
     vim.cmd(":w")
     require("persisted").save()
@@ -51,7 +48,6 @@ describe("Don't follow cwd change", function()
     vim.cmd(":w")
     require("persisted").save()
     vim.cmd(":bdelete")
-
   end)
   it("ensures only one session was created", function()
     local pattern = "/"

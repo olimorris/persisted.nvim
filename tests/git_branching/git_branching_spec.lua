@@ -18,7 +18,6 @@ describe("Git Branching", function()
 
     require("persisted").save()
     assert.equals(vim.fn.system("ls tests/git_branch_data | wc -l"):gsub("%s+", ""), "2")
-
   end)
 
   it("ensures the session has the branch name in", function()
