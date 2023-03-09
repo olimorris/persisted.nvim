@@ -18,14 +18,7 @@ M.load_session = function(session, config)
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedTelescopeLoadPre", data = session })
 
   vim.schedule(function()
-    -- TODO: clean up this function call after deprecation notice ends
-    utils.load_session(
-      session.file_path,
-      config.telescope.before_source and config.telescope.before_source(session) or _,
-      config.telescope.after_source and config.telescope.after_source(session) or _,
-      config.silent
-      --
-    )
+    utils.load_session(session.file_path, config.silent)
   end)
 
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedTelescopeLoadPost", data = session })

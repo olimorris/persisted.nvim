@@ -10,7 +10,7 @@ local telescope_opts = {}
 
 local function search_sessions(opts)
   local config = require("persisted.config").options
-  opts = vim.tbl_extend('force', telescope_opts, opts or {})
+  opts = vim.tbl_extend("force", telescope_opts, opts or {})
 
   pickers
     .new(opts, {
@@ -21,7 +21,7 @@ local function search_sessions(opts)
         local refresh_sessions = function()
           local picker = action_state.get_current_picker(prompt_bufnr)
           picker:refresh(_finders.session_finder(require("persisted").list()), {
-            reset_prompt = config.telescope.reset_prompt_after_deletion
+            reset_prompt = config.telescope.reset_prompt_after_deletion,
           })
         end
 

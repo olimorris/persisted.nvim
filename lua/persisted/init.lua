@@ -86,9 +86,7 @@ function M.load(opt)
   if session then
     if vim.fn.filereadable(session) ~= 0 then
       vim.g.persisting_session = config.options.follow_cwd and nil or session
-      -- TODO: Alter this function call after deprecation notice ends
-      utils.load_session(session, config.options.before_source, config.options.after_source, config.options.silent)
-      --
+      utils.load_session(session, config.options.silent)
     elseif type(config.options.on_autoload_no_session) == "function" then
       config.options.on_autoload_no_session()
     end
@@ -131,36 +129,25 @@ end
 function M.save(opt)
   opt = opt or {}
 
-  -- If the user has stopped the session, then do not save
+  -- Do not save the session if the user has manually stopped it
   if vim.g.persisting == false then
     return
   end
 
-  -- Autosave config option takes priority unless it's overriden
+  -- Do not save the session if autosave is turned off...unless it's overriden
   if not config.options.autosave and not opt.override then
     return
   end
 
+  -- Do not save the session if the callback returns false
   if type(config.options.should_autosave) == "function" and not config.options.should_autosave() then
     return
   end
-
-  --TODO: Remove this after deprecation notice period ends
-  if type(config.options.before_save) == "function" then
-    config.options.before_save()
-  end
-  --
 
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePre" })
 
   vim.cmd("mks! " .. e(vim.g.persisting_session or get_current()))
   vim.g.persisting = true
-
-  --TODO: Remove this after deprecation notice period ends
-  if type(config.options.after_save) == "function" then
-    config.options.after_save()
-  end
-  --
 
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePost" })
 end

@@ -61,31 +61,15 @@ end
 
 ---Load the given session
 ---@param session string
----@param before_callback function
----@param after_callback function
 ---@param silent boolean Load the session silently?
 ---@return nil|string
-function M.load_session(session, before_callback, after_callback, silent)
-  -- TODO: Clean up this function call after deprecation notice ends
-
-  --TODO: Remove this after deprecation notice period ends
-  if type(before_callback) == "function" then
-    before_callback()
-  end
-  --
-
+function M.load_session(session, silent)
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedLoadPre", data = session })
 
   local ok, result = pcall(vim.cmd, (silent and "silent " or "") .. "source " .. e(session))
   if not ok then
     return echoerr("Error loading the session! ", result)
   end
-
-  --TODO: Remove this after deprecation notice period ends
-  if type(after_callback) == "function" then
-    after_callback()
-  end
-  --
 
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedLoadPost", data = session })
 end
