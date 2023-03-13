@@ -129,8 +129,8 @@ end
 function M.save(opt)
   opt = opt or {}
 
-  -- Do not save the session if the user has manually stopped it
-  if vim.g.persisting == false or vim.g.persisting == nil then
+  -- Do not save the session if the user has manually stopped it, but if there's an override, then do it
+  if (vim.g.persisting == false or vim.g.persisting == nil) and not opt.override then
     return
   end
 
