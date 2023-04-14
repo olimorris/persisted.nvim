@@ -111,7 +111,7 @@ The plugin comes with a number of commands:
 - `:SessionSave` - Save the current session
 - `:SessionLoad` - Load the session for the current directory and current branch (if `git_use_branch = true`)
 - `:SessionLoadLast` - Load the most recent session
-- `:SessionLoadFromPath` - Load a session from a given path
+- `:SessionLoadFromFile` - Load a session from a given path
 - `:SessionDelete` - Delete the current session
 
 **Telescope**
