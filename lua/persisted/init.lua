@@ -47,7 +47,19 @@ function M.get_branch()
   if config.options.use_git_branch and git_enabled then
     local branch = vim.fn.systemlist([[git rev-parse --abbrev-ref HEAD 2>/dev/null]])
     if vim.v.shell_error == 0 then
-      return config.options.branch_separator .. branch[1]:gsub("/", "%%")
+      branch = config.options.branch_separator .. branch[1]:gsub("/", "%%")
+      local branch_session = config.options.save_dir
+        .. vim.fn.getcwd():gsub(utils.get_dir_pattern(), "%%")
+        .. branch
+        .. ".vim"
+
+      -- Check if session exists for the current branch, otherwise use default_branch
+      if vim.fn.filereadable(branch_session) ~= 0 then
+        return branch
+      else
+        vim.g.persisted_branch_session = branch_session
+        return config.options.branch_separator .. default_branch
+      end
     end
   end
 
@@ -146,7 +158,12 @@ function M.save(opt)
 
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePre" })
 
-  vim.cmd("mks! " .. e(vim.g.persisting_session or get_current()))
+  if vim.g.persisted_branch_session then
+    vim.cmd("mks! " .. e(vim.g.persisted_branch_session))
+  else
+    vim.cmd("mks! " .. e(vim.g.persisting_session or get_current()))
+  end
+
   vim.g.persisting = true
 
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePost" })
