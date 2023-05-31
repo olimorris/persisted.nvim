@@ -42,7 +42,7 @@ Install the plugin with your preferred package manager:
 ```lua
 -- Lua
 use({
-  "olimorris/persisted.nvim"
+  "olimorris/persisted.nvim",
   config = true
 })
 ```
@@ -181,6 +181,8 @@ require("persisted").setup({
 ```
 
 > **Note**: If git branching is enabled on a non git enabled repo, then `main` will be used as the default branch
+
+If you switch branches in a repository, the plugin will try to load a session which corresponds to that branch. If it can't find one, then it will load the session from the `main` branch.
 
 ### Autosaving
 
