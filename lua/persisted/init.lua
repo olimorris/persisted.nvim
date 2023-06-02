@@ -53,7 +53,7 @@ function M.get_branch()
         .. branch
         .. ".vim"
 
-      -- Check if session exists for the current branch, otherwise use default_branch
+      -- Try to load the session for the current branch and if not, use the value of default_branch
       if vim.fn.filereadable(branch_session) ~= 0 then
         return branch
       else
@@ -157,15 +157,8 @@ function M.save(opt)
   end
 
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePre" })
-
-  if vim.g.persisted_branch_session then
-    vim.cmd("mks! " .. e(vim.g.persisted_branch_session))
-  else
-    vim.cmd("mks! " .. e(vim.g.persisting_session or get_current()))
-  end
-
+  vim.cmd("mks! " .. e(vim.g.persisted_branch_session or vim.g.persisting_session or get_current()))
   vim.g.persisting = true
-
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePost" })
 end
 
