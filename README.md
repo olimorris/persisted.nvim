@@ -41,10 +41,10 @@ Install the plugin with your preferred package manager:
 
 ```lua
 -- Lua
-use({
+{
   "olimorris/persisted.nvim",
   config = true
-})
+}
 ```
 
 **[Packer](https://github.com/wbthomason/packer.nvim)**
