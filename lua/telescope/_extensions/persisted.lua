@@ -3,8 +3,8 @@ local pickers = require("telescope.pickers")
 local conf = require("telescope.config").values
 local action_state = require("telescope.actions.state")
 
-local _actions = require("telescope._extensions.actions")
-local _finders = require("telescope._extensions.finders")
+local _actions = require("telescope._extensions.persisted.actions")
+local _finders = require("telescope._extensions.persisted.finders")
 
 local telescope_opts = {}
 
