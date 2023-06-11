@@ -20,6 +20,9 @@ M.session_finder = function(sessions)
     else
       str = session.dir_path
     end
+    if session.file_path == vim.v.this_session then
+      str = str .. " (*)"
+    end
     return displayer({ str })
   end
 
