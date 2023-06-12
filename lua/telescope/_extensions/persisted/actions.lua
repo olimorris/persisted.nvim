@@ -30,8 +30,7 @@ M.delete_session = function()
   local session = get_selected_session()
   local path = session.file_path
 
-  local confirm = vim.fn.input("Delete [" .. session.name .. "]?: ", ""):lower()
-  if confirm == "yes" or confirm == "y" then
+  if vim.fn.confirm("Delete [" .. session.name .. "]?", "&Yes\n&No") == 1 then
     vim.fn.delete(vim.fn.expand(path))
   end
 end
