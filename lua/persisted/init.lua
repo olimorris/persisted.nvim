@@ -114,7 +114,7 @@ end
 function M.autoload()
   -- Ensure that no arguments have been passed to Neovim
   if config.options.autoload and vim.fn.argc() == 0 then
-    if allow_dir() and not ignore_dir() then
+    if allow_dir() and not ignore_dir() and not vim.g.persisted_lazy_install then
       M.load()
     end
   end

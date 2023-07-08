@@ -17,6 +17,23 @@ vim.cmd([[command! SessionToggle :lua require("persisted").toggle()]])
 -- Create the autocmds
 local group = vim.api.nvim_create_augroup("Persisted", {})
 
+-- Account for Lazy.nvim installs
+vim.api.nvim_create_autocmd({ "User" }, {
+  pattern = "LazyInstallPre",
+  group = group,
+  callback = function()
+    vim.g.persisted_lazy_install = true
+  end,
+})
+vim.api.nvim_create_autocmd({ "User" }, {
+  pattern = "LazyInstall",
+  group = group,
+  callback = function()
+    vim.g.persisted_lazy_install = nil
+    persisted.autoload()
+  end,
+})
+
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
   group = group,
   nested = true,
