@@ -21,6 +21,7 @@ local group = vim.api.nvim_create_augroup("Persisted", {})
 vim.api.nvim_create_autocmd({ "User" }, {
   pattern = "LazyInstallPre",
   group = group,
+  nested = true,
   callback = function()
     vim.g.persisted_lazy_install = true
   end,
@@ -28,10 +29,16 @@ vim.api.nvim_create_autocmd({ "User" }, {
 vim.api.nvim_create_autocmd({ "User" }, {
   pattern = "LazyInstall",
   group = group,
+  nested = true,
   callback = function()
     vim.g.persisted_lazy_install = nil
-    persisted.autoload()
   end,
+})
+vim.api.nvim_create_autocmd({ "User" }, {
+  pattern = "LazyDone",
+  group = group,
+  nested = true,
+  callback = persisted.autoload,
 })
 
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
