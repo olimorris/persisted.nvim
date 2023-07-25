@@ -157,7 +157,7 @@ function M.save(opt)
   end
 
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePre" })
-  vim.cmd("mks! " .. e(vim.g.persisted_branch_session or vim.g.persisting_session or get_current()))
+  vim.cmd("mks! " .. e(opt.session or vim.g.persisted_branch_session or vim.g.persisting_session or get_current()))
   vim.g.persisting = true
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePost" })
 end
