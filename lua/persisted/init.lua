@@ -140,6 +140,12 @@ end
 ---@return nil
 function M.save(opt)
   opt = opt or {}
+  local session = opt.session or (vim.g.persisted_branch_session or vim.g.persisting_session or get_current())
+
+  if opt.session then
+    write(session)
+    return
+  end
 
   -- Do not save the session if the user has manually stopped it, but if there's an override, then do it
   if (vim.g.persisting == false or vim.g.persisting == nil) and not opt.override then
@@ -156,8 +162,15 @@ function M.save(opt)
     return
   end
 
+  write(session)
+end
+
+---Write the session to disk
+---@param session string
+---@return nil
+function write(session)
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePre" })
-  vim.cmd("mks! " .. e(opt.session or vim.g.persisted_branch_session or vim.g.persisting_session or get_current()))
+  vim.cmd("mks! " .. e(session))
   vim.g.persisting = true
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePost" })
 end

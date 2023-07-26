@@ -123,9 +123,12 @@ Once opened, the available keymaps are:
 - `<CR>` - Source the session file
 - `<C-d>` - Delete the session file
 
-**Statuslines**
+**Global variables**
 
-The plugin sets a global variable, `vim.g.persisting`, which is set to `true` when a session is started and `false` when it is stopped. Also, the plugin offers a `PersistedStateChange` event that can be hooked into via an autocmd (see the [events/callbacks](#events--callbacks) section).
+The plugin sets global variables which can be utilised in your configuration:
+
+- `vim.g.persisting` - This is set to `true` when a session is started and `false` when a session is stopped
+- `vim.g.persisted_loaded_session` - The file path to the currently loaded session
 
 ## :wrench: Configuration
 
