@@ -194,6 +194,8 @@ end
 ---Determines whether to load, start or stop a session
 ---@return nil
 function M.toggle()
+  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedToggled" })
+
   if vim.g.persisting == nil then
     return M.load()
   end

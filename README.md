@@ -301,6 +301,7 @@ The plugin fires events at various points during its lifecycle which users can h
 - `PersistedDeletePre` - For _before_ a session is deleted
 - `PersistedDeletePost` - For _after_ a session is deleted
 - `PersistedStateChange` - For when a session is _started_ or _stopped_
+- `PersistedToggled` - For when a session is toggled
 
 For example, to ensure that the excellent [minimap](https://github.com/wfxr/minimap.vim) plugin is not saved into a session, an autocmd can be created to hook into the `PersistedSavePre` event:
 
