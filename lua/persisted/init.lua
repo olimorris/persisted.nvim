@@ -140,28 +140,25 @@ end
 ---@return nil
 function M.save(opt)
   opt = opt or {}
+
+  if not opt.session then
+    -- Do not save the session if the user has manually stopped it, but if there's an override, then do it
+    if (vim.g.persisting == false or vim.g.persisting == nil) and not opt.override then
+      return
+    end
+
+    -- Do not save the session if autosave is turned off...unless it's overriden
+    if not config.options.autosave and not opt.override then
+      return
+    end
+
+    -- Do not save the session if the callback returns false
+    if type(config.options.should_autosave) == "function" and not config.options.should_autosave() then
+      return
+    end
+  end
+
   local session = opt.session or (vim.g.persisted_branch_session or vim.g.persisting_session or get_current())
-
-  if opt.session then
-    write(session)
-    return
-  end
-
-  -- Do not save the session if the user has manually stopped it, but if there's an override, then do it
-  if (vim.g.persisting == false or vim.g.persisting == nil) and not opt.override then
-    return
-  end
-
-  -- Do not save the session if autosave is turned off...unless it's overriden
-  if not config.options.autosave and not opt.override then
-    return
-  end
-
-  -- Do not save the session if the callback returns false
-  if type(config.options.should_autosave) == "function" and not config.options.should_autosave() then
-    return
-  end
-
   write(session)
 end
 
