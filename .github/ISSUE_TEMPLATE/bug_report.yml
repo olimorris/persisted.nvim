@@ -73,11 +73,11 @@ body:
     - type: textarea
       id: persisted-config
       attributes:
-        label: Your Persisted.nvim config
-        description: Please paste your specific Persisted.nvim config
+        label: Your `minimal.lua` config
+        description: Please paste your minimal.lua config here
         placeholder: |
           ```lua
-          -- Your persisted config here
+          -- Your minimal.lua config here
           ```
       validations:
         required: true
