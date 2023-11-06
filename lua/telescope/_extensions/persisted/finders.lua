@@ -21,7 +21,7 @@ M.session_finder = function(sessions)
       str = session.dir_path
     end
     if session.file_path == vim.v.this_session then
-      str = "* " ..str
+      str = "* " .. str
     end
     return displayer({ str })
   end
