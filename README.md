@@ -317,7 +317,7 @@ vim.api.nvim_create_autocmd({ "User" }, {
 })
 ```
 
-Session data is also made available to the callbacks:
+Another and more commonly requested example is to use the Telescope extension to load a session, saving the current session before clearing all of the open buffers. This can be achieved by utilising some of the session data that is made available to the callbacks:
 
 ```lua
 local group = vim.api.nvim_create_augroup("PersistedHooks", {})
@@ -326,7 +326,11 @@ vim.api.nvim_create_autocmd({ "User" }, {
   pattern = "PersistedTelescopeLoadPre",
   group = group,
   callback = function(session)
-    print(session.data.branch) -- Print the session's branch
+    -- Save the currently loaded session
+    require("persisted").save({ session = vim.g.persisted_loaded_session })
+
+    -- Delete all of the open buffers
+    vim.api.nvim_input("<ESC>:%bd!<CR>")
   end,
 })
 ```

@@ -35,10 +35,10 @@ Install the plugin with your preferred package manager:
 
 >lua
     -- Lua
-    use({
-      "olimorris/persisted.nvim"
+    {
+      "olimorris/persisted.nvim",
       config = true
-    })
+    }
 <
 
 **Packer**
@@ -124,12 +124,13 @@ Once opened, the available keymaps are:
 - `<CR>` - Source the session file
 - `<C-d>` - Delete the session file
 
-**Statuslines**
+**Global variables**
 
-The plugin sets a global variable, `vim.g.persisting`, which is set to `true`
-when a session is started and `false` when it is stopped. Also, the plugin
-offers a `PersistedStateChange` event that can be hooked into via an autocmd
-(see the |persisted.nvim-events/callbacks| section).
+The plugin sets global variables which can be utilised in your configuration:
+
+
+- `vim.g.persisting` - This is set to `true` when a session is started and `false` when a session is stopped
+- `vim.g.persisted_loaded_session` - The file path to the currently loaded session
 
 
 CONFIGURATION                                   *persisted.nvim-configuration*
@@ -197,6 +198,10 @@ files for a given project, by using git branches. To enable git branching:
 
   **Note**If git branching is enabled on a non git enabled repo, then `main` will
   be used as the default branch
+If you switch branches in a repository, the plugin will try to load a session
+which corresponds to that branch. If it can’t find one, then it will load the
+session from the `main` branch.
+
 
 AUTOSAVING ~
 
@@ -340,6 +345,7 @@ hook into:
 - `PersistedDeletePre` - For _before_ a session is deleted
 - `PersistedDeletePost` - For _after_ a session is deleted
 - `PersistedStateChange` - For when a session is _started_ or _stopped_
+- `PersistedToggled` - For when a session is toggled
 
 For example, to ensure that the excellent minimap
 <https://github.com/wfxr/minimap.vim> plugin is not saved into a session, an
@@ -357,7 +363,10 @@ autocmd can be created to hook into the `PersistedSavePre` event:
     })
 <
 
-Session data is also made available to the callbacks:
+Another and more commonly requested example is to use the Telescope extension
+to load a session, saving the current session before clearing all of the open
+buffers. This can be achieved by utilising some of the session data that is
+made available to the callbacks:
 
 >lua
     local group = vim.api.nvim_create_augroup("PersistedHooks", {})
@@ -366,7 +375,11 @@ Session data is also made available to the callbacks:
       pattern = "PersistedTelescopeLoadPre",
       group = group,
       callback = function(session)
-        print(session.data.branch) -- Print the session's branch
+        -- Save the currently loaded session
+        require("persisted").save({ session = vim.g.persisted_loaded_session })
+    
+        -- Delete all of the open buffers
+        vim.api.nvim_input("<ESC>:%bd!<CR>")
       end,
     })
 <
