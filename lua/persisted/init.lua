@@ -41,24 +41,26 @@ end
 ---Get the current Git branch
 ---@return string
 function M.get_branch()
-  vim.fn.system([[git rev-parse 2> /dev/null]])
-  local git_enabled = (vim.v.shell_error == 0)
+  if config.options.use_git_branch then
+    vim.fn.system([[git rev-parse 2> /dev/null]])
+    local git_enabled = (vim.v.shell_error == 0)
 
-  if config.options.use_git_branch and git_enabled then
-    local branch = vim.fn.systemlist([[git rev-parse --abbrev-ref HEAD 2>/dev/null]])
-    if vim.v.shell_error == 0 then
-      branch = config.options.branch_separator .. branch[1]:gsub("/", "%%")
-      local branch_session = config.options.save_dir
-        .. vim.fn.getcwd():gsub(utils.get_dir_pattern(), "%%")
-        .. branch
-        .. ".vim"
+    if git_enabled then
+      local branch = vim.fn.systemlist([[git rev-parse --abbrev-ref HEAD 2>/dev/null]])
+      if vim.v.shell_error == 0 then
+        branch = config.options.branch_separator .. branch[1]:gsub("/", "%%")
+        local branch_session = config.options.save_dir
+          .. vim.fn.getcwd():gsub(utils.get_dir_pattern(), "%%")
+          .. branch
+          .. ".vim"
 
-      -- Try to load the session for the current branch and if not, use the value of default_branch
-      if vim.fn.filereadable(branch_session) ~= 0 then
-        return branch
-      else
-        vim.g.persisted_branch_session = branch_session
-        return config.options.branch_separator .. default_branch
+        -- Try to load the session for the current branch and if not, use the value of default_branch
+        if vim.fn.filereadable(branch_session) ~= 0 then
+          return branch
+        else
+          vim.g.persisted_branch_session = branch_session
+          return config.options.branch_separator .. default_branch
+        end
       end
     end
   end
