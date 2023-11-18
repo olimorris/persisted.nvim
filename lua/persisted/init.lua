@@ -75,11 +75,21 @@ local function get_current()
   return config.options.save_dir .. name .. M.get_branch() .. ".vim"
 end
 
+---Determine if a session for the current wording directory, exists
+---@return boolean
+function M.session_exists()
+  return vim.fn.filereadable(get_current()) ~= 0
+end
+
 ---Setup the plugin
 ---@param opts? table
 ---@return nil
 function M.setup(opts)
   config.setup(opts)
+
+  if M.session_exists() then
+    vim.g.persisted_exists = true
+  end
 
   if
     config.options.autosave

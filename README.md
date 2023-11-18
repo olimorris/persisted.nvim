@@ -101,7 +101,7 @@ require('telescope').setup({
 
 ## :rocket: Usage
 
-**Default commands**
+### Commands
 
 The plugin comes with a number of commands:
 
@@ -114,7 +114,7 @@ The plugin comes with a number of commands:
 - `:SessionLoadFromFile` - Load a session from a given path
 - `:SessionDelete` - Delete the current session
 
-**Telescope**
+### Telescope extension
 
 The Telescope extension may be opened via `:Telescope persisted`.
 
@@ -123,12 +123,13 @@ Once opened, the available keymaps are:
 - `<CR>` - Source the session file
 - `<C-d>` - Delete the session file
 
-**Global variables**
+### Global variables
 
 The plugin sets global variables which can be utilised in your configuration:
 
-- `vim.g.persisting` - This is set to `true` when a session is started and `false` when a session is stopped
-- `vim.g.persisted_loaded_session` - The file path to the currently loaded session
+- `vim.g.persisting` - (bool) Determines if the plugin is active for the current session
+- `vim.g.persisted_exists` - (bool) Determines if a session exists for the current working directory
+- `vim.g.persisted_loaded_session` - (string) The file path to the current session
 
 ## :wrench: Configuration
 
@@ -348,6 +349,14 @@ The session data available differs depending on the events that are hooked into.
 <!-- panvimdoc-ignore-end -->
 
 The plugin contains an extension for [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) which allows the user to list all of the saved session files and source them via `:Telescope persisted`.
+
+### Global variables
+
+The plugin makes a number of global variables available for users to hook into during the lifecycle of their Neovim session:
+
+- `vim.g.persisting` - (bool) Determines if the plugin is active for the current session
+- `vim.g.persisted_exists` - (bool) Determines if a session exists for the current working directory
+- `vim.g.persisted_loaded_session` - (string) The name of the active session
 
 ## :page_with_curl: License
 
