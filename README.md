@@ -350,14 +350,6 @@ The session data available differs depending on the events that are hooked into.
 
 The plugin contains an extension for [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) which allows the user to list all of the saved session files and source them via `:Telescope persisted`.
 
-### Global variables
-
-The plugin makes a number of global variables available for users to hook into during the lifecycle of their Neovim session:
-
-- `vim.g.persisting` - (bool) Determines if the plugin is active for the current session
-- `vim.g.persisted_exists` - (bool) Determines if a session exists for the current working directory
-- `vim.g.persisted_loaded_session` - (string) The name of the active session
-
 ## :page_with_curl: License
 
 [MIT](https://github.com/olimorris/persisted.nvim/blob/main/LICENSE)

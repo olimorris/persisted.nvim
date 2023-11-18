@@ -100,7 +100,8 @@ The layout can then be customised from within Telescope:
 
 USAGE                                                   *persisted.nvim-usage*
 
-**Default commands**
+
+COMMANDS ~
 
 The plugin comes with a number of commands:
 
@@ -114,7 +115,8 @@ The plugin comes with a number of commands:
 - `:SessionLoadFromFile` - Load a session from a given path
 - `:SessionDelete` - Delete the current session
 
-**Telescope**
+
+TELESCOPE EXTENSION ~
 
 The Telescope extension may be opened via `:Telescope persisted`.
 
@@ -124,13 +126,15 @@ Once opened, the available keymaps are:
 - `<CR>` - Source the session file
 - `<C-d>` - Delete the session file
 
-**Global variables**
+
+GLOBAL VARIABLES ~
 
 The plugin sets global variables which can be utilised in your configuration:
 
 
-- `vim.g.persisting` - This is set to `true` when a session is started and `false` when a session is stopped
-- `vim.g.persisted_loaded_session` - The file path to the currently loaded session
+- `vim.g.persisting` - (bool) Determines if the plugin is active for the current session
+- `vim.g.persisted_exists` - (bool) Determines if a session exists for the current working directory
+- `vim.g.persisted_loaded_session` - (string) The file path to the current session
 
 
 CONFIGURATION                                   *persisted.nvim-configuration*
