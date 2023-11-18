@@ -25,6 +25,7 @@ local function ignore_dir()
   if ignored_dirs == nil then
     return false
   end
+
   return utils.dirs_match(vim.fn.getcwd(), ignored_dirs)
 end
 
@@ -35,6 +36,7 @@ local function get_last()
   table.sort(sessions, function(a, b)
     return vim.loop.fs_stat(a).mtime.sec > vim.loop.fs_stat(b).mtime.sec
   end)
+
   return sessions[1]
 end
 
@@ -164,17 +166,17 @@ function M.save(opt)
   opt = opt or {}
 
   if not opt.session then
-    -- Do not save the session if the user has manually stopped it, but if there's an override, then do it
-    if (vim.g.persisting == false or vim.g.persisting == nil) and not opt.override then
+    -- Do not save the session if the user has manually stopped it...unless it's forced
+    if (vim.g.persisting == false or vim.g.persisting == nil) and not opt.force then
       return
     end
 
-    -- Do not save the session if autosave is turned off...unless it's overriden
-    if not config.options.autosave and not opt.override then
+    -- Do not save the session if autosave is turned off...unless it's forced
+    if not config.options.autosave and not opt.force then
       return
     end
 
-    -- Do not save the session if the callback returns false
+    -- Do not save the session if the callback returns false...unless it's forced
     if type(config.options.should_autosave) == "function" and not config.options.should_autosave() then
       return
     end
