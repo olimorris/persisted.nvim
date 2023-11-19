@@ -6,6 +6,7 @@ local defaults = {
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
   branch_separator = "@@", -- string used to separate session directory name from branch name
   autosave = true, -- automatically save session files when exiting Neovim
+  autosave_when_session_exists = false, -- automatically save session files only when session exists
   should_autosave = nil, -- function to determine if a session should be autosaved (resolve to a boolean)
 
   autoload = false, -- automatically load the session for the cwd on Neovim startup

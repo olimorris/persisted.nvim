@@ -169,7 +169,14 @@ end
 function M.save(opt)
   opt = opt or {}
 
-  if not opt.session and not opt.force then
+  if opt.session then
+    write(opt.session)
+    return
+  end
+
+  local session = vim.g.persisted_branch_session or vim.g.persisting_session or get_current()
+
+  if not opt.force then
     -- Do not save the session if the user has manually stopped it...unless it's forced
     if (vim.g.persisting == false or vim.g.persisting == nil) then
       return
@@ -180,13 +187,16 @@ function M.save(opt)
       return
     end
 
+    if config.options.autosave_when_session_exists and vim.fn.filereadable(session) == 0 then
+      return
+    end
+
     -- Do not save the session if the callback returns false...unless it's forced
     if type(config.options.should_autosave) == "function" and not config.options.should_autosave() then
       return
     end
   end
 
-  local session = opt.session or (vim.g.persisted_branch_session or vim.g.persisting_session or get_current())
   write(session)
 end
 

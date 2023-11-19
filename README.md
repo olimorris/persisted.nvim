@@ -144,6 +144,7 @@ require("persisted").setup({
   use_git_branch = false, -- create session files based on the branch of the git enabled repository
   autosave = true, -- automatically save session files when exiting Neovim
   should_autosave = nil, -- function to determine if a session should be autosaved
+  autosave_when_session_exists = false, -- automatically save session files only when session exists
   autoload = false, -- automatically load the session for the cwd on Neovim startup
   on_autoload_no_session = nil, -- function to run when `autoload = true` but there is no session to load
   follow_cwd = true, -- change session file name to match current working directory if it changes
@@ -199,6 +200,14 @@ require("persisted").setup({
 ```
 
 Autosaving can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
+
+If you only want to autosave your manually saved sessions:
+
+```lua
+require("persisted").setup({
+  autosave_when_session_exists = true,
+})
+```
 
 There may be occasions when you do not wish to autosave; perhaps when a dashboard or a certain buftype is present. To control this, a callback function, `should_autosave`, may be used which should return a boolean value.
 
