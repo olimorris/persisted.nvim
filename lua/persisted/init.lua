@@ -165,14 +165,14 @@ end
 function M.save(opt)
   opt = opt or {}
 
-  if not opt.session then
+  if not opt.session and not opt.force then
     -- Do not save the session if the user has manually stopped it...unless it's forced
-    if (vim.g.persisting == false or vim.g.persisting == nil) and not opt.force then
+    if (vim.g.persisting == false or vim.g.persisting == nil) then
       return
     end
 
     -- Do not save the session if autosave is turned off...unless it's forced
-    if not config.options.autosave and not opt.force then
+    if not config.options.autosave then
       return
     end
 
