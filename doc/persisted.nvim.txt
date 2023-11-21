@@ -12,7 +12,6 @@ Table of Contents                           *persisted.nvim-table-of-contents*
 
 FEATURES                                             *persisted.nvim-features*
 
-
 - Automatically saves the active session under `.local/share/nvim/sessions` on exiting Neovim
 - Supports sessions across multiple git branches
 - Supports autosaving and autoloading of sessions with allowed/ignored directories
@@ -22,7 +21,6 @@ FEATURES                                             *persisted.nvim-features*
 
 
 REQUIREMENTS                                     *persisted.nvim-requirements*
-
 
 - Neovim >= 0.8.0
 
@@ -105,7 +103,6 @@ COMMANDS ~
 
 The plugin comes with a number of commands:
 
-
 - `:SessionToggle` - Determines whether to load, start or stop a session
 - `:SessionStart` - Start recording a session. Useful if `autosave = false`
 - `:SessionStop` - Stop recording a session
@@ -122,7 +119,6 @@ The Telescope extension may be opened via `:Telescope persisted`.
 
 Once opened, the available keymaps are:
 
-
 - `<CR>` - Source the session file
 - `<C-d>` - Delete the session file
 
@@ -130,7 +126,6 @@ Once opened, the available keymaps are:
 GLOBAL VARIABLES ~
 
 The plugin sets global variables which can be utilised in your configuration:
-
 
 - `vim.g.persisting` - (bool) Determines if the plugin is active for the current session
 - `vim.g.persisted_exists` - (bool) Determines if a session exists for the current working directory
@@ -167,7 +162,7 @@ WHAT IS SAVED IN THE SESSION? ~
 
 As the plugin uses Vim’s `:mksession` command then you may change the
 `vim.o.sessionoptions` value to determine what to write into the session.
-Please see `:h sessionoptions` for more information.
+Please see |sessionoptions| for more information.
 
 
   **Note**The author uses: `vim.o.sessionoptions =
@@ -333,12 +328,30 @@ autosave and autoload from. For example:
 Specifying `~/.config` will prevent any autosaving and autoloading from that
 directory as well as all its sub-directories.
 
+You can also specify exact directory matches to ignore. In this case, unlike
+the default behavior which ignores all children of the ignored directory, this
+will ignore only the specified child. For example:
+
+>lua
+    require("persisted").setup({
+      ignored_dirs = {
+        "~/.config",
+        "~/.local/nvim",
+        { "/", exact = true },
+        { "/tmp", exact = true }
+      },
+    })
+<
+
+In this setup, `~/.config` and `~/.local/nvim` are still going to behave in
+their default setting (ignoring all listed directory and its children), however
+`/` and `/tmp` will only ignore those directories exactly.
+
 
 EVENTS / CALLBACKS ~
 
 The plugin fires events at various points during its lifecycle which users can
 hook into:
-
 
 - `PersistedLoadPre` - For _before_ a session is loaded
 - `PersistedLoadPost` - For _after_ a session is loaded

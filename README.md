@@ -289,6 +289,21 @@ require("persisted").setup({
 
 Specifying `~/.config` will prevent any autosaving and autoloading from that directory as well as all its sub-directories.
 
+You can also specify exact directory matches to ignore. In this case, unlike the default behavior which ignores all children of the ignored directory, this will ignore only the specified child. For example:
+
+```lua
+require("persisted").setup({
+  ignored_dirs = {
+    "~/.config",
+    "~/.local/nvim",
+    { "/", exact = true },
+    { "/tmp", exact = true }
+  },
+})
+```
+
+In this setup, `~/.config` and `~/.local/nvim` are still going to behave in their default setting (ignoring all listed directory and its children), however `/` and `/tmp` will only ignore those directories exactly.
+
 ### Events / Callbacks
 
 The plugin fires events at various points during its lifecycle which users can hook into:
