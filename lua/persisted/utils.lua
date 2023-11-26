@@ -1,5 +1,7 @@
 local M = {}
 local e = vim.fn.fnameescape
+local fp_sep = vim.loop.os_uname().sysname:lower():match('windows') and '\\' or '/' -- \ for windows, mac and linux both use \
+
 
 ---Print an error message
 --@param msg string
@@ -44,9 +46,22 @@ end
 function M.dirs_match(dir, dirs_table)
   dir = vim.fn.expand(dir)
   return dirs_table
-    and next(vim.tbl_filter(function(pattern)
-      return dir:find(escape_pattern(vim.fn.expand(pattern)))
-    end, dirs_table))
+    and next(vim.tbl_filter(
+      function(pattern)
+        if pattern.exact then
+          -- The pattern is actually a table
+          pattern = pattern[1]
+          -- Stripping off the trailing backslash that a user might put here,
+          -- but only if we aren't looking at the root directory
+          if pattern:sub(-1) == fp_sep and pattern:len() > 1 then
+            pattern = pattern:sub(1, -2)
+          end
+          return dir == pattern
+        else
+          return dir:find(escape_pattern(vim.fn.expand(pattern)))
+        end
+      end,
+    dirs_table))
 end
 
 ---Get the directory pattern based on OS
