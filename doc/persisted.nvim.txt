@@ -42,7 +42,7 @@ Install the plugin with your preferred package manager:
 <
 
 
-  **Note:** The `lazy = true` option may be useful if you use a dashboard
+  **Note**The `lazy = true` option may be useful if you use a dashboard
 **Packer**
 
 >lua
@@ -151,7 +151,8 @@ The plugin comes with the following defaults:
     require("persisted").setup({
       save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
       silent = false, -- silent nvim message when sourcing session file
-      use_git_branch = false, -- create session files based on the branch of the git enabled repository
+      use_git_branch = false, -- create session files based on the branch of a git enabled repository
+      default_branch = "main", -- the branch to load if a session file is not found for the current branch
       autosave = true, -- automatically save session files when exiting Neovim
       should_autosave = nil, -- function to determine if a session should be autosaved
       autoload = false, -- automatically load the session for the cwd on Neovim startup
@@ -159,8 +160,8 @@ The plugin comes with the following defaults:
       follow_cwd = true, -- change session file name to match current working directory if it changes
       allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
       ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
-      telescope = { -- options for the telescope extension
-        reset_prompt_after_deletion = true, -- whether to reset prompt after session deleted
+      telescope = {
+        reset_prompt = true, -- Reset prompt after a telescope action?
       },
     })
 <
@@ -202,10 +203,11 @@ files for a given project, by using git branches. To enable git branching:
     })
 <
 
-If you switch branches in a repository, the plugin will try to load a session
-which corresponds to that branch. If it can’t find one, then it will load the
-session from the `main` branch.
 
+  **Note**If you initiate git in a repository which has an existing session file,
+  you’ll need to add it’s branch name to the session name. To do this from
+  within Neovim, use the `:Sessions` command, navigate to the session and press
+  `<C-a>`.
 
 AUTOSAVING ~
 

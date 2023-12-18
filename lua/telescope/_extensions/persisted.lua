@@ -26,8 +26,12 @@ local function search_sessions(opts)
           })
         end
 
+        _actions.add_branch:enhance({ post = refresh_sessions })
         _actions.delete_session:enhance({ post = refresh_sessions })
 
+        map("i", "<c-a>", function()
+          return _actions.add_branch(config)
+        end)
         map("i", "<c-d>", _actions.delete_session)
 
         actions.select_default:replace(function()
