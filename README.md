@@ -47,6 +47,8 @@ Install the plugin with your preferred package manager:
 }
 ```
 
+> **Note**: The `lazy = true` option may be useful if you use a dashboard
+
 **[Packer](https://github.com/wbthomason/packer.nvim)**
 
 ```lua
@@ -122,10 +124,11 @@ Once opened, the available keymaps are:
 
 - `<CR>` - Source the session file
 - `<C-d>` - Delete the session file
+- `<C-a>` - Add/update a git branch to the session file
 
 ### Global variables
 
-The plugin sets global variables which can be utilised in your configuration:
+The plugin sets a number of global variables throughout its lifecycle:
 
 - `vim.g.persisting` - (bool) Determines if the plugin is active for the current session
 - `vim.g.persisted_exists` - (bool) Determines if a session exists for the current working directory
@@ -141,7 +144,7 @@ The plugin comes with the following defaults:
 require("persisted").setup({
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
   silent = false, -- silent nvim message when sourcing session file
-  use_git_branch = false, -- create session files based on the branch of the git enabled repository
+  use_git_branch = false, -- create session files based on the branch of a git enabled repository
   autosave = true, -- automatically save session files when exiting Neovim
   should_autosave = nil, -- function to determine if a session should be autosaved
   autoload = false, -- automatically load the session for the cwd on Neovim startup
@@ -149,8 +152,8 @@ require("persisted").setup({
   follow_cwd = true, -- change session file name to match current working directory if it changes
   allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
   ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
-  telescope = { -- options for the telescope extension
-    reset_prompt_after_deletion = true, -- whether to reset prompt after session deleted
+  telescope = {
+    reset_prompt = true, -- Reset prompt after a telescope action?
   },
 })
 ```
@@ -241,7 +244,7 @@ require("persisted").setup({
 
 Autoloading can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
-> **Note**: Autoloading will not occur if a user opens Neovim with arguments. For example: `nvim some_file.rb`
+> **Note**: Autoloading will not occur if the plugin is lazy loaded or a user opens Neovim with arguments. For example: `nvim some_file.rb`
 
 ### Following current working directory
 
@@ -306,7 +309,7 @@ In this setup, `~/.config` and `~/.local/nvim` are still going to behave in thei
 
 ### Events / Callbacks
 
-The plugin fires events at various points during its lifecycle which users can hook into:
+The plugin fires events at various points during its lifecycle, which users can hook into:
 
 - `PersistedLoadPre` - For _before_ a session is loaded
 - `PersistedLoadPost` - For _after_ a session is loaded
