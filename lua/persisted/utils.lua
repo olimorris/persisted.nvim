@@ -86,6 +86,7 @@ function M.load_session(session, silent)
     return echoerr("Error loading the session! ", result)
   end
 
+  vim.g.persisted_exists = true
   vim.g.persisted_loaded_session = session
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedLoadPost", data = session })
 end

@@ -89,10 +89,6 @@ end
 function M.setup(opts)
   config.setup(opts)
 
-  if M.session_exists() then
-    vim.g.persisted_exists = true
-  end
-
   if
     config.options.autosave
     and (allow_dir() and not ignore_dir() and vim.g.persisting == nil)
