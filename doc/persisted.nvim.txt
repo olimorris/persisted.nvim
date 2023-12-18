@@ -12,6 +12,7 @@ Table of Contents                           *persisted.nvim-table-of-contents*
 
 FEATURES                                             *persisted.nvim-features*
 
+
 - Automatically saves the active session under `.local/share/nvim/sessions` on exiting Neovim
 - Supports sessions across multiple git branches
 - Supports autosaving and autoloading of sessions with allowed/ignored directories
@@ -21,6 +22,7 @@ FEATURES                                             *persisted.nvim-features*
 
 
 REQUIREMENTS                                     *persisted.nvim-requirements*
+
 
 - Neovim >= 0.8.0
 
@@ -39,6 +41,8 @@ Install the plugin with your preferred package manager:
     }
 <
 
+
+  **Note:** The `lazy = true` option may be useful if you use a dashboard
 **Packer**
 
 >lua
@@ -103,6 +107,7 @@ COMMANDS ~
 
 The plugin comes with a number of commands:
 
+
 - `:SessionToggle` - Determines whether to load, start or stop a session
 - `:SessionStart` - Start recording a session. Useful if `autosave = false`
 - `:SessionStop` - Stop recording a session
@@ -119,13 +124,16 @@ The Telescope extension may be opened via `:Telescope persisted`.
 
 Once opened, the available keymaps are:
 
+
 - `<CR>` - Source the session file
 - `<C-d>` - Delete the session file
+- `<C-a>` - Add/update a git branch to the session file
 
 
 GLOBAL VARIABLES ~
 
-The plugin sets global variables which can be utilised in your configuration:
+The plugin sets a number of global variables throughout its lifecycle:
+
 
 - `vim.g.persisting` - (bool) Determines if the plugin is active for the current session
 - `vim.g.persisted_exists` - (bool) Determines if a session exists for the current working directory
@@ -162,7 +170,7 @@ WHAT IS SAVED IN THE SESSION? ~
 
 As the plugin uses Vim’s `:mksession` command then you may change the
 `vim.o.sessionoptions` value to determine what to write into the session.
-Please see |sessionoptions| for more information.
+Please see `:h sessionoptions` for more information.
 
 
   **Note**The author uses: `vim.o.sessionoptions =
@@ -194,9 +202,6 @@ files for a given project, by using git branches. To enable git branching:
     })
 <
 
-
-  **Note**If git branching is enabled on a non git enabled repo, then `main` will
-  be used as the default branch
 If you switch branches in a repository, the plugin will try to load a session
 which corresponds to that branch. If it can’t find one, then it will load the
 session from the `main` branch.
@@ -266,8 +271,8 @@ Autoloading can be further controlled for certain directories by specifying
 `allowed_dirs` and `ignored_dirs`.
 
 
-  **Note**Autoloading will not occur if a user opens Neovim with arguments. For
-  example: `nvim some_file.rb`
+  **Note**Autoloading will not occur if the plugin is lazy loaded or a user opens
+  Neovim with arguments. For example: `nvim some_file.rb`
 
 FOLLOWING CURRENT WORKING DIRECTORY ~
 
@@ -350,8 +355,9 @@ their default setting (ignoring all listed directory and its children), however
 
 EVENTS / CALLBACKS ~
 
-The plugin fires events at various points during its lifecycle which users can
+The plugin fires events at various points during its lifecycle, which users can
 hook into:
+
 
 - `PersistedLoadPre` - For _before_ a session is loaded
 - `PersistedLoadPost` - For _after_ a session is loaded

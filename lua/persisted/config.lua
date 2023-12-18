@@ -15,8 +15,8 @@ local defaults = {
   allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
   ignored_dirs = nil, -- table of dirs that are ignored for auto-saving and auto-loading
 
-  telescope = { -- options for the telescope extension
-    reset_prompt_after_deletion = true, -- whether to reset prompt after session deleted
+  telescope = {
+    reset_prompt = true, -- Reset prompt after a telescope action?
   },
 }
 
