@@ -144,6 +144,7 @@ require("persisted").setup({
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
   silent = false, -- silent nvim message when sourcing session file
   use_git_branch = false, -- create session files based on the branch of a git enabled repository
+  default_branch = "main", -- the branch to load if a session file is not found for the current branch
   autosave = true, -- automatically save session files when exiting Neovim
   should_autosave = nil, -- function to determine if a session should be autosaved
   autoload = false, -- automatically load the session for the cwd on Neovim startup
@@ -186,9 +187,7 @@ require("persisted").setup({
 })
 ```
 
-> **Note**: If git branching is enabled on a non git enabled repo, then `main` will be used as the default branch
-
-If you switch branches in a repository, the plugin will try to load a session which corresponds to that branch. If it can't find one, then it will load the session from the `main` branch.
+> **Note**: If you initiate git in a repository which has an existing session file, you'll need to add it's branch name to the session name. To do this from within Neovim, use the `:Sessions` command, navigate to the session and press `<C-a>`.
 
 ### Autosaving
 

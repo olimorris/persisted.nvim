@@ -3,8 +3,11 @@ local M = {}
 local defaults = {
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
   silent = false, -- silent nvim message when sourcing session file
-  use_git_branch = false, -- create session files based on the branch of the git enabled repository
+
+  use_git_branch = false, -- create session files based on the branch of a git enabled repository
   branch_separator = "@@", -- string used to separate session directory name from branch name
+  default_branch = "main", -- the branch to load if a session file is not found for the current branch
+
   autosave = true, -- automatically save session files when exiting Neovim
   should_autosave = nil, -- function to determine if a session should be autosaved (resolve to a boolean)
 
@@ -17,6 +20,7 @@ local defaults = {
 
   telescope = {
     reset_prompt = true, -- Reset prompt after a telescope action?
+    --TODO: We should add a deprecation notice for the old API here
   },
 }
 

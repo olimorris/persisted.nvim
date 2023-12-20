@@ -120,14 +120,14 @@ The plugin comes with a number of commands:
 
 TELESCOPE EXTENSION ~
 
-The Telescope extension may be opened via `:Telescope persisted`.
+The Telescope extension may be opened via `:Telescope persisted`. The available
+actions are:
 
-Once opened, the available keymaps are:
 
-
-- `<CR>` - Source the session file
+- `<CR>` - Open/source the session file
+- `<C-b>` - Add/update the git branch for the session file
+- `<C-c>` - Copy the session file
 - `<C-d>` - Delete the session file
-- `<C-a>` - Add/update a git branch to the session file
 
 
 GLOBAL VARIABLES ~
@@ -161,7 +161,7 @@ The plugin comes with the following defaults:
       allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
       ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
       telescope = {
-        reset_prompt = true, -- Reset prompt after a telescope action?
+        reset_prompt = true, -- Reset the Telescope prompt after an action?
       },
     })
 <
