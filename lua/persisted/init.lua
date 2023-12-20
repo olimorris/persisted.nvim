@@ -115,15 +115,14 @@ function M.session_exists()
 end
 
 ---Checks if neovim was started with either zero arguments or a single argument
----which is a drectory. This is to prevent autoloading or starting sessions when
----using neovim to edit a single file.
----@return bool
+---which is a directory. This is to prevent autoloading or starting sessions
+---when using neovim to edit a single file.
+---@return boolean
 local function is_neovim_start_ok()
-  local start_ok = vim.fn.argc() == 0
   if vim.fn.argc() == 1 then
-    start_ok = vim.fn.isdirectory(vim.fn.argv(0))
+    return vim.fn.isdirectory(vim.fn.argv(0)) ~= 0
   end
-  return start_ok
+  return vim.fn.argc() == 0
 end
 
 ---Setup the plugin
