@@ -242,7 +242,7 @@ require("persisted").setup({
 
 Autoloading can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
-> **Note**: Autoloading will not occur if the plugin is lazy loaded or a user opens Neovim with arguments. For example: `nvim some_file.rb`
+> **Note**: Autoloading will not occur if the plugin is lazy loaded or a user opens Neovim with arguments other than a single directory argument. For example: `nvim some_file.rb` will not not result in autoloading but `nvim some/existing/path` or `nvim .` will.
 
 ### Following current working directory
 
