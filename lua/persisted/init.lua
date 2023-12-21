@@ -270,14 +270,16 @@ function M.delete(dir)
   local session = get_current(dir)
 
   if session and vim.loop.fs_stat(session) ~= 0 then
-    vim.api.nvim_exec_autocmds("User", { pattern = "PersistedDeletePre", data = { name = session } })
+    local session_data = utils.make_session_data(session)
+
+    vim.api.nvim_exec_autocmds("User", { pattern = "PersistedDeletePre", data = session_data })
 
     vim.schedule(function()
       M.stop()
       vim.fn.system("rm " .. e(session))
     end)
 
-    vim.api.nvim_exec_autocmds("User", { pattern = "PersistedDeletePost", data = { name = session } })
+    vim.api.nvim_exec_autocmds("User", { pattern = "PersistedDeletePost", data = session_data })
   end
 end
 
@@ -291,9 +293,11 @@ function M.toggle(dir)
   if vim.g.persisting == nil then
     return M.load({}, dir)
   end
+
   if vim.g.persisting then
     return M.stop()
   end
+
   return M.start()
 end
 
