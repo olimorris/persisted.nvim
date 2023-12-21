@@ -20,14 +20,14 @@ local function escape_pattern(str, pattern, replace, n)
 end
 
 ---Gets the directory from the file/path argument passed to Neovim if there's
----exactly one and it resolves to an valid directory
+---exactly one and it resolves to a valid directory
 ---@return string|nil
 local function args_path()
   if vim.fn.argc() ~= 1 then
     return nil
   end
 
-  -- Use expand() to resolve `~`and use fs_realpath to resolve both '.' and
+  -- Use expand() to resolve '~' and use fs_realpath to resolve both '.' and
   -- relative paths passed as arguments. Note that argv() will only ever return
   -- paths/files passed as arguments and does not include other
   -- parameters/arguments. fs_realpath() returns nil if the path doesn't exist.
