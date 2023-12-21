@@ -161,7 +161,7 @@ end
 
 ---Load a session
 ---@param opt? table
----@param dir string Directory to be used for the session
+---@param dir? string Directory to be used for the session
 ---@return nil
 function M.load(opt, dir)
   opt = opt or {}
