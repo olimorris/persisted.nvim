@@ -19,32 +19,37 @@ local function escape_pattern(str, pattern, replace, n)
   return string.gsub(str, pattern, replace, n)
 end
 
+---Gets the directory from the file/path argument passed to Neovim if there's
+---exactly one and it resolves to an valid directory
+---@return string|nil
+local function args_path()
+  if vim.fn.argc() ~= 1 then
+    return nil
+  end
+
+  -- Use expand() to resolve `~`and use fs_realpath to resolve both '.' and
+  -- relative paths passed as arguments. Note that argv() will only ever return
+  -- paths/files passed as arguments and does not include other
+  -- parameters/arguments.
+  local dir = vim.loop.fs_realpath(vim.fn.expand(vim.fn.argv(0)))
+  if dir ~= nil and vim.fn.isdirectory(dir) ~= 0 then
+    return dir
+  end
+  return nil
+end
+
 ---Check any arguments passed to Neovim and verify if they're a directory
 ---@return boolean
 local function args_check()
-  if vim.fn.argc() == 1 then
-    return vim.fn.isdirectory(vim.fn.argv(0)) ~= 0
-  end
-
-  return vim.fn.argc() == 0
+  -- Args are valid if a single directory was resolved or if no args were used.
+  return args_path() ~= nil or vim.fn.argc() == 0
 end
 
 ---Get the directory to be used for the session
 ---@return string
 local function session_dir()
-  if vim.fn.argc() == 1 then
-    local dir = vim.fn.expand(vim.fn.argv(0))
-
-    if dir == "." then
-      return vim.fn.getcwd()
-    end
-
-    if vim.fn.isdirectory(dir) ~= 0 then
-      return dir
-    end
-  end
-
-  return vim.fn.getcwd()
+  -- Use specified directory from arguments or the working directory otherwise.
+  return args_path() or vim.fn.getcwd()
 end
 
 ---Does the current working directory allow for the auto-saving and loading?
@@ -92,12 +97,12 @@ function M.get_branch(dir)
   dir = dir or session_dir()
 
   if config.options.use_git_branch then
-    vim.fn.system("git -C " .. dir .. " rev-parse 2>/dev/null")
+    vim.fn.system("git -C \"" .. dir .. "\" rev-parse 2>/dev/null")
 
     local git_enabled = (vim.v.shell_error == 0)
 
     if git_enabled then
-      local git_branch = vim.fn.systemlist("git -C " .. dir .. " rev-parse --abbrev-ref HEAD 2>/dev/null")
+      local git_branch = vim.fn.systemlist("git -C \"" .. dir .. "\" rev-parse --abbrev-ref HEAD 2>/dev/null")
 
       if vim.v.shell_error == 0 then
         local branch = config.options.branch_separator .. git_branch[1]:gsub("/", "%%")
