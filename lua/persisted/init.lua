@@ -30,12 +30,8 @@ local function args_path()
   -- Use expand() to resolve `~`and use fs_realpath to resolve both '.' and
   -- relative paths passed as arguments. Note that argv() will only ever return
   -- paths/files passed as arguments and does not include other
-  -- parameters/arguments.
-  local dir = vim.loop.fs_realpath(vim.fn.expand(vim.fn.argv(0)))
-  if dir ~= nil and vim.fn.isdirectory(dir) ~= 0 then
-    return dir
-  end
-  return nil
+  -- parameters/arguments. fs_realpath() returns nil if the path doesn't exist.
+  return vim.loop.fs_realpath(vim.fn.expand(vim.fn.argv(0)))
 end
 
 ---Check any arguments passed to Neovim and verify if they're a directory
