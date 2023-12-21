@@ -15,19 +15,19 @@
 
 <p align="center">
 <b>Persisted.nvim</b> is a simple lua plugin for working with sessions in Neovim<br>
-Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim</a> as active development had stopped
+(Forked from <a href="https://github.com/folke/persistence.nvim">Persistence.nvim</a>)
 </p>
 
 <!-- panvimdoc-ignore-end -->
 
 ## :sparkles: Features
 
-- Automatically saves the active session under `.local/share/nvim/sessions` on exiting Neovim
-- Supports sessions across multiple git branches
-- Supports autosaving and autoloading of sessions with allowed/ignored directories
-- Simple API to save/stop/restore/delete/list the current session(s)
-- Custom events which users can hook into for greater integration
-- Telescope extension to work with saved sessions
+- :evergreen_tree: Supports sessions across multiple git branches
+- :telescope: Telescope extension to work with saved sessions
+- :tickets: Custom events which users can hook into for tighter integration
+- :memo: Simple API to save/stop/restore/delete/list the current session(s)
+- :open_file_folder: Supports autosaving and autoloading of sessions with allowed/ignored directories
+- :floppy_disk: Automatically saves the active session under `.local/share/nvim/sessions` on exiting Neovim
 
 ## :zap: Requirements
 
