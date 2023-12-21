@@ -121,7 +121,7 @@ The plugin comes with a number of commands:
 <!-- panvimdoc-ignore-start -->
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/9512444/177375482-3bc9bd0d-42c8-4755-a36c-08ea5f954525.png" alt="Telescope">
+<img src="https://github.com/olimorris/persisted.nvim/assets/9512444/5bfd6f94-ff70-4f2b-9193-53cdf7140d75" alt="Telescope">
 </p>
 
 <!-- panvimdoc-ignore-end -->
