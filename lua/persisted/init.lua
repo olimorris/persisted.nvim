@@ -113,6 +113,15 @@ function M.get_branch(dir)
         if vim.fn.filereadable(branch_session) ~= 0 then
           return branch
         else
+          vim.api.nvim_echo({
+            { "[Persisted.nvim]\n", "Question" },
+            { "Could not load a session for branch " },
+            { git_branch[1] .. "\n", "WarningMsg" },
+            { "Trying to load a session for branch " },
+            { config.options.default_branch, "Title" },
+            { " ..." },
+          }, true, {})
+
           vim.g.persisted_branch_session = branch_session
           return config.options.branch_separator .. config.options.default_branch
         end
@@ -175,17 +184,6 @@ function M.load(opt, dir)
     elseif type(config.options.on_autoload_no_session) == "function" then
       config.options.on_autoload_no_session()
     end
-  end
-
-  if session and not session_exists then
-    vim.api.nvim_echo({
-      { "[Persisted.nvim]\n", "Question" },
-      { "Could not find a session for " },
-      { vim.fn.getcwd() .. "\n", "WarningMsg" },
-      { "As per " },
-      { "https://github.com/olimorris/persisted.nvim/discussions/103", "WarningMsg" },
-      { " you may need to remove the branch from the name" },
-    }, true, {})
   end
 
   if config.options.autosave and (allow_dir(dir) and not ignore_dir(dir)) then
