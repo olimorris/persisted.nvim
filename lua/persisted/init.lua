@@ -98,12 +98,12 @@ function M.get_branch(dir)
   dir = dir or session_dir()
 
   if config.options.use_git_branch then
-    vim.fn.system("git -C \"" .. dir .. "\" rev-parse 2>/dev/null")
+    vim.fn.system('git -C "' .. dir .. '" rev-parse 2>/dev/null')
 
     local git_enabled = (vim.v.shell_error == 0)
 
     if git_enabled then
-      local git_branch = vim.fn.systemlist("git -C \"" .. dir .. "\" rev-parse --abbrev-ref HEAD 2>/dev/null")
+      local git_branch = vim.fn.systemlist('git -C "' .. dir .. '" rev-parse --abbrev-ref HEAD 2>/dev/null')
 
       if vim.v.shell_error == 0 then
         local branch = config.options.branch_separator .. git_branch[1]:gsub("/", "%%")
@@ -113,15 +113,6 @@ function M.get_branch(dir)
         if vim.fn.filereadable(branch_session) ~= 0 then
           return branch
         else
-          vim.api.nvim_echo({
-            { "[Persisted.nvim]\n", "Question" },
-            { "Could not load a session for branch " },
-            { git_branch[1] .. "\n", "WarningMsg" },
-            { "Trying to load a session for branch " },
-            { config.options.default_branch, "Title" },
-            { " ..." },
-          }, true, {})
-
           vim.g.persisted_branch_session = branch_session
           return config.options.branch_separator .. config.options.default_branch
         end
@@ -294,6 +285,7 @@ end
 ---@return nil
 function M.toggle(dir)
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedToggled" })
+
   dir = dir or session_dir()
 
   if vim.g.persisting == nil then
