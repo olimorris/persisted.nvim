@@ -8,7 +8,7 @@ local fp_sep = vim.loop.os_uname().sysname:lower():match("windows") and "\\" or 
 --@return string
 local function echoerr(msg, error)
   vim.api.nvim_echo({
-    { "[persisted.nvim]: ", "ErrorMsg" },
+    { "[Persisted.nvim]: ", "ErrorMsg" },
     { msg, "WarningMsg" },
     { error, "Normal" },
   }, true, {})
