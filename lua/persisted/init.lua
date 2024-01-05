@@ -113,8 +113,14 @@ function M.get_branch(dir)
         if vim.fn.filereadable(branch_session) ~= 0 then
           return branch
         else
-          vim.notify(string.format('[Persisted.nvim]: Trying to load a session for branch %s', config.options.default_branch), vim.log.levels.INFO)
-          vim.notify(string.format('[Persisted.nvim]: Could not load a session for branch %s.', git_branch[1]), vim.log.levels.WARN)
+          vim.notify(
+            string.format("[Persisted.nvim]: Trying to load a session for branch %s", config.options.default_branch),
+            vim.log.levels.INFO
+          )
+          vim.notify(
+            string.format("[Persisted.nvim]: Could not load a session for branch %s.", git_branch[1]),
+            vim.log.levels.WARN
+          )
           vim.g.persisted_branch_session = branch_session
           return config.options.branch_separator .. config.options.default_branch
         end

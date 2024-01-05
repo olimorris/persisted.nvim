@@ -12,7 +12,6 @@ Table of Contents                           *persisted.nvim-table-of-contents*
 
 FEATURES                                             *persisted.nvim-features*
 
-
 - Supports sessions across multiple git branches
 - Telescope extension to work with saved sessions
 - Custom events which users can hook into for tighter integration
@@ -22,7 +21,6 @@ FEATURES                                             *persisted.nvim-features*
 
 
 REQUIREMENTS                                     *persisted.nvim-requirements*
-
 
 - Neovim >= 0.8.0
 
@@ -60,7 +58,7 @@ Install the plugin with your preferred package manager:
 >vim
     " Vim Script
     Plug 'olimorris/persisted.nvim'
-
+    
     lua << EOF
       require("persisted").setup {
         -- your configuration comes here
@@ -107,7 +105,6 @@ COMMANDS ~
 
 The plugin comes with a number of commands:
 
-
 - `:SessionToggle` - Determines whether to load, start or stop a session
 - `:SessionStart` - Start recording a session. Useful if `autosave = false`
 - `:SessionStop` - Stop recording a session
@@ -123,7 +120,6 @@ TELESCOPE EXTENSION ~
 The Telescope extension may be opened via `:Telescope persisted`. The available
 actions are:
 
-
 - `<CR>` - Open/source the session file
 - `<C-b>` - Add/update the git branch for the session file
 - `<C-c>` - Copy the session file
@@ -133,7 +129,6 @@ actions are:
 GLOBAL VARIABLES ~
 
 The plugin sets a number of global variables throughout its lifecycle:
-
 
 - `vim.g.persisting` - (bool) Determines if the plugin is active for the current session
 - `vim.g.persisted_exists` - (bool) Determines if a session exists for the current working directory
@@ -171,7 +166,7 @@ WHAT IS SAVED IN THE SESSION? ~
 
 As the plugin uses Vim’s `:mksession` command then you may change the
 `vim.o.sessionoptions` value to determine what to write into the session.
-Please see `:h sessionoptions` for more information.
+Please see |sessionoptions| for more information.
 
 
   **Note**The author uses: `vim.o.sessionoptions =
@@ -356,7 +351,6 @@ EVENTS / CALLBACKS ~
 
 The plugin fires events at various points during its lifecycle:
 
-
 - `PersistedLoadPre` - For _before_ a session is loaded
 - `PersistedLoadPost` - For _after_ a session is loaded
 - `PersistedTelescopeLoadPre` - For _before_ a session is loaded via Telescope
@@ -379,14 +373,14 @@ session, saving the current session before clearing all of the open buffers:
 
 >lua
     local group = vim.api.nvim_create_augroup("PersistedHooks", {})
-
+    
     vim.api.nvim_create_autocmd({ "User" }, {
       pattern = "PersistedTelescopeLoadPre",
       group = group,
       callback = function(session)
         -- Save the currently loaded session using a global variable
         require("persisted").save({ session = vim.g.persisted_loaded_session })
-
+    
         -- Delete all of the open buffers
         vim.api.nvim_input("<ESC>:%bd!<CR>")
       end,
