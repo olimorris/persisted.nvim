@@ -12,6 +12,7 @@ Table of Contents                           *persisted.nvim-table-of-contents*
 
 FEATURES                                             *persisted.nvim-features*
 
+
 - Supports sessions across multiple git branches
 - Telescope extension to work with saved sessions
 - Custom events which users can hook into for tighter integration
@@ -21,6 +22,7 @@ FEATURES                                             *persisted.nvim-features*
 
 
 REQUIREMENTS                                     *persisted.nvim-requirements*
+
 
 - Neovim >= 0.8.0
 
@@ -40,7 +42,7 @@ Install the plugin with your preferred package manager:
 <
 
 
-  **Note**The `lazy = true` option may be useful if you use a dashboard
+  [!NOTE] The `lazy = true` option may be useful if you use a dashboard
 **Packer**
 
 >lua
@@ -105,6 +107,7 @@ COMMANDS ~
 
 The plugin comes with a number of commands:
 
+
 - `:SessionToggle` - Determines whether to load, start or stop a session
 - `:SessionStart` - Start recording a session. Useful if `autosave = false`
 - `:SessionStop` - Stop recording a session
@@ -120,6 +123,7 @@ TELESCOPE EXTENSION ~
 The Telescope extension may be opened via `:Telescope persisted`. The available
 actions are:
 
+
 - `<CR>` - Open/source the session file
 - `<C-b>` - Add/update the git branch for the session file
 - `<C-c>` - Copy the session file
@@ -129,6 +133,7 @@ actions are:
 GLOBAL VARIABLES ~
 
 The plugin sets a number of global variables throughout its lifecycle:
+
 
 - `vim.g.persisting` - (bool) Determines if the plugin is active for the current session
 - `vim.g.persisted_exists` - (bool) Determines if a session exists for the current working directory
@@ -166,10 +171,10 @@ WHAT IS SAVED IN THE SESSION? ~
 
 As the plugin uses Vim’s `:mksession` command then you may change the
 `vim.o.sessionoptions` value to determine what to write into the session.
-Please see |sessionoptions| for more information.
+Please see `:h sessionoptions` for more information.
 
 
-  **Note**The author uses: `vim.o.sessionoptions =
+  [!NOTE] The author uses: `vim.o.sessionoptions =
   "buffers,curdir,folds,tabpages,winpos,winsize"`
 
 SESSION SAVE LOCATION ~
@@ -184,7 +189,7 @@ configuration option. For example:
 <
 
 
-  **Note**The plugin may be unable to find existing sessions if the `save_dir`
+  [!NOTE] The plugin may be unable to find existing sessions if the `save_dir`
   value is changed
 
 GIT BRANCHING ~
@@ -233,7 +238,7 @@ Of course, if you wish to manually save the session when autosaving is
 disabled, the `:SessionSave` command can be used.
 
 
-  **Note**If `autosave = false` then the `should_autosave` callback will not be
+  [!TIP] If `autosave = false` then the `should_autosave` callback will not be
   executed.
 
 AUTOLOADING ~
@@ -263,7 +268,7 @@ Autoloading can be further controlled for certain directories by specifying
 `allowed_dirs` and `ignored_dirs`.
 
 
-  **Note**Autoloading will not occur if the plugin is lazy loaded or a user opens
+  [!NOTE] Autoloading will not occur if the plugin is lazy loaded or a user opens
   Neovim with arguments other than a single directory argument. For example:
   `nvim some_file.rb` will not result in autoloading but `nvim
   some/existing/path` or `nvim .` will.
@@ -283,7 +288,7 @@ By default, the session name will match the current working directory:
 <
 
 
-  **Note**If `follow_cwd = false` the session name is stored upon loading under
+  [!NOTE] If `follow_cwd = false` the session name is stored upon loading under
   the global variable `vim.g.persisting_session`. This variable can be manually
   adjusted if changes to the session name are needed. Alternatively, if
   `follow_cwd = true` then `vim.g.persisting_session = nil`.
@@ -306,7 +311,7 @@ Specifying `~/Code` will autosave and autoload from that directory as well as
 all its sub-directories.
 
 
-  **Note**If `allowed_dirs` is left at its default value and `autosave` and/or
+  [!NOTE] If `allowed_dirs` is left at its default value and `autosave` and/or
   `autoload` are set to `true`, then the plugin will autoload/autosave from _any_
   directory
 
@@ -350,6 +355,7 @@ their default setting (ignoring all listed directory and its children), however
 EVENTS / CALLBACKS ~
 
 The plugin fires events at various points during its lifecycle:
+
 
 - `PersistedLoadPre` - For _before_ a session is loaded
 - `PersistedLoadPost` - For _after_ a session is loaded
@@ -415,7 +421,7 @@ To consume this data, use the `session.data` table in your autocmd:
 <
 
 
-  **Note**This data is available for the `PersistedLoad`, `PersistedDelete` and
+  [!NOTE] This data is available for the `PersistedLoad`, `PersistedDelete` and
   `PersistedTelescope` events
 
 LICENSE                                               *persisted.nvim-license*

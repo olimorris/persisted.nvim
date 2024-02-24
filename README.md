@@ -47,7 +47,8 @@ Install the plugin with your preferred package manager:
 }
 ```
 
-> **Note**: The `lazy = true` option may be useful if you use a dashboard
+> [!NOTE]
+> The `lazy = true` option may be useful if you use a dashboard
 
 **[Packer](https://github.com/wbthomason/packer.nvim)**
 
@@ -170,8 +171,8 @@ require("persisted").setup({
 
 As the plugin uses Vim's `:mksession` command then you may change the `vim.o.sessionoptions` value to determine what to write into the session. Please see `:h sessionoptions` for more information.
 
-> **Note**: The author uses:
-> `vim.o.sessionoptions = "buffers,curdir,folds,tabpages,winpos,winsize"`
+> [!NOTE]
+> The author uses: `vim.o.sessionoptions = "buffers,curdir,folds,tabpages,winpos,winsize"`
 
 ### Session save location
 
@@ -183,7 +184,8 @@ require("persisted").setup({
 })
 ```
 
-> **Note**: The plugin may be unable to find existing sessions if the `save_dir` value is changed
+> [!NOTE]
+> The plugin may be unable to find existing sessions if the `save_dir` value is changed
 
 ### Git branching
 
@@ -223,7 +225,8 @@ require("persisted").setup({
 
 Of course, if you wish to manually save the session when autosaving is disabled, the `:SessionSave` command can be used.
 
-> **Note**: If `autosave = false` then the `should_autosave` callback will not be executed.
+> [!TIP]
+> If `autosave = false` then the `should_autosave` callback will not be executed.
 
 ### Autoloading
 
@@ -248,7 +251,8 @@ require("persisted").setup({
 
 Autoloading can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
-> **Note**: Autoloading will not occur if the plugin is lazy loaded or a user opens Neovim with arguments other than a single directory argument. For example: `nvim some_file.rb` will not result in autoloading but `nvim some/existing/path` or `nvim .` will.
+> [!NOTE]
+> Autoloading will not occur if the plugin is lazy loaded or a user opens Neovim with arguments other than a single directory argument. For example: `nvim some_file.rb` will not result in autoloading but `nvim some/existing/path` or `nvim .` will.
 
 ### Following current working directory
 
@@ -262,7 +266,8 @@ require("persisted").setup({
 })
 ```
 
-> **Note**: If `follow_cwd = false` the session name is stored upon loading under the global variable `vim.g.persisting_session`. This variable can be manually adjusted if changes to the session name are needed. Alternatively, if `follow_cwd = true` then `vim.g.persisting_session = nil`.
+> [!NOTE]
+> If `follow_cwd = false` the session name is stored upon loading under the global variable `vim.g.persisting_session`. This variable can be manually adjusted if changes to the session name are needed. Alternatively, if `follow_cwd = true` then `vim.g.persisting_session = nil`.
 
 ### Allowed directories
 
@@ -279,7 +284,8 @@ require("persisted").setup({
 
 Specifying `~/Code` will autosave and autoload from that directory as well as all its sub-directories.
 
-> **Note**: If `allowed_dirs` is left at its default value and `autosave` and/or `autoload` are set to `true`, then the plugin will autoload/autosave from _any_ directory
+> [!NOTE]
+> If `allowed_dirs` is left at its default value and `autosave` and/or `autoload` are set to `true`, then the plugin will autoload/autosave from _any_ directory
 
 ### Ignored directories
 
@@ -373,7 +379,8 @@ vim.api.nvim_create_autocmd({ "User" }, {
 })
 ```
 
-> **Note**: This data is available for the `PersistedLoad`, `PersistedDelete` and `PersistedTelescope` events
+> [!NOTE]
+> This data is available for the `PersistedLoad`, `PersistedDelete` and `PersistedTelescope` events
 
 ## :page_with_curl: License
 
