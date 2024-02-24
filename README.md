@@ -225,7 +225,7 @@ require("persisted").setup({
 
 Of course, if you wish to manually save the session when autosaving is disabled, the `:SessionSave` command can be used.
 
-> [!TIP]
+> [!NOTE]
 > If `autosave = false` then the `should_autosave` callback will not be executed.
 
 ### Autoloading
