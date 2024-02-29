@@ -247,7 +247,7 @@ function M.save(opt, dir)
     end
 
     -- Do not save the session if the callback returns false...unless it's forced
-    if type(config.options.should_autosave) == "function" and not config.options.should_autosave() then
+    if not opt.force and type(config.options.should_autosave) == "function" and not config.options.should_autosave() then
       return
     end
   end
