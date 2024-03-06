@@ -21,6 +21,11 @@ local defaults = {
   telescope = {
     reset_prompt = true, -- Reset prompt after a telescope action?
     --TODO: We should add a deprecation notice for the old API here
+    mappings = {
+      change_branch = "<c-b>",
+      copy_session = "<c-c>",
+      delete_session = "<c-d>",
+    },
   },
 }
 

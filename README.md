@@ -163,6 +163,11 @@ require("persisted").setup({
   ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
   telescope = {
     reset_prompt = true, -- Reset the Telescope prompt after an action?
+    mappings = { -- table of mappings for the Telescope extension
+      change_branch = "<c-b>",
+      copy_session = "<c-c>",
+      delete_session = "<c-d>",
+    },
   },
 })
 ```

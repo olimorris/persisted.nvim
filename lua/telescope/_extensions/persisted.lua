@@ -30,13 +30,15 @@ local function search_sessions(opts)
         _actions.copy_session:enhance({ post = refresh_sessions })
         _actions.delete_session:enhance({ post = refresh_sessions })
 
-        map("i", "<c-b>", function()
+        local change_session_branch = function()
           return _actions.change_branch(config)
-        end)
-        map("i", "<c-c>", function()
+        end
+        local copy_session = function()
           return _actions.copy_session(config)
-        end)
-        map("i", "<c-d>", _actions.delete_session)
+        end
+        map("i", config.telescope.mappings.change_branch, change_session_branch)
+        map("i", config.telescope.mappings.copy_session, copy_session)
+        map("i", config.telescope.mappings.delete_session, _actions.delete_session)
 
         actions.select_default:replace(function()
           local session = action_state.get_selected_entry()
