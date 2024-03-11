@@ -17,6 +17,7 @@ local defaults = {
   follow_cwd = true, -- change session file name with changes in current working directory
   allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
   ignored_dirs = nil, -- table of dirs that are ignored for auto-saving and auto-loading
+  ignored_branches = nil, -- table of branch patterns that are ignored for auto-saving and auto-loading
 
   telescope = {
     reset_prompt = true, -- Reset prompt after a telescope action?

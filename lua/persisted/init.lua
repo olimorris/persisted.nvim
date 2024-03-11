@@ -79,6 +79,19 @@ local function ignore_dir(dir)
   return utils.dirs_match(dir, ignored_dirs)
 end
 
+---Is the current branch ignored for auto-saving and loading?
+---@param dir string Branch to be used for the session
+---@return boolean
+local function ignore_branch(branch)
+  local ignored_branches = config.options.ignored_branches
+
+  if ignored_branches == nil then
+    return false
+  end
+
+  return utils.table_match(branch, ignored_branches) ~= nil
+end
+
 ---Get the session that was saved last
 ---@return string
 local function get_last()
@@ -89,6 +102,24 @@ local function get_last()
   end)
 
   return sessions[1]
+end
+
+
+---Get the current Git branch name, untouched
+---@param dir? string Directory to be used for the session
+---@return string|nil
+local function get_branchname(dir)
+  dir = dir or session_dir()
+  vim.fn.system('git -C "' .. dir .. '" rev-parse 2>/dev/null')
+
+  local git_enabled = (vim.v.shell_error == 0)
+
+  if git_enabled then
+    local git_branch = vim.fn.systemlist('git -C "' .. dir .. '" rev-parse --abbrev-ref HEAD 2>/dev/null')
+    return git_branch[1]
+  end
+
+  return nil
 end
 
 ---Get the current Git branch
@@ -154,10 +185,12 @@ end
 function M.setup(opts)
   config.setup(opts)
   local dir = session_dir()
+  local branch = get_branchname()
 
   if
     config.options.autosave
     and (allow_dir(dir) and not ignore_dir(dir) and vim.g.persisting == nil)
+    and not ignore_branch(branch)
     and args_check()
   then
     M.start()
@@ -171,6 +204,7 @@ end
 function M.load(opt, dir)
   opt = opt or {}
   dir = dir or session_dir()
+  local branch = get_branchname()
 
   local session = opt.session or (opt.last and get_last() or get_current(dir))
 
@@ -185,7 +219,11 @@ function M.load(opt, dir)
     end
   end
 
-  if config.options.autosave and (allow_dir(dir) and not ignore_dir(dir)) then
+  if
+    config.options.autosave
+    and (allow_dir(dir) and not ignore_dir(dir))
+    and not ignore_branch(branch)
+  then
     M.start()
   end
 end
@@ -194,9 +232,10 @@ end
 ---@return nil
 function M.autoload()
   local dir = session_dir()
+  local branch = get_branchname()
 
   if config.options.autoload and args_check() then
-    if allow_dir(dir) and not ignore_dir(dir) then
+    if allow_dir(dir) and not ignore_dir(dir) and not ignore_branch(branch) then
       M.load({}, dir)
     end
   end
