@@ -104,7 +104,6 @@ local function get_last()
   return sessions[1]
 end
 
-
 ---Get the current Git branch name, untouched
 ---@param dir? string Directory to be used for the session
 ---@return string|nil
@@ -219,11 +218,7 @@ function M.load(opt, dir)
     end
   end
 
-  if
-    config.options.autosave
-    and (allow_dir(dir) and not ignore_dir(dir))
-    and not ignore_branch(branch)
-  then
+  if config.options.autosave and (allow_dir(dir) and not ignore_dir(dir)) and not ignore_branch(branch) then
     M.start()
   end
 end
@@ -286,7 +281,11 @@ function M.save(opt, dir)
     end
 
     -- Do not save the session if the callback returns false...unless it's forced
-    if not opt.force and type(config.options.should_autosave) == "function" and not config.options.should_autosave() then
+    if
+      not opt.force
+      and type(config.options.should_autosave) == "function"
+      and not config.options.should_autosave()
+    then
       return
     end
   end

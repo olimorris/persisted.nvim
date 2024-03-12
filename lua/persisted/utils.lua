@@ -82,7 +82,9 @@ end
 ---@return boolean
 function M.dirs_match(dir, dirs_table)
   dir = vim.fn.expand(dir)
-  return M.table_match(dir, dirs_table, function(pattern) return escape_pattern(vim.fn.expand(pattern)) end)
+  return M.table_match(dir, dirs_table, function(pattern)
+    return escape_pattern(vim.fn.expand(pattern))
+  end)
 end
 
 ---Check if a string matches and entry in a given table
