@@ -161,6 +161,7 @@ require("persisted").setup({
   follow_cwd = true, -- change session file name to match current working directory if it changes
   allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
   ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
+  ignored_branches = nil, -- table of branch patterns that are ignored for auto-saving and auto-loading
   telescope = {
     reset_prompt = true, -- Reset the Telescope prompt after an action?
     mappings = { -- table of mappings for the Telescope extension
@@ -321,6 +322,19 @@ require("persisted").setup({
 ```
 
 In this setup, `~/.config` and `~/.local/nvim` are still going to behave in their default setting (ignoring all listed directory and its children), however `/` and `/tmp` will only ignore those directories exactly.
+
+### Ignored branches
+
+You may specify a table of patterns that match against braches for which the plugin will **never** autosave and autoload from. For example:
+
+```lua
+require("persisted").setup({
+  ignored_branches = {
+    "^master",
+    "feature/%u"
+  },
+})
+```
 
 ### Events / Callbacks
 
