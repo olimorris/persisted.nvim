@@ -325,7 +325,7 @@ In this setup, `~/.config` and `~/.local/nvim` are still going to behave in thei
 
 ### Ignored branches
 
-You may specify a table of patterns that match against braches for which the plugin will **never** autosave and autoload from. For example:
+You may specify a table of patterns that match against branches for which the plugin will **never** autosave and autoload from:
 
 ```lua
 require("persisted").setup({
