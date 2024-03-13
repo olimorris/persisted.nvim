@@ -43,12 +43,13 @@ Install the plugin with your preferred package manager:
 -- Lua
 {
   "olimorris/persisted.nvim",
+  lazy = false, -- make sure the plugin is always loaded at startup
   config = true
 }
 ```
 
 > [!NOTE]
-> The `lazy = true` option may be useful if you use a dashboard
+> Setting `lazy = true` option may be useful if you use a dashboard
 
 **[Packer](https://github.com/wbthomason/packer.nvim)**
 
