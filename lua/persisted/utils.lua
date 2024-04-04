@@ -92,6 +92,9 @@ end
 ---@param heystack table
 ---@return boolean
 function M.table_match(needle, heystack, escape_fct)
+  if needle == nil then
+    return false
+  end
   return heystack
     and next(vim.tbl_filter(function(pattern)
       if pattern.exact then
