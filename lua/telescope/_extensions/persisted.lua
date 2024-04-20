@@ -53,6 +53,10 @@ end
 
 return require("telescope").register_extension({
   setup = function(topts)
+    vim.api.nvim_set_hl(0, "TelescopePersistedIsCurrent", { link = "TelescopeResultsOperator" })
+    vim.api.nvim_set_hl(0, "TelescopePersistedDir", { link = "TelescopeResultsNormal" })
+    vim.api.nvim_set_hl(0, "TelescopePersistedDirIcon", { link = "Directory" })
+    vim.api.nvim_set_hl(0, "TelescopePersistedBranch", { link = "TelescopeResultsIdentifier" })
     telescope_opts = topts
   end,
   exports = {

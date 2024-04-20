@@ -1,36 +1,38 @@
 local finders = require("telescope.finders")
-local entry_display = require("telescope.pickers.entry_display")
 
 local M = {}
 
 M.session_finder = function(sessions)
-  -- Layout borrowed from:
-  ---https://github.com/LinArcX/telescope-env.nvim/blob/master/lua/telescope/_extensions/env.lua
+  local custom_displayer = function(session)
+    local final_str = ""
+    local hls = {}
 
-  local displayer = entry_display.create({
-    items = {
-      { remaining = true },
-    },
-  })
+    local function append(str, hl)
+      local hl_start = #final_str
+      final_str = final_str .. str
+      table.insert(hls, { { hl_start, #final_str }, hl })
+    end
 
-  local make_display = function(session)
-    local str
+    -- is current session
+    append(session.file_path == vim.v.this_session and "  " or "   ", "TelescopePersistedIsCurrent")
+
+    -- session path
+    append("󰉋 ", "TelescopePersistedDirIcon")
+    append(session.dir_path, "TelescopePersistedDir")
+
+    -- branch
     if session.branch then
-      str = string.format("%s (branch: %s)", session.dir_path, session.branch)
-    else
-      str = session.dir_path
+      append(" 󰘬 " .. session.branch, "TelescopePersistedBranch")
     end
-    if session.file_path == vim.v.this_session then
-      str = "* " .. str
-    end
-    return displayer({ str })
+
+    return final_str, hls
   end
 
   return finders.new_table({
     results = sessions,
     entry_maker = function(session)
       session.ordinal = session.name
-      session.display = make_display
+      session.display = custom_displayer
       session.name = session.name
       session.branch = session.branch
       session.file_path = session.file_path

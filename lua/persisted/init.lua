@@ -367,11 +367,18 @@ function M.list()
       dir_path = session_name
     end
 
+    local f = io.popen("stat -f %a " .. session)
+    local last_modified = ""
+    if f then
+      last_modified = f:read()
+    end
+
     table.insert(sessions, {
       ["name"] = session_name,
       ["file_path"] = session,
       ["branch"] = branch,
       ["dir_path"] = dir_path,
+      ["last_modified"] = last_modified,
     })
   end
 
