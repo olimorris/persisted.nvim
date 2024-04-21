@@ -27,13 +27,18 @@ local defaults = {
       copy_session = "<c-c>",
       delete_session = "<c-d>",
     },
+    icons = { -- icons displayed in the picker
+      branch = " ",
+      dir = " ",
+      selected = " ",
+    },
   },
 }
 
 M.options = {}
 
 function M.setup(opts)
-  M.options = vim.tbl_deep_extend("force", {}, defaults, opts or {})
+  M.options = vim.tbl_deep_extend("force", defaults, opts or {})
   vim.fn.mkdir(M.options.save_dir, "p")
 end
 

@@ -1,8 +1,17 @@
+local config = require("persisted.config")
 local finders = require("telescope.finders")
 
 local M = {}
 
+local no_icons = {
+  branch = "",
+  dir = "",
+  selected = "",
+}
+
 M.session_finder = function(sessions)
+  local icons = vim.tbl_extend("force", no_icons, config.options.telescope.icons or {})
+
   local custom_displayer = function(session)
     local final_str = ""
     local hls = {}
@@ -14,15 +23,15 @@ M.session_finder = function(sessions)
     end
 
     -- is current session
-    append(session.file_path == vim.v.this_session and "  " or "   ", "TelescopePersistedIsCurrent")
+    append(session.file_path == vim.v.this_session and (icons.selected .. " ") or "   ", "TelescopePersistedIsCurrent")
 
     -- session path
-    append("󰉋 ", "TelescopePersistedDirIcon")
+    append(icons.dir, "TelescopePersistedDirIcon")
     append(session.dir_path, "TelescopePersistedDir")
 
     -- branch
     if session.branch then
-      append(" 󰘬 " .. session.branch, "TelescopePersistedBranch")
+      append(" " .. icons.branch .. session.branch, "TelescopePersistedBranch")
     end
 
     return final_str, hls
