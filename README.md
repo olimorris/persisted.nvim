@@ -170,6 +170,11 @@ require("persisted").setup({
       copy_session = "<c-c>",
       delete_session = "<c-d>",
     },
+    icons = { -- icons displayed in the picker, set to nil to disable entirely
+      branch = " ",
+      dir = " ",
+      selected = " ",
+    },
   },
 })
 ```
