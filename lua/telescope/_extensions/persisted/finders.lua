@@ -19,15 +19,17 @@ M.session_finder = function(sessions)
     local function append(str, hl)
       local hl_start = #final_str
       final_str = final_str .. str
-      table.insert(hls, { { hl_start, #final_str }, hl })
+      if hl then
+        table.insert(hls, { { hl_start, #final_str }, hl })
+      end
     end
 
     -- is current session
     append(session.file_path == vim.v.this_session and (icons.selected .. " ") or "   ", "TelescopePersistedIsCurrent")
 
     -- session path
-    append(icons.dir, "TelescopePersistedDirIcon")
-    append(session.dir_path, "TelescopePersistedDir")
+    append(icons.dir, "TelescopePersistedDir")
+    append(session.dir_path)
 
     -- branch
     if session.branch then
