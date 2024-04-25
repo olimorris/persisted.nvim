@@ -367,7 +367,7 @@ function M.list()
       dir_path = session_name
     end
 
-    local f = io.popen("stat -f %a " .. session)
+    local f = io.popen("stat -c %x " .. session)
     local last_modified = ""
     if f then
       last_modified = f:read()
