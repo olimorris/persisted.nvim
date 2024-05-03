@@ -29,32 +29,28 @@ end
 
 ---Form a table of session data
 ---@param session string
----@return table
+---@return table|nil
 function M.make_session_data(session)
   local config = require("persisted.config").options
 
-  local home
-  if os.getenv("HOME") then
-    home = os.getenv("HOME") -- Unix-based systems (Linux, macOS)
-  elseif os.getenv("USERPROFILE") then
-    home = os.getenv("USERPROFILE") -- Windows
-  else
-    home = ""
+  local home = os.getenv("HOME") or os.getenv("USERPROFILE") or ""
+
+  -- Split the session string into path and branch parts
+  local separator_index = session:find(config.branch_separator)
+  if not separator_index then
+    return nil
   end
 
-  -- Form the branch
-  local pattern = config.branch_separator .. "(.-)%.vim"
-  local branch = session:match(pattern) or ""
+  local branch = session:sub(separator_index + 2):gsub("%.vim$", ""):gsub("%%", "/")
 
-  -- Form the name
+  -- Removing the home directory from the path and cleaning leading `/`
   local name = session:gsub(config.save_dir, ""):gsub("%%", "/"):gsub(home, "")
-  name = name:sub(1, #name - 4) -- Remove the .vim extension
-
+  -- Remove the .vim extension
+  name = name:sub(1, #name - 4)
   if name:sub(1, 1) == "/" then
     name = name:sub(2)
   end
 
-  -- Form the dir_path
   local dir_path = name:gsub(branch, ""):gsub(config.branch_separator, ""):gsub(home, "")
 
   return {

@@ -66,3 +66,12 @@ async.describe("With default settings:", function()
     assert.equals("0", vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""))
   end)
 end)
+
+describe("Utilities", function()
+  it("can make derive the session name", function()
+    local session = "%home%username%projects%front@@user%fix-analytics-export-null-values.vim"
+    local data = require("persisted.utils").make_session_data(session)
+
+    assert.equals("home/username/projects/front@@user/fix-analytics-export-null-values", data.name)
+  end)
+end)
