@@ -69,9 +69,9 @@ end)
 
 describe("Utilities", function()
   it("can make derive the session name", function()
-    local session = "%home%louis-cherel%projects%front@@louis%fix-analytics-export-null-values.vim"
+    local session = "%home%username%projects%front@@user%fix-analytics-export-null-values.vim"
     local data = require("persisted.utils").make_session_data(session)
 
-    assert.equals("home/louis-cherel/projects/front@@louis/fix-analytics-export-null-values", data.name)
+    assert.equals("home/username/projects/front@@user/fix-analytics-export-null-values", data.name)
   end)
 end)
