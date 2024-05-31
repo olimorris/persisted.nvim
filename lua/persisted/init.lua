@@ -211,7 +211,7 @@ function M.load(opt, dir)
 
   if session then
     if session_exists then
-      vim.g.persisting_session = config.options.follow_cwd and nil or session
+      vim.g.persisting_session = not config.options.follow_cwd and session or nil
       utils.load_session(session, config.options.silent)
     elseif type(config.options.on_autoload_no_session) == "function" then
       config.options.on_autoload_no_session()

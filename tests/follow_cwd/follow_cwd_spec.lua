@@ -20,10 +20,14 @@ describe("Follow cwd change", function()
     vim.cmd(":bdelete")
   end)
   it("ensures both sessions were created", function()
+    require("persisted").load()
+
     local pattern = "/"
-    local name1 = vim.fn.getcwd():gsub(pattern, "%%") .. require("persisted").get_branch() .. ".vim"
+    local branch1 = require("persisted").get_branch()
+    local name1 = vim.fn.getcwd():gsub(pattern, "%%") .. (branch1 or "") .. ".vim"
     vim.cmd(":cd ../..")
-    local name2 = vim.fn.getcwd():gsub(pattern, "%%") .. require("persisted").get_branch() .. ".vim"
+    local branch2 = require("persisted").get_branch()
+    local name2 = vim.fn.getcwd():gsub(pattern, "%%") .. (branch2 or "") .. ".vim"
 
     local sessions = vim.fn.readdir(session_dir)
     assert.equals(sessions[1], name1)
@@ -52,7 +56,8 @@ describe("Don't follow cwd change", function()
   it("ensures only one session was created", function()
     local pattern = "/"
     vim.cmd(":cd ../..")
-    local name = vim.fn.getcwd():gsub(pattern, "%%") .. require("persisted").get_branch() .. ".vim"
+    local branch = require("persisted").get_branch()
+    local name = vim.fn.getcwd():gsub(pattern, "%%") .. (branch or "") .. ".vim"
 
     local sessions = vim.fn.readdir(session_dir)
     assert.equals(#sessions, 1)
