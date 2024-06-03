@@ -25,10 +25,7 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
 vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
   group = group,
   nested = true,
-  callback = function()
-    persisted.save()
-    vim.cmd('sleep 10m')
-  end
+  callback = persisted.save,
 })
 
 vim.g.loaded_persisted = true
