@@ -1,7 +1,7 @@
 local actions_state = require("telescope.actions.state")
 local transform_mod = require("telescope.actions.mt").transform_mod
 
-local utils = require("persisted.utils")
+local persisted = require("persisted")
 local M = {}
 
 ---Get the selected session from Telescope
@@ -18,7 +18,7 @@ M.load_session = function(session, config)
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedTelescopeLoadPre", data = session })
 
   vim.schedule(function()
-    utils.load_session(session.file_path, config.silent)
+    persisted.load({ session = session.file_path })
   end)
 
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedTelescopeLoadPost", data = session })
