@@ -37,11 +37,10 @@ function M.make_session_data(session)
 
   -- Split the session string into path and branch parts
   local separator_index = session:find(config.branch_separator)
-  if not separator_index then
-    return nil
+  local branch = ""
+  if separator_index then
+    branch = session:sub(separator_index + 2):gsub("%.vim$", ""):gsub("%%", "/")
   end
-
-  local branch = session:sub(separator_index + 2):gsub("%.vim$", ""):gsub("%%", "/")
 
   -- Removing the home directory from the path and cleaning leading `/`
   local name = session:gsub(config.save_dir, ""):gsub("%%", "/"):gsub(home, "")
