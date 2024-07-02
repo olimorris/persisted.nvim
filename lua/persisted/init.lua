@@ -80,12 +80,12 @@ local function ignore_dir(dir)
 end
 
 ---Is the current branch ignored for auto-saving and loading?
----@param dir string Branch to be used for the session
+---@param branch? string Branch to be used for the session
 ---@return boolean
 local function ignore_branch(branch)
   local ignored_branches = config.options.ignored_branches
 
-  if ignored_branches == nil then
+  if not branch or ignored_branches == nil then
     return false
   end
 
