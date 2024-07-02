@@ -1,6 +1,7 @@
 local M = {}
 
 local defaults = {
+  log_level = "ERROR", -- One of "TRACE", "DEBUG", "ERROR"
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
   silent = false, -- silent nvim message when sourcing session file
 

@@ -1,5 +1,6 @@
-local utils = require("persisted.utils")
 local config = require("persisted.config")
+local log = require("persisted.log")
+local utils = require("persisted.utils")
 
 local M = {}
 
@@ -143,14 +144,8 @@ function M.get_branch(dir)
         if vim.fn.filereadable(branch_session) ~= 0 then
           return branch
         else
-          vim.notify(
-            string.format("[Persisted.nvim]: Trying to load a session for branch %s", config.options.default_branch),
-            vim.log.levels.INFO
-          )
-          vim.notify(
-            string.format("[Persisted.nvim]: Could not load a session for branch %s.", git_branch[1]),
-            vim.log.levels.WARN
-          )
+          log:debug("Trying to load a session for branch: %s", config.options.default_branch)
+          log:error("Could not load a session for branch: %s", git_branch[1])
           vim.g.persisted_branch_session = branch_session
           return config.options.branch_separator .. config.options.default_branch
         end
@@ -183,6 +178,21 @@ end
 ---@return nil
 function M.setup(opts)
   config.setup(opts)
+
+  log.set_root(log.new({
+    handlers = {
+      {
+        type = "echo",
+        level = vim.log.levels.WARN,
+      },
+      {
+        type = "file",
+        filename = "persisted.log",
+        level = vim.log.levels[config.options.log_level],
+      },
+    },
+  }))
+
   local dir = session_dir()
   local branch = get_branchname()
 
@@ -192,6 +202,7 @@ function M.setup(opts)
     and not ignore_branch(branch)
     and args_check()
   then
+    log:trace("Starting session")
     M.start()
   end
 end
@@ -210,19 +221,24 @@ function M.load(opt, dir)
     session = opt.session
     local session_data = utils.make_session_data(session)
     branch = session_data and session_data.branch or ""
+    log:trace("Session branch %s", branch)
+    log:trace("Session data %s", session_data)
     if not branch then
       vim.notify(string.format("[Persisted.nvim]: Invalid session file %s", session), vim.log.levels.WARN)
     end
   else
     branch = get_branchname()
     session = opt.last and get_last() or get_current(dir)
+    log:trace("Session branch: %s", branch)
   end
 
   if session then
     if vim.fn.filereadable(session) ~= 0 then
       vim.g.persisting_session = not config.options.follow_cwd and session or nil
+      log:trace("Session load: %s", session)
       utils.load_session(session, config.options.silent)
     elseif type(config.options.on_autoload_no_session) == "function" then
+      log:trace("No session to load")
       config.options.on_autoload_no_session()
     end
   end
@@ -241,6 +257,7 @@ function M.autoload()
 
   if config.options.autoload and args_check() then
     if allow_dir(dir) and not ignore_dir(dir) and not ignore_branch(branch) then
+      log:trace("Autoloading from %s", dir)
       M.load({}, dir)
     end
   end
@@ -268,6 +285,7 @@ local function write(session)
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePre" })
   vim.cmd("mks! " .. e(session))
   vim.g.persisting = true
+  log:trace("Session saved")
   vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePost" })
 end
 
@@ -317,6 +335,7 @@ function M.delete(dir)
     vim.api.nvim_exec_autocmds("User", { pattern = "PersistedDeletePre", data = session_data })
 
     vim.schedule(function()
+      log:trace("Deleting session %s", session)
       M.stop()
       vim.fn.system("rm " .. e(session))
     end)
@@ -334,13 +353,16 @@ function M.toggle(dir)
   dir = dir or session_dir()
 
   if vim.g.persisting == nil then
+    log:trace("Toggling load")
     return M.load({}, dir)
   end
 
   if vim.g.persisting then
+    log:trace("Toggling stop")
     return M.stop()
   end
 
+  log:trace("Toggling start")
   return M.start()
 end
 
