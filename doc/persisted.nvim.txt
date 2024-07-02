@@ -76,8 +76,7 @@ recommended that you give this plugin a greater loading priority. With
 **Packer** the `after` config option can be used and in **Lazy.nvim**, the
 `priority` property.
 
-
-TELESCOPE EXTENSION ~
+**Telescope extension**
 
 Ensure that the telescope extension is loaded with:
 
@@ -103,8 +102,7 @@ The layout can then be customised from within Telescope:
 
 USAGE                                                   *persisted.nvim-usage*
 
-
-COMMANDS ~
+**Commands**
 
 The plugin comes with a number of commands:
 
@@ -118,8 +116,7 @@ The plugin comes with a number of commands:
 - `:SessionLoadFromFile` - Load a session from a given path
 - `:SessionDelete` - Delete the current session
 
-
-TELESCOPE EXTENSION ~
+**Telescope extension**
 
 The Telescope extension may be opened via `:Telescope persisted`. The available
 actions are:
@@ -130,8 +127,7 @@ actions are:
 - `<C-c>` - Copy the session file
 - `<C-d>` - Delete the session file
 
-
-GLOBAL VARIABLES ~
+**Global variables**
 
 The plugin sets a number of global variables throughout its lifecycle:
 
@@ -143,13 +139,13 @@ The plugin sets a number of global variables throughout its lifecycle:
 
 CONFIGURATION                                   *persisted.nvim-configuration*
 
-
-DEFAULTS ~
+**Defaults**
 
 The plugin comes with the following defaults:
 
 >lua
     require("persisted").setup({
+      log_level = "ERROR", -- One of "TRACE", "DEBUG", "ERROR"
       save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
       silent = false, -- silent nvim message when sourcing session file
       use_git_branch = false, -- create session files based on the branch of a git enabled repository
@@ -170,16 +166,15 @@ The plugin comes with the following defaults:
           delete_session = "<c-d>",
         },
         icons = { -- icons displayed in the picker, set to nil to disable entirely
-          branch = " ",
-          dir = " ",
-          selected = " ",
+          branch = " ",
+          dir = " ",
+          selected = " ",
         },
       },
     })
 <
 
-
-WHAT IS SAVED IN THE SESSION? ~
+**What is saved in the session?**
 
 As the plugin uses Vim’s `:mksession` command then you may change the
 `vim.o.sessionoptions` value to determine what to write into the session.
@@ -188,8 +183,7 @@ Please see `:h sessionoptions` for more information.
 
   [!NOTE] The author uses: `vim.o.sessionoptions =
   "buffers,curdir,folds,tabpages,winpos,winsize"`
-
-SESSION SAVE LOCATION ~
+**Session save location**
 
 The location of the session files may be changed by altering the `save_dir`
 configuration option. For example:
@@ -203,8 +197,7 @@ configuration option. For example:
 
   [!NOTE] The plugin may be unable to find existing sessions if the `save_dir`
   value is changed
-
-GIT BRANCHING ~
+**Git branching**
 
 One of the plugin’s core features is the ability to have multiple session
 files for a given project, by using git branches. To enable git branching:
@@ -215,8 +208,7 @@ files for a given project, by using git branches. To enable git branching:
     })
 <
 
-
-AUTOSAVING ~
+**Autosaving**
 
 By default, the plugin will automatically save a Neovim session to disk when
 the `VimLeavePre` event is triggered. Autosaving can be turned off by:
@@ -252,8 +244,7 @@ disabled, the `:SessionSave` command can be used.
 
   [!NOTE] If `autosave = false` then the `should_autosave` callback will not be
   executed.
-
-AUTOLOADING ~
+**Autoloading**
 
 The plugin can be enabled to automatically load sessions when Neovim is
 started. Whilst off by default, this can be turned on by:
@@ -284,8 +275,7 @@ Autoloading can be further controlled for certain directories by specifying
   Neovim with arguments other than a single directory argument. For example:
   `nvim some_file.rb` will not result in autoloading but `nvim
   some/existing/path` or `nvim .` will.
-
-FOLLOWING CURRENT WORKING DIRECTORY ~
+**Following current working directory**
 
 There may be a need to change the working directory to quickly access files in
 other directories without changing the current session’s name on save. This
@@ -304,8 +294,7 @@ By default, the session name will match the current working directory:
   the global variable `vim.g.persisting_session`. This variable can be manually
   adjusted if changes to the session name are needed. Alternatively, if
   `follow_cwd = true` then `vim.g.persisting_session = nil`.
-
-ALLOWED DIRECTORIES ~
+**Allowed directories**
 
 You may specify a table of directories for which the plugin will autosave
 and/or autoload from. For example:
@@ -326,8 +315,7 @@ all its sub-directories.
   [!NOTE] If `allowed_dirs` is left at its default value and `autosave` and/or
   `autoload` are set to `true`, then the plugin will autoload/autosave from _any_
   directory
-
-IGNORED DIRECTORIES ~
+**Ignored directories**
 
 You may specify a table of directories for which the plugin will **never**
 autosave and autoload from. For example:
@@ -363,8 +351,7 @@ In this setup, `~/.config` and `~/.local/nvim` are still going to behave in
 their default setting (ignoring all listed directory and its children), however
 `/` and `/tmp` will only ignore those directories exactly.
 
-
-IGNORED BRANCHES ~
+**Ignored branches**
 
 You may specify a table of patterns that match against branches for which the
 plugin will **never** autosave and autoload from:
@@ -378,8 +365,7 @@ plugin will **never** autosave and autoload from:
     })
 <
 
-
-EVENTS / CALLBACKS ~
+**Events / Callbacks**
 
 The plugin fires events at various points during its lifecycle:
 
@@ -397,9 +383,6 @@ The plugin fires events at various points during its lifecycle:
 
 These events can be consumed anywhere within your configuration by utilising
 the `vim.api.nvim_create_autocmd` function.
-
-
-EXAMPLE USE CASE
 
 A commonly requested example is to use the Telescope extension to load a
 session, saving the current session before clearing all of the open buffers:
@@ -420,8 +403,7 @@ session, saving the current session before clearing all of the open buffers:
     })
 <
 
-
-USING CALLBACK DATA
+**Using callback data**
 
 When certain events are fired, session data is made available for the user to
 consume, for example:
