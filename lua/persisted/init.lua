@@ -1,6 +1,7 @@
 local config = require("persisted.config")
 local log = require("persisted.log")
 local utils = require("persisted.utils")
+local uv = vim.uv or vim.loop
 
 local M = {}
 
@@ -33,7 +34,7 @@ local function args_path()
   -- paths/files passed as arguments and does not include other
   -- parameters/arguments. fs_realpath() returns nil if the path doesn't exist.
   -- Use isdirectory to validate it's a directory and not a file.
-  local dir = vim.loop.fs_realpath(vim.fn.expand(vim.fn.argv(0)))
+  local dir = uv.fs_realpath(vim.fn.expand(vim.fn.argv(0)))
   if dir ~= nil and vim.fn.isdirectory(dir) ~= 0 then
     return dir
   end
@@ -99,7 +100,7 @@ local function get_last()
   local sessions = vim.fn.glob(config.options.save_dir .. "*.vim", true, true)
 
   table.sort(sessions, function(a, b)
-    return vim.loop.fs_stat(a).mtime.sec > vim.loop.fs_stat(b).mtime.sec
+    return uv.fs_stat(a).mtime.sec > uv.fs_stat(b).mtime.sec
   end)
 
   return sessions[1]
@@ -129,15 +130,11 @@ function M.get_branch(dir)
   dir = dir or session_dir()
 
   if config.options.use_git_branch then
-    vim.fn.system('git -C "' .. dir .. '" rev-parse 2>/dev/null')
-
-    local git_enabled = (vim.v.shell_error == 0)
-
-    if git_enabled then
-      local git_branch = vim.fn.systemlist('git -C "' .. dir .. '" rev-parse --abbrev-ref HEAD 2>/dev/null')
+    if uv.fs_stat(".git") then
+      local git_branch = vim.fn.systemlist("git branch --show-current")[1]
 
       if vim.v.shell_error == 0 then
-        local branch = config.options.branch_separator .. git_branch[1]:gsub("/", "%%")
+        local branch = config.options.branch_separator .. git_branch:gsub("/", "%%")
         local branch_session = config.options.save_dir .. dir:gsub(utils.get_dir_pattern(), "%%") .. branch .. ".vim"
 
         -- Try to load the session for the current branch
@@ -329,7 +326,7 @@ function M.delete(dir)
   dir = dir or session_dir()
   local session = get_current(dir)
 
-  if session and vim.loop.fs_stat(session) ~= 0 then
+  if session and uv.fs_stat(session) ~= 0 then
     local session_data = utils.make_session_data(session)
 
     vim.api.nvim_exec_autocmds("User", { pattern = "PersistedDeletePre", data = session_data })
