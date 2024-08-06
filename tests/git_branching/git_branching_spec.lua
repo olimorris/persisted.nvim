@@ -23,7 +23,7 @@ describe("Git Branching", function()
   it("ensures the session has the branch name in", function()
     -- Workout what the name should be
     local pattern = "/"
-    local name = vim.fn.getcwd():gsub(pattern, "%%") .. require("persisted").get_branch() .. ".vim"
+    local name = vim.fn.getcwd():gsub(pattern, "%%") .. "@@" .. require("persisted").branch() .. ".vim"
     local session = vim.fn.glob(session_dir .. "*.vim", true, true)[1]
 
     session:gsub(session_dir .. "/", "")

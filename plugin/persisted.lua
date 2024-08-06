@@ -10,7 +10,6 @@ vim.cmd([[command! SessionStop :lua require("persisted").stop()]])
 vim.cmd([[command! SessionSave :lua require("persisted").save({ force = true })]])
 vim.cmd([[command! SessionLoad :lua require("persisted").load()]])
 vim.cmd([[command! SessionLoadLast :lua require("persisted").load({ last = true })]])
-vim.cmd([[command! -nargs=1 SessionLoadFromFile :lua require("persisted").load({ session = <f-args> })]])
 vim.cmd([[command! SessionDelete :lua require("persisted").delete()]])
 vim.cmd([[command! SessionToggle :lua require("persisted").toggle()]])
 
@@ -27,8 +26,8 @@ vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
   nested = true,
   callback = function()
     persisted.save()
-    vim.cmd('sleep 10m')
-  end
+    vim.cmd("sleep 10m")
+  end,
 })
 
 vim.g.loaded_persisted = true

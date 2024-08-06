@@ -31,12 +31,12 @@ end
 ---@param session string
 ---@return table|nil
 function M.make_session_data(session)
-  local config = require("persisted.config").options
+  local config = require("persisted.config")
 
   local home = os.getenv("HOME") or os.getenv("USERPROFILE") or ""
 
   -- Split the session string into path and branch parts
-  local separator_index = session:find(config.branch_separator)
+  local separator_index = session:find("@@")
   local branch = ""
   if separator_index then
     branch = session:sub(separator_index + 2):gsub("%.vim$", ""):gsub("%%", "/")
@@ -50,7 +50,7 @@ function M.make_session_data(session)
     name = name:sub(2)
   end
 
-  local dir_path = name:gsub(branch, ""):gsub(config.branch_separator, ""):gsub(home, "")
+  local dir_path = name:gsub(branch, ""):gsub("@@", ""):gsub(home, "")
 
   return {
     name = name,

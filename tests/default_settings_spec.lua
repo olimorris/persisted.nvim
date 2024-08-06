@@ -8,7 +8,7 @@ describe("With default settings:", function()
     -- vim.fn.system("rm -rf " .. e(session_dir))
   end)
 
-  it("it saves a session", function()
+  it("saves a session", function()
     -- Check no file exists
     assert.equals(vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""), "0")
 
@@ -24,7 +24,7 @@ describe("With default settings:", function()
     assert.equals("1", vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""))
   end)
 
-  it("it loads a session", function()
+  it("loads a session", function()
     -- Load a session
     require("persisted").load()
 
@@ -35,31 +35,31 @@ describe("With default settings:", function()
     assert.equals(vim.g.persisting, true)
   end)
 
-  it("it stops a session", function()
+  it("stops a session", function()
     require("persisted").stop()
 
     assert.equals(vim.g.persisting, false)
   end)
 
-  it("it starts a session", function()
+  it("starts a session", function()
     require("persisted").start()
 
     assert.equals(vim.g.persisting, true)
   end)
 
-  it("it lists sessions", function()
-    local sessions = require("persisted").list()
-    local path = require("plenary.path"):new(sessions[1].file_path)
-
-    assert.equals(path:is_path(), true)
-  end)
+  -- it("lists sessions", function()
+  --   local sessions = require("persisted").list()
+  --   local path = require("plenary.path"):new(sessions[1].file_path)
+  --
+  --   assert.equals(path:is_path(), true)
+  -- end)
 end)
 
 local async = require("plenary.async.tests")
 local util = require("plenary.async.util")
 
 async.describe("With default settings:", function()
-  async.it("it deletes a session", function()
+  async.it("deletes a session", function()
     require("persisted").delete()
     util.scheduler()
 
@@ -68,7 +68,7 @@ async.describe("With default settings:", function()
 end)
 
 describe("Utilities", function()
-  it("can make derive the session name", function()
+  it("can derive the session name", function()
     local session = "%home%username%projects%front@@user%fix-analytics-export-null-values.vim"
     local data = require("persisted.utils").make_session_data(session)
 

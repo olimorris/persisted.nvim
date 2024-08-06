@@ -150,34 +150,33 @@ The plugin sets a number of global variables throughout its lifecycle:
 The plugin comes with the following defaults:
 
 ```lua
-require("persisted").setup({
+{
   log_level = "ERROR", -- One of "TRACE", "DEBUG", "ERROR"
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
-  silent = false, -- silent nvim message when sourcing session file
+
   use_git_branch = false, -- create session files based on the branch of a git enabled repository
-  default_branch = "main", -- the branch to load if a session file is not found for the current branch
+
   autosave = true, -- automatically save session files when exiting Neovim
-  should_autosave = nil, -- function to determine if a session should be autosaved
   autoload = false, -- automatically load the session for the cwd on Neovim startup
-  on_autoload_no_session = nil, -- function to run when `autoload = true` but there is no session to load
-  follow_cwd = true, -- change session file name to match current working directory if it changes
+  should_autosave = nil, -- function to determine if a session should be autosaved (resolve to a boolean)
+
   allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
-  ignored_dirs = nil, -- table of dirs that are ignored when auto-saving and auto-loading
-  ignored_branches = nil, -- table of branch patterns that are ignored for auto-saving and auto-loading
+  ignored_dirs = nil, -- table of dirs that are ignored for auto-saving and auto-loading
+
   telescope = {
-    reset_prompt = true, -- Reset the Telescope prompt after an action?
-    mappings = { -- table of mappings for the Telescope extension
+    reset_prompt = true, -- Reset prompt after a telescope action?
+    mappings = {
       change_branch = "<c-b>",
       copy_session = "<c-c>",
       delete_session = "<c-d>",
     },
-    icons = { -- icons displayed in the picker, set to nil to disable entirely
+    icons = { -- icons displayed in the picker
       branch = " ",
       dir = " ",
       selected = " ",
     },
-  },
-})
+  }
+}
 ```
 
 **What is saved in the session?**
@@ -267,21 +266,6 @@ Autoloading can be further controlled for certain directories by specifying `all
 > [!NOTE]
 > Autoloading will not occur if the plugin is lazy loaded or a user opens Neovim with arguments other than a single directory argument. For example: `nvim some_file.rb` will not result in autoloading but `nvim some/existing/path` or `nvim .` will.
 
-**Following current working directory**
-
-There may be a need to change the working directory to quickly access files in other directories without changing the current session's name on save. This behavior can be configured with `follow_cwd = false`.
-
-By default, the session name will match the current working directory:
-
-```lua
-require("persisted").setup({
-  follow_cwd = true,
-})
-```
-
-> [!NOTE]
-> If `follow_cwd = false` the session name is stored upon loading under the global variable `vim.g.persisting_session`. This variable can be manually adjusted if changes to the session name are needed. Alternatively, if `follow_cwd = true` then `vim.g.persisting_session = nil`.
-
 **Allowed directories**
 
 You may specify a table of directories for which the plugin will autosave and/or autoload from. For example:
@@ -330,19 +314,6 @@ require("persisted").setup({
 
 In this setup, `~/.config` and `~/.local/nvim` are still going to behave in their default setting (ignoring all listed directory and its children), however `/` and `/tmp` will only ignore those directories exactly.
 
-**Ignored branches**
-
-You may specify a table of patterns that match against branches for which the plugin will **never** autosave and autoload from:
-
-```lua
-require("persisted").setup({
-  ignored_branches = {
-    "^master",
-    "feature/%u"
-  },
-})
-```
-
 **Events / Callbacks**
 
 The plugin fires events at various points during its lifecycle:
@@ -377,34 +348,6 @@ vim.api.nvim_create_autocmd({ "User" }, {
   end,
 })
 ```
-
-**Using callback data**
-
-When certain events are fired, session data is made available for the user to consume, for example:
-
-```lua
-{
-  branch = "main",
-  dir_path = "Code/Neovim/persisted.nvim",
-  file_path = "/Users/Oli/.local/share/nvim/sessions/%Users%Oli%Code%Neovim%persisted.nvim@@main.vim",
-  name = "Code/Neovim/persisted.nvim@@main",
-}
-```
-
-To consume this data, use the `session.data` table in your autocmd:
-
-```lua
-vim.api.nvim_create_autocmd({ "User" }, {
-  pattern = "PersistedLoadPost",
-  group = group,
-  callback = function(session)
-    print(session.data.branch)
-  end,
-})
-```
-
-> [!NOTE]
-> This data is available for the `PersistedLoad`, `PersistedDelete` and `PersistedTelescope` events
 
 ## :page_with_curl: License
 
