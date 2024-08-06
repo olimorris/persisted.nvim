@@ -31,7 +31,7 @@ describe("Git Branching", function()
     -- Check if branch_name is valid
     if not branch_name then
       print("Failed to get branch name.")
-      branch_name = nil
+      branch_name = ""
     else
       branch_name = "@@" .. branch_name
     end
