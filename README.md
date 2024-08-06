@@ -160,8 +160,8 @@ The plugin comes with the following defaults:
   autoload = false, -- automatically load the session for the cwd on Neovim startup
   should_autosave = nil, -- function to determine if a session should be autosaved (resolve to a boolean)
 
-  allowed_dirs = nil, -- table of dirs that the plugin will auto-save and auto-load from
-  ignored_dirs = nil, -- table of dirs that are ignored for auto-saving and auto-loading
+  allowed_dirs = nil, -- table of dirs that the plugin will autosave and autoload from
+  ignored_dirs = nil, -- table of dirs that are ignored for autosaving and autoloading
 
   telescope = {
     reset_prompt = true, -- Reset prompt after a telescope action?

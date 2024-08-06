@@ -111,7 +111,7 @@ function M.save(opts)
   if not config.autosave and not opts.force then
     return
   end
-  -- Do not save the session if the callback returns false...unless it's forced
+  -- Do not save the session if should_autosave evals to false...unless it's forced
   if type(config.should_autosave) == "function" and not config.should_autosave() and not opts.force then
     return
   end
