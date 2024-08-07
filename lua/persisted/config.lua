@@ -7,6 +7,7 @@ return {
   autoload = false, -- automatically load the session for the cwd on Neovim startup
   should_autosave = nil, -- function to determine if a session should be autosaved (resolve to a boolean)
 
+  change_with_cwd = true, -- change the name of the session file if the cwd changes?
   allowed_dirs = nil, -- table of dirs that the plugin will autosave and autoload from
   ignored_dirs = nil, -- table of dirs that are ignored for autosaving and autoloading
 
