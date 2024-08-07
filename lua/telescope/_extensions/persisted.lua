@@ -13,22 +13,35 @@ local config = persisted.config
 
 local telescope_opts = {}
 
+---Escapes special characters before performing string substitution
+---@param str string
+---@param pattern string
+---@param replace string
+---@param n? integer
+---@return string
+---@return integer
+local function escape_pattern(str, pattern, replace, n)
+  pattern = string.gsub(pattern, "[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1") -- escape pattern
+  replace = string.gsub(replace, "[%%]", "%%%%") -- escape replacement
+
+  return string.gsub(str, pattern, replace, n)
+end
+
 ---List all of the available sessions
 local function list_sessions()
   local dir_separator = utils.get_dir_pattern()
 
   local sessions = {}
   for _, session in pairs(persisted.list()) do
-    local session_name = utils
-      .escape_pattern(session, config.save_dir, "")
+    local session_name = escape_pattern(session, config.save_dir, "")
       :gsub("%%", dir_separator)
       :gsub(vim.fn.expand("~"), dir_separator)
       :gsub("//", "")
       :sub(1, -5)
 
     if vim.fn.has("win32") == 1 then
-      session_name = utils.escape_pattern(session_name, dir_separator, ":", 1)
-      session_name = utils.escape_pattern(session_name, dir_separator, "\\")
+      session_name = escape_pattern(session_name, dir_separator, ":", 1)
+      session_name = escape_pattern(session_name, dir_separator, "\\")
     end
 
     local branch, dir_path
