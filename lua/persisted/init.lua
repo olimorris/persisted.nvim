@@ -52,6 +52,8 @@ function M.load(opts)
     fire("LoadPre")
     vim.cmd("silent! source " .. e(session))
     fire("LoadPost")
+  elseif type(config.on_autoload_no_session) == "function" then
+    config.on_autoload_no_session()
   end
 
   if config.autosave and M.allow_dir() then
@@ -66,7 +68,7 @@ function M.autoload()
   end
 
   if config.autoload and M.allow_dir() then
-    M.load()
+    M.load({ auto = true })
   end
 end
 

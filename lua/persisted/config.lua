@@ -4,8 +4,9 @@ return {
   use_git_branch = false, -- create session files based on the branch of a git enabled repository
 
   autosave = true, -- automatically save session files when exiting Neovim
-  autoload = false, -- automatically load the session for the cwd on Neovim startup
   should_autosave = nil, -- function to determine if a session should be autosaved (resolve to a boolean)
+  autoload = false, -- automatically load the session for the cwd on Neovim startup
+  on_autoload_no_session = nil, -- function to run when `autoload = true` but there is no session to load
 
   change_with_cwd = true, -- change the name of the session file if the cwd changes?
   allowed_dirs = nil, -- table of dirs that the plugin will autosave and autoload from
