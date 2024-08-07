@@ -1,5 +1,4 @@
 return {
-  log_level = "ERROR", -- One of "TRACE", "DEBUG", "ERROR"
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
 
   use_git_branch = false, -- create session files based on the branch of a git enabled repository
@@ -12,16 +11,15 @@ return {
   ignored_dirs = nil, -- table of dirs that are ignored for autosaving and autoloading
 
   telescope = {
-    reset_prompt = true, -- Reset prompt after a telescope action?
     mappings = {
-      change_branch = "<c-b>",
-      copy_session = "<c-c>",
-      delete_session = "<c-d>",
+      change_branch = "<C-b>",
+      copy_session = "<C-c>",
+      delete_session = "<C-d>",
     },
     icons = { -- icons displayed in the picker
       branch = " ",
-      dir = " ",
-      selected = " ",
+      dir = "  ",
+      selected = " ",
     },
   },
 }

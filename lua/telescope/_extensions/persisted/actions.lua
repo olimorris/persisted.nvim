@@ -2,43 +2,43 @@ local actions_state = require("telescope.actions.state")
 local transform_mod = require("telescope.actions.mt").transform_mod
 
 local persisted = require("persisted")
+local config = persisted.config
+
 local M = {}
+
+---Fire an event
+---@param event string
+local function fire(event)
+  vim.api.nvim_exec_autocmds("User", { pattern = "Persisted" .. event })
+end
 
 ---Get the selected session from Telescope
 ---@return table
-local get_selected_session = function()
+local function get_selected_session()
   return actions_state.get_selected_entry()
 end
 
 ---Load the selected session
 ---@param session table
----@param config table
----@return nil
-M.load_session = function(session, config)
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedTelescopeLoadPre", data = session })
-
+function M.load_session(session)
+  fire("TelescopeLoadPre")
   vim.schedule(function()
     persisted.load({ session = session.file_path })
   end)
-
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedTelescopeLoadPost", data = session })
+  fire("TelescopeLoadPost")
 end
 
 ---Delete the selected session from disk
---@return nil
-M.delete_session = function()
+function M.delete_session()
   local session = get_selected_session()
-  local path = session.file_path
 
   if vim.fn.confirm("Delete [" .. session.name .. "]?", "&Yes\n&No") == 1 then
-    vim.fn.delete(vim.fn.expand(path))
+    vim.fn.delete(vim.fn.expand(session.file_path))
   end
 end
 
 ---Change the branch of an existing session
----@param config table
----@return nil
-M.change_branch = function(config)
+function M.change_branch()
   local session = get_selected_session()
   local path = session.file_path
 
@@ -48,8 +48,7 @@ M.change_branch = function(config)
     local ext = path:match("^.+(%..+)$")
 
     -- Check for existing branch in the filename
-    local branch_separator = config.branch_separator or "@@"
-    local pattern = "(.*)" .. branch_separator .. ".+" .. ext .. "$"
+    local pattern = "(.*)@@.+" .. ext .. "$"
     local base = path:match(pattern) or path:sub(1, #path - #ext)
 
     -- Replace or add the new branch name
@@ -57,7 +56,7 @@ M.change_branch = function(config)
     if branch == "" then
       new_path = base .. ext
     else
-      new_path = base .. branch_separator .. branch .. ext
+      new_path = base .. "@@" .. branch .. ext
     end
 
     os.rename(path, new_path)
@@ -65,8 +64,7 @@ M.change_branch = function(config)
 end
 
 ---Copy an existing session
----@return nil
-M.copy_session = function(config)
+function M.copy_session()
   local session = get_selected_session()
   local old_name = session.file_path:gsub(config.save_dir, "")
 

@@ -47,12 +47,12 @@ describe("With default settings:", function()
     assert.equals(vim.g.persisting, true)
   end)
 
-  -- it("lists sessions", function()
-  --   local sessions = require("persisted").list()
-  --   local path = require("plenary.path"):new(sessions[1].file_path)
-  --
-  --   assert.equals(path:is_path(), true)
-  -- end)
+  it("lists sessions", function()
+    local sessions = require("persisted").list()
+    local path = require("plenary.path"):new(sessions[1].file_path)
+
+    assert.equals(path:is_path(), true)
+  end)
 end)
 
 local async = require("plenary.async.tests")
@@ -64,14 +64,5 @@ async.describe("With default settings:", function()
     util.scheduler()
 
     assert.equals("0", vim.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""))
-  end)
-end)
-
-describe("Utilities", function()
-  it("can derive the session name", function()
-    local session = "%home%username%projects%front@@user%fix-analytics-export-null-values.vim"
-    local data = require("persisted.utils").make_session_data(session)
-
-    assert.equals("home/username/projects/front@@user/fix-analytics-export-null-values", data.name)
   end)
 end)
