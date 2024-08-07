@@ -159,9 +159,9 @@ The plugin comes with the following defaults:
           delete_session = "<C-d>",
         },
         icons = { -- icons displayed in the picker
-          branch = " ",
-          dir = "  ",
           selected = " ",
+          dir = "  ",
+          branch = " ",
         },
       }
     }
@@ -358,6 +358,15 @@ session, saving the current session before clearing all of the open buffers:
       end,
     })
 <
+
+**Highlights**
+
+The plugin also comes with pre-defined highlight groups for the Telescope
+implementation:
+
+- `PersistedTelescopeSelected`
+- `PersistedTelescopeDir`
+- `PersistedTelescopeBranch`
 
 
 LICENSE                                               *persisted.nvim-license*

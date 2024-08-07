@@ -19,9 +19,9 @@ return {
       delete_session = "<C-d>",
     },
     icons = { -- icons displayed in the picker
-      branch = " ",
-      dir = "  ",
       selected = " ",
+      dir = "  ",
+      branch = " ",
     },
   },
 }

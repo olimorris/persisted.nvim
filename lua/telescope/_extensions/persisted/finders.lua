@@ -4,9 +4,9 @@ local finders = require("telescope.finders")
 local M = {}
 
 local no_icons = {
-  branch = "",
-  dir = "",
   selected = "",
+  dir = "",
+  branch = "",
 }
 
 ---Create a finder for persisted sessions
@@ -27,7 +27,7 @@ function M.session_finder(sessions)
     end
 
     -- is current session
-    append(session.file_path == vim.v.this_session and (icons.selected .. " ") or "   ", "PersistedTelescopeIsCurrent")
+    append(session.file_path == vim.v.this_session and (icons.selected .. " ") or "   ", "PersistedTelescopeSelected")
 
     -- session path
     append(icons.dir, "PersistedTelescopeDir")

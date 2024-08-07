@@ -170,9 +170,9 @@ The plugin comes with the following defaults:
       delete_session = "<C-d>",
     },
     icons = { -- icons displayed in the picker
-      branch = " ",
-      dir = "  ",
       selected = " ",
+      dir = "  ",
+      branch = " ",
     },
   }
 }
@@ -345,6 +345,14 @@ vim.api.nvim_create_autocmd("User", {
   end,
 })
 ```
+
+**Highlights**
+
+The plugin also comes with pre-defined highlight groups for the Telescope implementation:
+
+- `PersistedTelescopeSelected`
+- `PersistedTelescopeDir`
+- `PersistedTelescopeBranch`
 
 ## :page_with_curl: License
 
