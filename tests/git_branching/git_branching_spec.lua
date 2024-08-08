@@ -21,9 +21,24 @@ describe("Git Branching", function()
   end)
 
   it("ensures the session has the branch name in", function()
+    if vim.fn.isdirectory(session_dir .. "/.git") == 0 then
+      vim.fn.system("mkdir -p " .. session_dir)
+      vim.fn.system("cd " .. session_dir .. " && git init")
+    end
+
+    local branch_name = require("persisted").branch()
+
+    -- Check if branch_name is valid
+    if not branch_name then
+      print("Failed to get branch name.")
+      branch_name = ""
+    else
+      branch_name = "@@" .. branch_name
+    end
+
     -- Workout what the name should be
     local pattern = "/"
-    local name = vim.fn.getcwd():gsub(pattern, "%%") .. require("persisted").get_branch() .. ".vim"
+    local name = vim.fn.getcwd():gsub(pattern, "%%") .. branch_name .. ".vim"
     local session = vim.fn.glob(session_dir .. "*.vim", true, true)[1]
 
     session:gsub(session_dir .. "/", "")

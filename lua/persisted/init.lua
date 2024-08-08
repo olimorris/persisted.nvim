@@ -1,410 +1,216 @@
-local config = require("persisted.config")
-local log = require("persisted.log")
 local utils = require("persisted.utils")
-local uv = vim.uv or vim.loop
 
 local M = {}
 
+local config
 local e = vim.fn.fnameescape
+local uv = vim.uv or vim.loop
 
----Escapes special characters before performing string substitution
----@param str string
----@param pattern string
----@param replace string
----@param n? integer
----@return string
----@return integer
-local function escape_pattern(str, pattern, replace, n)
-  pattern = string.gsub(pattern, "[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1") -- escape pattern
-  replace = string.gsub(replace, "[%%]", "%%%%") -- escape replacement
-
-  return string.gsub(str, pattern, replace, n)
+---Fire an event
+---@param event string
+function M.fire(event)
+  vim.api.nvim_exec_autocmds("User", { pattern = "Persisted" .. event })
 end
 
----Gets the directory from the file/path argument passed to Neovim if there's
----exactly one and it resolves to a valid directory
----@return string|nil
-local function args_path()
-  if vim.fn.argc() ~= 1 then
-    return nil
+---Get the current session for the cwd and git branch
+---@param opts? {branch?: boolean}
+---@return string
+function M.current(opts)
+  opts = opts or {}
+  local name = vim.fn.getcwd():gsub("[\\/:]+", "%%")
+
+  if config.use_git_branch and opts.branch ~= false then
+    local branch = M.branch()
+    if branch then
+      name = name .. "@@" .. branch:gsub("[\\/:]+", "%%")
+    end
   end
 
-  -- Use expand() to resolve '~' and use fs_realpath to resolve both '.' and
-  -- relative paths passed as arguments. Note that argv() will only ever return
-  -- paths/files passed as arguments and does not include other
-  -- parameters/arguments. fs_realpath() returns nil if the path doesn't exist.
-  -- Use isdirectory to validate it's a directory and not a file.
-  local dir = uv.fs_realpath(vim.fn.expand(vim.fn.argv(0)))
-  if dir ~= nil and vim.fn.isdirectory(dir) ~= 0 then
-    return dir
+  return config.save_dir .. name .. ".vim"
+end
+
+---Automatically load the session for the current dir
+---@param opts? { force?: boolean }
+function M.autoload(opts)
+  opts = opts or {}
+
+  if not opts.force and (vim.fn.argc() > 0 or vim.g.started_with_stdin) then
+    return
   end
-  return nil
+
+  if config.autoload and M.allowed_dir() then
+    M.load({ autoload = true })
+  end
 end
 
----Check any arguments passed to Neovim and verify if they're a directory
+---Load a session
+---@param opts? { last?: boolean, autoload?: boolean, session?: string }
+function M.load(opts)
+  opts = opts or {}
+
+  local session
+
+  if opts.last then
+    session = M.last()
+  elseif opts.session then
+    session = opts.session
+  else
+    session = M.current()
+    if vim.fn.filereadable(session) == 0 then
+      session = M.current({ branch = false })
+    end
+  end
+
+  if session and vim.fn.filereadable(session) ~= 0 then
+    vim.g.persisting_session = not config.follow_cwd and session or nil
+    vim.g.persisted_loaded_session = session
+    M.fire("LoadPre")
+    vim.cmd("silent! source " .. e(session))
+    M.fire("LoadPost")
+  elseif opts.autoload and type(config.on_autoload_no_session) == "function" then
+    config.on_autoload_no_session()
+  end
+
+  if config.autostart and M.allowed_dir() then
+    M.start()
+  end
+end
+
+---Start a session
+function M.start()
+  vim.api.nvim_create_autocmd("VimLeavePre", {
+    group = vim.api.nvim_create_augroup("Persisted", { clear = true }),
+    callback = function()
+      M.save()
+    end,
+  })
+
+  vim.g.persisting = true
+  M.fire("Start")
+end
+
+---Stop a session
+function M.stop()
+  vim.g.persisting = false
+  pcall(vim.api.nvim_del_augroup_by_name, "Persisted")
+  M.fire("Stop")
+end
+
+---Save the session
+---@param opts? { force?: boolean, session?: string }
+function M.save(opts)
+  opts = opts or {}
+
+  -- Do not save the session if should_save evals to false...unless it's forced
+  if type(config.should_save) == "function" and not config.should_save() and not opts.force then
+    return
+  end
+
+  M.fire("SavePre")
+  vim.cmd("mks! " .. e(opts.session or vim.g.persisting_session or M.current()))
+  vim.cmd("sleep 10m")
+  M.fire("SavePost")
+end
+
+---Delete the current session
+---@param opts? { session?: string }
+function M.delete(opts)
+  opts = opts or {}
+  local session = opts.session or M.current()
+
+  if session and uv.fs_stat(session) ~= 0 then
+    M.fire("DeletePre")
+
+    vim.schedule(function()
+      M.stop()
+      vim.fn.system("rm " .. e(session))
+    end)
+
+    M.fire("DeletePost")
+  end
+end
+
+---Get the current Git branch
+---@return string?
+function M.branch()
+  if uv.fs_stat(".git") then
+    local branch = vim.fn.systemlist("git branch --show-current")[1]
+    return vim.v.shell_error == 0 and branch or nil
+  end
+end
+
+---Determines whether to load, start or stop a session
+function M.toggle()
+  M.fire("Toggle")
+
+  if vim.g.persisting == nil then
+    return M.load()
+  end
+
+  if vim.g.persisting then
+    return M.stop()
+  end
+
+  return M.start()
+end
+
+---Allow autosaving and autoloading for the given dir?
+---@param opts? {dir?: string}
 ---@return boolean
-local function args_check()
-  -- Args are valid if a single directory was resolved or if no args were used.
-  return args_path() ~= nil or vim.fn.argc() == 0
-end
-
----Get the directory to be used for the session
----@return string
-local function session_dir()
-  -- Use specified directory from arguments or the working directory otherwise.
-  return args_path() or vim.fn.getcwd()
-end
-
----Does the current working directory allow for the auto-saving and loading?
----@param dir string Directory to be used for the session
----@return boolean
-local function allow_dir(dir)
-  local allowed_dirs = config.options.allowed_dirs
-
-  if allowed_dirs == nil then
+function M.allowed_dir(opts)
+  if next(config.allowed_dirs) == nil and next(config.ignored_dirs) == nil then
     return true
   end
 
-  return utils.dirs_match(dir, allowed_dirs)
+  opts = opts or {}
+  local dir = opts.dir or vim.fn.getcwd()
+
+  return utils.dirs_match(dir, config.allowed_dirs) and not utils.dirs_match(dir, config.ignored_dirs)
 end
 
----Is the current working directory ignored for auto-saving and loading?
----@param dir string Directory to be used for the session
----@return boolean
-local function ignore_dir(dir)
-  local ignored_dirs = config.options.ignored_dirs
-
-  if ignored_dirs == nil then
-    return false
-  end
-
-  return utils.dirs_match(dir, ignored_dirs)
-end
-
----Is the current branch ignored for auto-saving and loading?
----@param branch? string Branch to be used for the session
----@return boolean
-local function ignore_branch(branch)
-  local ignored_branches = config.options.ignored_branches
-
-  if not branch or ignored_branches == nil then
-    return false
-  end
-
-  return utils.table_match(branch, ignored_branches) ~= nil
-end
-
----Get the session that was saved last
----@return string
-local function get_last()
-  local sessions = vim.fn.glob(config.options.save_dir .. "*.vim", true, true)
+---Get an ordered list of sessions, sorted by modified time
+---@return string[]
+function M.list()
+  local sessions = vim.fn.glob(config.save_dir .. "*.vim", true, true)
 
   table.sort(sessions, function(a, b)
     return uv.fs_stat(a).mtime.sec > uv.fs_stat(b).mtime.sec
   end)
 
-  return sessions[1]
+  return sessions
 end
 
----Get the current Git branch name, untouched
----@param dir? string Directory to be used for the session
----@return string|nil
-local function get_branchname(dir)
-  dir = dir or session_dir()
-  vim.fn.system('git -C "' .. dir .. '" rev-parse 2>/dev/null')
-
-  local git_enabled = (vim.v.shell_error == 0)
-
-  if git_enabled then
-    local git_branch = vim.fn.systemlist('git -C "' .. dir .. '" rev-parse --abbrev-ref HEAD 2>/dev/null')
-    return git_branch[1]
-  end
-
-  return nil
-end
-
----Get the current Git branch
----@param dir? string Directory to be used for the session
----@return string|nil
-function M.get_branch(dir)
-  dir = dir or session_dir()
-
-  if config.options.use_git_branch then
-    if uv.fs_stat(".git") then
-      local git_branch = vim.fn.systemlist("git branch --show-current")[1]
-
-      if vim.v.shell_error == 0 then
-        local branch = config.options.branch_separator .. git_branch:gsub("/", "%%")
-        local branch_session = config.options.save_dir .. dir:gsub(utils.get_dir_pattern(), "%%") .. branch .. ".vim"
-
-        -- Try to load the session for the current branch
-        if vim.fn.filereadable(branch_session) ~= 0 then
-          return branch
-        else
-          log:debug("Trying to load a session for branch: %s", config.options.default_branch)
-          log:error("Could not load a session for branch: %s", git_branch[1])
-          vim.g.persisted_branch_session = branch_session
-          return config.options.branch_separator .. config.options.default_branch
-        end
-      end
-    end
-  end
-end
-
----Get the current session for the current working directory and git branch
----@param dir string Directory to be used for the session
+---Get the last session that was saved
 ---@return string
-local function get_current(dir)
-  local name = dir:gsub(utils.get_dir_pattern(), "%%")
-  local branch = M.get_branch(dir)
-
-  return config.options.save_dir .. name .. (branch or "") .. ".vim"
-end
-
----Determine if a session for the current wording directory, exists
----@param dir? string Directory to be used for the session
----@return boolean
-function M.session_exists(dir)
-  dir = dir or session_dir()
-
-  return vim.fn.filereadable(get_current(dir)) ~= 0
+function M.last()
+  return M.list()[1]
 end
 
 ---Setup the plugin
 ---@param opts? table
----@return nil
 function M.setup(opts)
-  config.setup(opts)
+  -- Account for old config options
+  if opts and opts.autosave then
+    opts.autostart = opts.autosave
+  end
+  if opts and opts.should_autosave then
+    opts.should_save = opts.should_autosave
+  end
+  if opts and opts.allowed_dirs == nil then
+    opts.allowed_dirs = {}
+  end
+  if opts and opts.ignored_dirs == nil then
+    opts.ignored_dirs = {}
+  end
 
-  log.set_root(log.new({
-    handlers = {
-      {
-        type = "echo",
-        level = vim.log.levels.WARN,
-      },
-      {
-        type = "file",
-        filename = "persisted.log",
-        level = vim.log.levels[config.options.log_level],
-      },
-    },
-  }))
+  config = vim.tbl_deep_extend("force", require("persisted.config"), opts or {})
+  M.config = config
 
-  local dir = session_dir()
-  local branch = get_branchname()
+  vim.fn.mkdir(config.save_dir, "p")
 
-  if
-    config.options.autosave
-    and (allow_dir(dir) and not ignore_dir(dir) and vim.g.persisting == nil)
-    and not ignore_branch(branch)
-    and args_check()
-  then
-    log:trace("Starting session")
+  if config.autostart and M.allowed_dir() and vim.g.persisting == nil then
     M.start()
   end
-end
-
----Load a session
----@param opt? table
----@param dir? string Directory to be used for the session
----@return nil
-function M.load(opt, dir)
-  opt = opt or {}
-  dir = dir or session_dir()
-
-  local branch
-  local session
-  if opt.session then
-    session = opt.session
-    local session_data = utils.make_session_data(session)
-    branch = session_data and session_data.branch or ""
-    log:trace("Session branch %s", branch)
-    log:trace("Session data %s", session_data)
-    if not branch then
-      vim.notify(string.format("[Persisted.nvim]: Invalid session file %s", session), vim.log.levels.WARN)
-    end
-  else
-    branch = get_branchname()
-    session = opt.last and get_last() or get_current(dir)
-    log:trace("Session branch: %s", branch)
-  end
-
-  if session then
-    if vim.fn.filereadable(session) ~= 0 then
-      vim.g.persisting_session = not config.options.follow_cwd and session or nil
-      log:trace("Session load: %s", session)
-      utils.load_session(session, config.options.silent)
-    elseif type(config.options.on_autoload_no_session) == "function" then
-      log:trace("No session to load")
-      config.options.on_autoload_no_session()
-    end
-  end
-
-  dir = session_dir()
-  if config.options.autosave and (allow_dir(dir) and not ignore_dir(dir)) and not ignore_branch(branch) then
-    M.start()
-  end
-end
-
----Automatically load the session for the current dir
----@return nil
-function M.autoload()
-  local dir = session_dir()
-  local branch = get_branchname()
-
-  if config.options.autoload and args_check() then
-    if allow_dir(dir) and not ignore_dir(dir) and not ignore_branch(branch) then
-      log:trace("Autoloading from %s", dir)
-      M.load({}, dir)
-    end
-  end
-end
-
----Start recording a session
----@return nil
-function M.start()
-  vim.g.persisting = true
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedStateChange", data = { action = "start" } })
-end
-
----Stop recording a session
----@return nil
-function M.stop()
-  vim.g.persisting = false
-  vim.g.persisting_session = nil
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedStateChange", data = { action = "stop" } })
-end
-
----Write the session to disk
----@param session string
----@return nil
-local function write(session)
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePre" })
-  vim.cmd("mks! " .. e(session))
-  vim.g.persisting = true
-  log:trace("Session saved")
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedSavePost" })
-end
-
----Save the session
----@param opt? table
----@param dir? string Directory to be used for the session
----@return nil
-function M.save(opt, dir)
-  opt = opt or {}
-  dir = dir or session_dir()
-
-  if not opt.session then
-    -- Do not save the session if the user has manually stopped it...unless it's forced
-    if (vim.g.persisting == false or vim.g.persisting == nil) and not opt.force then
-      return
-    end
-
-    -- Do not save the session if autosave is turned off...unless it's forced
-    if not config.options.autosave and not opt.force then
-      return
-    end
-
-    -- Do not save the session if the callback returns false...unless it's forced
-    if
-      not opt.force
-      and type(config.options.should_autosave) == "function"
-      and not config.options.should_autosave()
-    then
-      return
-    end
-  end
-
-  local session = opt.session or (vim.g.persisted_branch_session or vim.g.persisting_session or get_current(dir))
-  write(session)
-end
-
----Delete the current session
----@param dir? string Directory to be used for the session
----@return nil
-function M.delete(dir)
-  dir = dir or session_dir()
-  local session = get_current(dir)
-
-  if session and uv.fs_stat(session) ~= 0 then
-    local session_data = utils.make_session_data(session)
-
-    vim.api.nvim_exec_autocmds("User", { pattern = "PersistedDeletePre", data = session_data })
-
-    vim.schedule(function()
-      log:trace("Deleting session %s", session)
-      M.stop()
-      vim.fn.system("rm " .. e(session))
-    end)
-
-    vim.api.nvim_exec_autocmds("User", { pattern = "PersistedDeletePost", data = session_data })
-  end
-end
-
----Determines whether to load, start or stop a session
----@param dir? string The directory whose associated session saving should be toggled. If not set, the current working directory is used.
----@return nil
-function M.toggle(dir)
-  vim.api.nvim_exec_autocmds("User", { pattern = "PersistedToggled" })
-
-  dir = dir or session_dir()
-
-  if vim.g.persisting == nil then
-    log:trace("Toggling load")
-    return M.load({}, dir)
-  end
-
-  if vim.g.persisting then
-    log:trace("Toggling stop")
-    return M.stop()
-  end
-
-  log:trace("Toggling start")
-  return M.start()
-end
-
----List all of the sessions
----@return table
-function M.list()
-  local save_dir = config.options.save_dir
-  local session_files = vim.fn.glob(save_dir .. "*.vim", true, true)
-  local branch_separator = config.options.branch_separator
-  local dir_separator = utils.get_dir_pattern()
-
-  local sessions = {}
-  for _, session in pairs(session_files) do
-    local session_name = escape_pattern(session, save_dir, "")
-      :gsub("%%", dir_separator)
-      :gsub(vim.fn.expand("~"), dir_separator)
-      :gsub("//", "")
-      :sub(1, -5)
-
-    if vim.fn.has("win32") == 1 then
-      -- format drive letter (no trailing separator)
-      session_name = escape_pattern(session_name, dir_separator, ":", 1)
-      -- format remaining filepath separator(s)
-      session_name = escape_pattern(session_name, dir_separator, "\\")
-    end
-
-    local branch, dir_path
-
-    if string.find(session_name, branch_separator, 1, true) then
-      local splits = vim.split(session_name, branch_separator, { plain = true })
-      branch = table.remove(splits, #splits)
-      dir_path = vim.fn.join(splits, branch_separator)
-    else
-      dir_path = session_name
-    end
-
-    table.insert(sessions, {
-      ["name"] = session_name,
-      ["file_path"] = session,
-      ["branch"] = branch,
-      ["dir_path"] = dir_path,
-    })
-  end
-
-  return sessions
 end
 
 return M
