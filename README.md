@@ -288,9 +288,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 ```
 
-> [!NOTE]
-> Autoloading will not occur if the plugin is lazy loaded or a user opens Neovim with arguments. Consider using autocmds in your config if you'd like to handle this use case.
-
 **Allowed directories**
 
 You may specify a table of directories for which the plugin will autosave and/or autoload from. For example:
