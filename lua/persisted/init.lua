@@ -29,8 +29,22 @@ function M.current(opts)
   return config.save_dir .. name .. ".vim"
 end
 
+---Automatically load the session for the current dir
+---@param opts? { force?: boolean }
+function M.autoload(opts)
+  opts = opts or {}
+
+  if not opts.force and (vim.fn.argc() > 0 or vim.g.started_with_stdin) then
+    return
+  end
+
+  if config.autoload and M.allowed_dir() then
+    M.load({ autoload = true })
+  end
+end
+
 ---Load a session
----@param opts? { last?: boolean, session?: string }
+---@param opts? { last?: boolean, autoload?: boolean, session?: string }
 function M.load(opts)
   opts = opts or {}
 
@@ -49,26 +63,16 @@ function M.load(opts)
 
   if session and vim.fn.filereadable(session) ~= 0 then
     vim.g.persisting_session = not config.follow_cwd and session or nil
+    vim.g.persisted_loaded_session = session
     fire("LoadPre")
     vim.cmd("silent! source " .. e(session))
     fire("LoadPost")
-  elseif type(config.on_autoload_no_session) == "function" then
+  elseif opts.autoload and type(config.on_autoload_no_session) == "function" then
     config.on_autoload_no_session()
   end
 
-  if config.autosave and M.allow_dir() then
+  if config.autosave and M.allowed_dir() then
     M.start()
-  end
-end
-
----Automatically load the session for the current dir
-function M.autoload()
-  if vim.fn.argc() > 0 or vim.g.started_with_stdin then
-    return
-  end
-
-  if config.autoload and M.allow_dir() then
-    M.load({ auto = true })
   end
 end
 
@@ -157,7 +161,7 @@ end
 ---Allow autosaving and autoloading for the given dir?
 ---@param opts? {dir?: string}
 ---@return boolean
-function M.allow_dir(opts)
+function M.allowed_dir(opts)
   if config.allowed_dirs == nil and config.ignored_dirs == nil then
     return true
   end
@@ -194,7 +198,7 @@ function M.setup(opts)
 
   vim.fn.mkdir(config.save_dir, "p")
 
-  if config.autosave and M.allow_dir() and vim.g.persisting == nil then
+  if config.autosave and M.allowed_dir() and vim.g.persisting == nil then
     M.start()
   end
 end

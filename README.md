@@ -140,7 +140,8 @@ The Telescope extension may be opened via `:Telescope persisted`. The default ac
 The plugin sets a number of global variables throughout its lifecycle:
 
 - `vim.g.persisting` - (bool) Determines if the plugin is active for the current session
-- `vim.g.persisting_session` - (string) The file path to the current session
+- `vim.g.persisting_session` - (string) The file path to the current session (if `follow_cwd` is false)
+- `vim.g.persisted_loaded_session` - (string) The file path to the last loaded session
 
 ## :wrench: Configuration
 
@@ -233,8 +234,9 @@ There may be occasions when you do not wish to autosave; perhaps when a dashboar
 
 ```lua
 require("persisted").setup({
+  ---@return bool
   should_autosave = function()
-    -- do not autosave if the alpha dashboard is the current filetype
+    -- Do not autosave if the alpha dashboard is the current filetype
     if vim.bo.filetype == "alpha" then
       return false
     end
@@ -258,7 +260,7 @@ require("persisted").setup({
 })
 ```
 
-You can also provide a function to run when `autoload = true` but there is no session to be loaded:
+You can also provide a function to run when `autoload = true` and there is no session to load:
 
 ```lua
 require("persisted").setup({
@@ -269,7 +271,22 @@ require("persisted").setup({
 })
 ```
 
-Autoloading can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
+Autoloading can be further controlled for directories in the `allowed_dirs` and `ignored_dirs` config tables.
+
+By design, the plugin will not autoload a session when any arguments are passed to Neovim such as `nvim my_file.py`. For users who wish to build on the plugin's capabilities, consider adding a custom autocmd:
+
+```lua
+vim.api.nvim_create_autocmd("VimEnter", {
+  nested = true,
+  callback = function()
+    -- Add more complex logic here
+    if vim.fn.argc() > 0 then
+      -- Leverage the plugin's ability to resolve allowed_dirs and ignored_dirs
+      require("persisted").autoload({ force = true })
+    end
+  end,
+})
+```
 
 > [!NOTE]
 > Autoloading will not occur if the plugin is lazy loaded or a user opens Neovim with arguments. Consider using autocmds in your config if you'd like to handle this use case.
@@ -347,7 +364,7 @@ vim.api.nvim_create_autocmd("User", {
   pattern = "PersistedTelescopeLoadPre",
   callback = function(session)
     -- Save the currently loaded session using the global variable
-    require("persisted").save({ session = vim.g.persisting_session })
+    require("persisted").save({ session = vim.g.persisted_loaded_session })
 
     -- Delete all of the open buffers
     vim.api.nvim_input("<ESC>:%bd!<CR>")

@@ -128,7 +128,8 @@ actions are:
 The plugin sets a number of global variables throughout its lifecycle:
 
 - `vim.g.persisting` - (bool) Determines if the plugin is active for the current session
-- `vim.g.persisting_session` - (string) The file path to the current session
+- `vim.g.persisting_session` - (string) The file path to the current session (if `follow_cwd` is false)
+- `vim.g.persisted_loaded_session` - (string) The file path to the last loaded session
 
 
 CONFIGURATION                                   *persisted.nvim-configuration*
@@ -139,31 +140,40 @@ The plugin comes with the following defaults:
 
 >lua
     {
-      save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
+      ---@type string
+      save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- Directory where session files are saved
     
-      use_git_branch = false, -- create session files based on the branch of a git enabled repository
+      ---@type boolean
+      use_git_branch = false, -- Include the git branch in the session file name?
     
-      autosave = true, -- automatically save session files when exiting Neovim
-      should_autosave = nil, -- function to determine if a session should be autosaved (resolve to a boolean)
-      autoload = false, -- automatically load the session for the cwd on Neovim startup
-      on_autoload_no_session = nil, -- function to run when `autoload = true` but there is no session to load
+      ---@type boolean
+      autosave = true, -- Automatically save session files when exiting Neovim?
+      ---@type fun(boolean)
+      should_autosave = nil, -- Function to determine if a session should be autosaved
+      ---@type boolean
+      autoload = false, -- Automatically load the session for the cwd on Neovim startup?
+      ---@type fun(boolean)
+      on_autoload_no_session = nil, -- Function to run when `autoload = true` but there is no session to load
     
-      change_with_cwd = true, -- change the name of the session file if the cwd changes?
-      allowed_dirs = nil, -- table of dirs that the plugin will autosave and autoload from
-      ignored_dirs = nil, -- table of dirs that are ignored for autosaving and autoloading
+      ---@type boolean
+      follow_cwd = true, -- Change session file name with changes in the cwd?
+      ---@type table
+      allowed_dirs = nil, -- Table of dirs that the plugin will autosave and autoload from
+      ---@type table
+      ignored_dirs = nil, -- Table of dirs that are ignored for autosaving and autoloading
     
       telescope = {
-        mappings = {
+        mappings = { -- Mappings for managing sessions in Telescope
           change_branch = "<C-b>",
           copy_session = "<C-c>",
           delete_session = "<C-d>",
         },
-        icons = { -- icons displayed in the picker
+        icons = { -- icons displayed in the Telescope picker
           selected = " ",
           dir = "  ",
           branch = " ",
         },
-      }
+      },
     }
 <
 
@@ -221,8 +231,9 @@ function, `should_autosave`, may be used which should return a boolean value.
 
 >lua
     require("persisted").setup({
+      ---@return bool
       should_autosave = function()
-        -- do not autosave if the alpha dashboard is the current filetype
+        -- Do not autosave if the alpha dashboard is the current filetype
         if vim.bo.filetype == "alpha" then
           return false
         end
@@ -248,8 +259,8 @@ started. Whilst off by default, this can be turned on by:
     })
 <
 
-You can also provide a function to run when `autoload = true` but there is no
-session to be loaded:
+You can also provide a function to run when `autoload = true` and there is no
+session to load:
 
 >lua
     require("persisted").setup({
@@ -260,8 +271,25 @@ session to be loaded:
     })
 <
 
-Autoloading can be further controlled for certain directories by specifying
-`allowed_dirs` and `ignored_dirs`.
+Autoloading can be further controlled for directories in the `allowed_dirs` and
+`ignored_dirs` config tables.
+
+By design, the plugin will not autoload a session when any arguments are passed
+to Neovim such as `nvim my_file.py`. For users who wish to build on the
+plugin’s capabilities, consider adding a custom autocmd:
+
+>lua
+    vim.api.nvim_create_autocmd("VimEnter", {
+      nested = true,
+      callback = function()
+        -- Add more complex logic here
+        if vim.fn.argc() > 0 then
+          -- Leverage the plugin's ability to resolve allowed_dirs and ignored_dirs
+          require("persisted").autoload({ force = true })
+        end
+      end,
+    })
+<
 
 
   [!NOTE] Autoloading will not occur if the plugin is lazy loaded or a user opens
@@ -351,7 +379,7 @@ session, saving the current session before clearing all of the open buffers:
       pattern = "PersistedTelescopeLoadPre",
       callback = function(session)
         -- Save the currently loaded session using the global variable
-        require("persisted").save({ session = vim.g.persisting_session })
+        require("persisted").save({ session = vim.g.persisted_loaded_session })
     
         -- Delete all of the open buffers
         vim.api.nvim_input("<ESC>:%bd!<CR>")
