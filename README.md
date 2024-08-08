@@ -403,12 +403,8 @@ local ignored_branches = {
   "feature_branch"
 }
 
-if utils.in_table(persisted.branch(), ignored_branches) ~= nil then
+if not utils.in_table(persisted.branch(), ignored_branches) then
   persisted.load()
   persisted.start()
 end
 ```
-
-## :page_with_curl: License
-
-[MIT](https://github.com/olimorris/persisted.nvim/blob/main/LICENSE)
