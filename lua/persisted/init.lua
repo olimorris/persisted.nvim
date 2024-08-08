@@ -8,7 +8,7 @@ local uv = vim.uv or vim.loop
 
 ---Fire an event
 ---@param event string
-local function fire(event)
+function M.fire(event)
   vim.api.nvim_exec_autocmds("User", { pattern = "Persisted" .. event })
 end
 
@@ -64,9 +64,9 @@ function M.load(opts)
   if session and vim.fn.filereadable(session) ~= 0 then
     vim.g.persisting_session = not config.follow_cwd and session or nil
     vim.g.persisted_loaded_session = session
-    fire("LoadPre")
+    M.fire("LoadPre")
     vim.cmd("silent! source " .. e(session))
-    fire("LoadPost")
+    M.fire("LoadPost")
   elseif opts.autoload and type(config.on_autoload_no_session) == "function" then
     config.on_autoload_no_session()
   end
@@ -86,14 +86,14 @@ function M.start()
   })
 
   vim.g.persisting = true
-  fire("Start")
+  M.fire("Start")
 end
 
 ---Stop a session
 function M.stop()
   vim.g.persisting = false
   pcall(vim.api.nvim_del_augroup_by_name, "Persisted")
-  fire("Stop")
+  M.fire("Stop")
 end
 
 ---Save the session
@@ -110,10 +110,10 @@ function M.save(opts)
     return
   end
 
-  fire("SavePre")
+  M.fire("SavePre")
   vim.cmd("mks! " .. e(opts.session or vim.g.persisting_session or M.current()))
   vim.cmd("sleep 10m")
-  fire("SavePost")
+  M.fire("SavePost")
 end
 
 ---Delete the current session
@@ -123,14 +123,14 @@ function M.delete(opts)
   local session = opts.session or M.current()
 
   if session and uv.fs_stat(session) ~= 0 then
-    fire("DeletePre")
+    M.fire("DeletePre")
 
     vim.schedule(function()
       M.stop()
       vim.fn.system("rm " .. e(session))
     end)
 
-    fire("DeletePost")
+    M.fire("DeletePost")
   end
 end
 
@@ -145,7 +145,7 @@ end
 
 ---Determines whether to load, start or stop a session
 function M.toggle()
-  fire("Toggle")
+  M.fire("Toggle")
 
   if vim.g.persisting == nil then
     return M.load()
