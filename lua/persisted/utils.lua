@@ -3,7 +3,7 @@ local M = {}
 --- Escape special pattern matching characters in a string
 ---@param input string
 ---@return string
-local function escape_dir_pattern(input)
+function M.escape_dir_pattern(input)
   local magic_chars = { "%", "(", ")", ".", "+", "-", "*", "?", "[", "^", "$" }
 
   for _, char in ipairs(magic_chars) do
@@ -21,7 +21,7 @@ function M.dirs_match(dir, dirs_table)
   dir = vim.fn.expand(dir)
 
   local match = M.table_match(dir, dirs_table, function(pattern)
-    return escape_dir_pattern(vim.fn.expand(pattern))
+    return M.escape_dir_pattern(vim.fn.expand(pattern))
   end)
 
   return match
