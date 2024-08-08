@@ -48,7 +48,7 @@ function M.load(opts)
   end
 
   if session and vim.fn.filereadable(session) ~= 0 then
-    vim.g.persisting_session = config.change_with_cwd and session or nil
+    vim.g.persisting_session = not config.follow_cwd and session or nil
     fire("LoadPre")
     vim.cmd("silent! source " .. e(session))
     fire("LoadPost")

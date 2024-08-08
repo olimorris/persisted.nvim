@@ -34,7 +34,7 @@ test: $(PLENARY_DIR)
 	nvim --headless --noplugin -u tests/minimal.vim +Setup
 	# nvim --headless --noplugin -u tests/minimal.vim +TestAutoloading
 	nvim --headless --noplugin -u tests/minimal.vim +TestGitBranching
-	nvim --headless --noplugin -u tests/minimal.vim +TestChangeCwd
+	nvim --headless --noplugin -u tests/minimal.vim +TestFollowCwd
 	nvim --headless --noplugin -u tests/minimal.vim +TestDefaults
 	nvim --headless --noplugin -u tests/minimal.vim +TearDown
 
