@@ -1,24 +1,33 @@
 return {
-  save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
+  ---@type string
+  save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- Directory where session files are saved
 
-  use_git_branch = false, -- create session files based on the branch of a git enabled repository
+  ---@type boolean
+  use_git_branch = false, -- Include the git branch in the session file name?
 
-  autosave = true, -- automatically save session files when exiting Neovim
-  should_autosave = nil, -- function to determine if a session should be autosaved (resolve to a boolean)
-  autoload = false, -- automatically load the session for the cwd on Neovim startup
-  on_autoload_no_session = nil, -- function to run when `autoload = true` but there is no session to load
+  ---@type boolean
+  autosave = true, -- Automatically save session files when exiting Neovim?
+  ---@type fun(boolean)
+  should_autosave = nil, -- Function to determine if a session should be autosaved
+  ---@type boolean
+  autoload = false, -- Automatically load the session for the cwd on Neovim startup?
+  ---@type fun(boolean)
+  on_autoload_no_session = nil, -- Function to run when `autoload = true` but there is no session to load
 
-  change_with_cwd = true, -- change the name of the session file if the cwd changes?
-  allowed_dirs = nil, -- table of dirs that the plugin will autosave and autoload from
-  ignored_dirs = nil, -- table of dirs that are ignored for autosaving and autoloading
+  ---@type boolean
+  follow_cwd = true, -- Change session file name with changes in the cwd?
+  ---@type table
+  allowed_dirs = nil, -- Table of dirs that the plugin will autosave and autoload from
+  ---@type table
+  ignored_dirs = nil, -- Table of dirs that are ignored for autosaving and autoloading
 
   telescope = {
-    mappings = {
+    mappings = { -- Mappings for managing sessions in Telescope
       change_branch = "<C-b>",
       copy_session = "<C-c>",
       delete_session = "<C-d>",
     },
-    icons = { -- icons displayed in the picker
+    icons = { -- icons displayed in the Telescope picker
       selected = " ",
       dir = "  ",
       branch = " ",
