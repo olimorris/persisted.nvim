@@ -71,7 +71,7 @@ function M.load(opts)
     config.on_autoload_no_session()
   end
 
-  if config.autosave and M.allowed_dir() then
+  if config.autostart and M.allowed_dir() then
     M.start()
   end
 end
@@ -101,12 +101,8 @@ end
 function M.save(opts)
   opts = opts or {}
 
-  -- Do not save the session if autosave is turned off...unless it's forced
-  if not config.autosave and not opts.force then
-    return
-  end
-  -- Do not save the session if should_autosave evals to false...unless it's forced
-  if type(config.should_autosave) == "function" and not config.should_autosave() and not opts.force then
+  -- Do not save the session if should_save evals to false...unless it's forced
+  if type(config.should_save) == "function" and not config.should_save() and not opts.force then
     return
   end
 
@@ -162,7 +158,7 @@ end
 ---@param opts? {dir?: string}
 ---@return boolean
 function M.allowed_dir(opts)
-  if config.allowed_dirs == nil and config.ignored_dirs == nil then
+  if next(config.allowed_dirs) == nil and next(config.ignored_dirs) == nil then
     return true
   end
 
@@ -193,12 +189,26 @@ end
 ---Setup the plugin
 ---@param opts? table
 function M.setup(opts)
+  -- Account for old config options
+  if opts and opts.autosave then
+    opts.autostart = opts.autosave
+  end
+  if opts and opts.should_autosave then
+    opts.should_save = opts.should_autosave
+  end
+  if opts and opts.allowed_dirs == nil then
+    opts.allowed_dirs = {}
+  end
+  if opts and opts.ignored_dirs == nil then
+    opts.ignored_dirs = {}
+  end
+
   config = vim.tbl_deep_extend("force", require("persisted.config"), opts or {})
   M.config = config
 
   vim.fn.mkdir(config.save_dir, "p")
 
-  if config.autosave and M.allowed_dir() and vim.g.persisting == nil then
+  if config.autostart and M.allowed_dir() and vim.g.persisting == nil then
     M.start()
   end
 end

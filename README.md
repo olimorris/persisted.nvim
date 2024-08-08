@@ -35,7 +35,7 @@
 
 ## :package: Installation
 
-Install the plugin with your preferred package manager:
+Install and configure the plugin with your preferred package manager:
 
 **[Lazy.nvim](https://github.com/folke/lazy.nvim)**
 
@@ -110,7 +110,7 @@ require('telescope').setup({
 The plugin comes with a number of commands:
 
 - `:SessionToggle` - Determines whether to load, start or stop a session
-- `:SessionStart` - Start recording a session. Useful if `autosave = false`
+- `:SessionStart` - Start recording a session. Useful if `autostart = false`
 - `:SessionStop` - Stop recording a session
 - `:SessionSave` - Save the current session
 - `:SessionLoad` - Load the session for the current directory and current branch (if `git_use_branch = true`)
@@ -151,32 +151,31 @@ The plugin comes with the following defaults:
 
 ```lua
 {
-  ---@type string
+  autostart = true, -- Automatically start the plugin on load?
+
+  -- Function to determine if a session should be saved
+  ---@type fun(): boolean
+  should_save = function()
+    return true
+  end,
+
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- Directory where session files are saved
 
-  ---@type boolean
+  follow_cwd = true, -- Change the session file to match any change in the cwd?
   use_git_branch = false, -- Include the git branch in the session file name?
-
-  ---@type boolean
-  autosave = true, -- Automatically save session files when exiting Neovim?
-  ---@type fun(boolean)
-  should_autosave = nil, -- Function to determine if a session should be autosaved
-  ---@type boolean
   autoload = false, -- Automatically load the session for the cwd on Neovim startup?
-  ---@type fun(boolean)
-  on_autoload_no_session = nil, -- Function to run when `autoload = true` but there is no session to load
 
-  ---@type boolean
-  follow_cwd = true, -- Change session file name with changes in the cwd?
-  ---@type table
-  allowed_dirs = nil, -- Table of dirs that the plugin will autosave and autoload from
-  ---@type table
-  ignored_dirs = nil, -- Table of dirs that are ignored for autosaving and autoloading
+  -- Function to run when `autoload = true` but there is no session to load
+  ---@type fun(): any
+  on_autoload_no_session = function() end,
+
+  allowed_dirs = {}, -- Table of dirs that the plugin will start and autoload from
+  ignored_dirs = {}, -- Table of dirs that are ignored for starting and autoloading
 
   telescope = {
     mappings = { -- Mappings for managing sessions in Telescope
-      change_branch = "<C-b>",
       copy_session = "<C-c>",
+      change_branch = "<C-b>",
       delete_session = "<C-d>",
     },
     icons = { -- icons displayed in the Telescope picker
@@ -218,25 +217,27 @@ require("persisted").setup({
 })
 ```
 
-**Autosaving**
+**Autostart**
 
-By default, the plugin will automatically save a Neovim session to disk when the `VimLeavePre` event is triggered. Autosaving can be turned off by:
+By default, the plugin will automatically start when the setup function is called. This results in a Neovim session being saved to disk when the `VimLeavePre` event is triggered. This can be disabled by:
 
 ```lua
 require("persisted").setup({
-  autosave = false,
+  autostart = false,
 })
 ```
 
-Autosaving can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
+Autostarting can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
 
-There may be occasions when you do not wish to autosave; perhaps when a dashboard or a certain buftype is present. To control this, a callback function, `should_autosave`, may be used which should return a boolean value.
+**`should_save`**
+
+There may be occasions when you do not wish to save the session; perhaps when a dashboard or a certain filetype is present. To handle this, the `should_save` function may be used which should return a boolean value.
 
 ```lua
 require("persisted").setup({
   ---@return bool
-  should_autosave = function()
-    -- Do not autosave if the alpha dashboard is the current filetype
+  should_save = function()
+    -- Do not save if the alpha dashboard is the current filetype
     if vim.bo.filetype == "alpha" then
       return false
     end
@@ -245,10 +246,7 @@ require("persisted").setup({
 })
 ```
 
-Of course, if you wish to manually save the session when autosaving is disabled, the `:SessionSave` command can be used.
-
-> [!NOTE]
-> If `autosave = false` then the `should_autosave` callback will not be executed.
+Of course, if you wish to manually save the session the `:SessionSave` command can be used.
 
 **Autoloading**
 
@@ -273,24 +271,12 @@ require("persisted").setup({
 
 Autoloading can be further controlled for directories in the `allowed_dirs` and `ignored_dirs` config tables.
 
-By design, the plugin will not autoload a session when any arguments are passed to Neovim such as `nvim my_file.py`. For users who wish to build on the plugin's capabilities, consider adding a custom autocmd:
-
-```lua
-vim.api.nvim_create_autocmd("VimEnter", {
-  nested = true,
-  callback = function()
-    -- Add more complex logic here
-    if vim.fn.argc() > 0 then
-      -- Leverage the plugin's ability to resolve allowed_dirs and ignored_dirs
-      require("persisted").autoload({ force = true })
-    end
-  end,
-})
-```
+> [!IMPORTANT]
+> By design, the plugin will not autoload a session when any arguments are passed to Neovim such as `nvim my_file.py`
 
 **Allowed directories**
 
-You may specify a table of directories for which the plugin will autosave and/or autoload from. For example:
+You may specify a table of directories for which the plugin will start and/or autoload from. For example:
 
 ```lua
 require("persisted").setup({
@@ -301,14 +287,14 @@ require("persisted").setup({
 })
 ```
 
-Specifying `~/Code` will autosave and autoload from that directory as well as all its sub-directories.
+Specifying `~/Code` will start and autoload from that directory as well as all its sub-directories.
 
 > [!NOTE]
-> If `allowed_dirs` is left at its default value and `autosave` and/or `autoload` are set to `true`, then the plugin will autoload/autosave from _any_ directory
+> If `allowed_dirs` is left at its default value and `autostart` and/or `autoload` are set to `true`, then the plugin will start and autoload from _any_ directory
 
 **Ignored directories**
 
-You may specify a table of directories for which the plugin will **never** autosave and autoload from. For example:
+You may specify a table of directories for which the plugin will **never** start and autoload from. For example:
 
 ```lua
 require("persisted").setup({
@@ -376,6 +362,52 @@ The plugin also comes with pre-defined highlight groups for the Telescope implem
 - `PersistedTelescopeSelected`
 - `PersistedTelescopeDir`
 - `PersistedTelescopeBranch`
+
+## :building_construction: Extending the Plugin
+
+The plugin has been designed to be fully extensible. All of the functions in the [init.lua](https://github.com/olimorris/persisted.nvim/blob/main/lua/persisted/init.lua) and [utils.lua](https://github.com/olimorris/persisted.nvim/blob/main/lua/persisted/utils.lua) file are public.
+
+Consider a user who wishes to autoload a session if arguments are passed to Neovim. A custom autocmd can be created which forces the autoload:
+
+```lua
+local persisted = require("persisted")
+
+persisted.setup({
+  autoload = true
+})
+
+vim.api.nvim_create_autocmd("VimEnter", {
+  nested = true,
+  callback = function()
+    -- Add more complex logic here
+    if vim.fn.argc() > 0 then
+      -- Leverage the plugin's ability to resolve allowed_dirs and ignored_dirs
+      require("persisted").autoload({ force = true })
+    end
+  end,
+})
+```
+
+Or, a user who wishes to check whether the current branch is in a table of branches to be ignored:
+
+```lua
+local persisted = require("persisted")
+local utils = require("persisted.utils")
+
+persisted.setup({
+  autostart = false,
+  use_git_branch = true,
+})
+
+local ignored_branches = {
+  "feature_branch"
+}
+
+if utils.in_table(persisted.branch(), ignored_branches) ~= nil then
+  persisted.load()
+  persisted.start()
+end
+```
 
 ## :page_with_curl: License
 

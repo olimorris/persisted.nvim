@@ -29,19 +29,19 @@ end
 
 ---List all of the available sessions
 local function list_sessions()
-  local dir_separator = utils.get_dir_pattern()
+  local sep = utils.dir_pattern()
 
   local sessions = {}
   for _, session in pairs(persisted.list()) do
     local session_name = escape_pattern(session, config.save_dir, "")
-      :gsub("%%", dir_separator)
-      :gsub(vim.fn.expand("~"), dir_separator)
+      :gsub("%%", sep)
+      :gsub(vim.fn.expand("~"), sep)
       :gsub("//", "")
       :sub(1, -5)
 
     if vim.fn.has("win32") == 1 then
-      session_name = escape_pattern(session_name, dir_separator, ":", 1)
-      session_name = escape_pattern(session_name, dir_separator, "\\")
+      session_name = escape_pattern(session_name, sep, ":", 1)
+      session_name = escape_pattern(session_name, sep, "\\")
     end
 
     local branch, dir_path
