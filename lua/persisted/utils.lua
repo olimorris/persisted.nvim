@@ -57,33 +57,17 @@ function M.dirs_match(dir, dirs)
   return false
 end
 
----Check if a string matches and entry in a given table
----@param val string
----@param tbl table
----@param callback function
+---Check if a value exists in a table
+---@param val any The value to search for
+---@param tbl table The table to search in
 ---@return boolean
-function M.in_table(val, tbl, callback)
-  if val == nil then
-    return false
+function M.in_table(val, tbl)
+  for _, v in pairs(tbl) do
+    if v == val then
+      return true
+    end
   end
-
-  return tbl
-    and next(vim.tbl_filter(function(pattern)
-      if pattern.exact then
-        pattern = pattern[1]
-        -- Stripping off the trailing backslash that a user might put here,
-        -- but only if we aren't looking at the root directory
-        if pattern:sub(-1) == M.dir_pattern() and pattern:len() > 1 then
-          pattern = pattern:sub(1, -2)
-        end
-        return val == pattern
-      else
-        if callback and type(callback) == "function" then
-          pattern = callback(pattern)
-        end
-        return val:match(pattern)
-      end
-    end, tbl))
+  return false
 end
 
 return M
