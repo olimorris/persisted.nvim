@@ -36,6 +36,7 @@ test: $(PLENARY_DIR)
 	nvim --headless --noplugin -u tests/minimal.vim +TestGitBranching
 	nvim --headless --noplugin -u tests/minimal.vim +TestFollowCwd
 	nvim --headless --noplugin -u tests/minimal.vim +TestDefaults
+	nvim --headless --noplugin -u tests/minimal.vim +TestDirs
 	nvim --headless --noplugin -u tests/minimal.vim +TearDown
 
 $(PLENARY_DIR):

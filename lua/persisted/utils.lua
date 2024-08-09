@@ -14,7 +14,7 @@ end
 ---@param input string
 ---@return string
 function M.escape_dir_pattern(input)
-  local magic_chars = { "%", "(", ")", ".", "+", "-", "*", "?", "[", "^", "$" }
+  local magic_chars = { "%", "(", ")", "+", "-", "*", "?", "[", "^", "$" }
 
   for _, char in ipairs(magic_chars) do
     input = input:gsub("%" .. char, "%%" .. char)
@@ -23,18 +23,38 @@ function M.escape_dir_pattern(input)
   return input
 end
 
----Check if a target directory exists in a given table
----@param dir string
----@param dirs_table table
+---Check if a directory is a subdirectory of another
+---@param parent string
+---@param child string
 ---@return boolean
-function M.dirs_match(dir, dirs_table)
-  dir = vim.fn.expand(dir)
+function M.is_subdirectory(parent, child)
+  return vim.startswith(child, parent)
+end
 
-  local match = M.in_table(dir, dirs_table, function(pattern)
-    return M.escape_dir_pattern(vim.fn.expand(pattern))
-  end)
+---Check if a directory exists in the given table of directories
+---@param dir string The directory to check
+---@param dirs table The table of directories to search in
+---@return boolean
+function M.dirs_match(dir, dirs)
+  dir = M.escape_dir_pattern(vim.fn.expand(dir))
 
-  return match
+  for _, search in ipairs(dirs) do
+    if type(search) == "string" then
+      search = M.escape_dir_pattern(vim.fn.expand(search))
+      if M.is_subdirectory(search, dir) then
+        return true
+      end
+    elseif type(search) == "table" then
+      if search.exact then
+        search = M.escape_dir_pattern(vim.fn.expand(search[1]))
+        if dir == search then
+          return true
+        end
+      end
+    end
+  end
+
+  return false
 end
 
 ---Check if a string matches and entry in a given table

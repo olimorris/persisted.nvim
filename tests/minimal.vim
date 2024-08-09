@@ -7,4 +7,5 @@ command TestAutoloading PlenaryBustedDirectory tests/autoload {minimal_init = 't
 command TestGitBranching PlenaryBustedDirectory tests/git_branching {minimal_init = 'tests/minimal.vim'}
 command TestFollowCwd PlenaryBustedDirectory tests/follow_cwd {minimal_init = 'tests/minimal.vim'}
 command TestDefaults PlenaryBustedFile tests/default_settings_spec.lua
+command TestDirs PlenaryBustedFile tests/dirs_spec.lua
 command TearDown PlenaryBustedFile tests/teardown/clean_up_dirs.lua
