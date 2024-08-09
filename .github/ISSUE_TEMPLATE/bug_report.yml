@@ -1,6 +1,6 @@
 name: Bugs or configuration issues
 description: If you've already asked for help with a problem and confirmed something is broken with the plugin itself, create a bug report.
-title: "[Bug]: "
+title: "[Bug]: TITLE DESCRIBING THE ISSUE"
 labels: ["bug"]
 assignees: olimorris
 
@@ -8,12 +8,13 @@ body:
     - type: markdown
       attributes:
         value: |
-          Thanks for taking the time to fill out this bug report! This form may seem onerous but it makes a resolution much quicker for you and I.
+          Thanks for taking the time to fill out this bug report! This form may seem onerous but it makes a resolution much quicker if I can recreate the exact problem you're facing.
     - type: markdown
       attributes:
         value: |
           ## Test with a `minimal.lua` file
-          I know the temptation is to skip this step but please don't. With the quantity of plugins you have in your Neovim config, it's like searching for a needle in a haystack.
+          > [!IMPORTANT]
+          > This allows me to _recreate_ your issue on my machine. Please don't skip this step and please provide the full `minimal.lua` file
 
           Firstly, test and run Neovim with the minimal config below. Be sure to add your Persisted.nvim config, saving to a `minimal.lua` file and adding any additional plugins you may need.
           ```lua
@@ -74,7 +75,7 @@ body:
       id: persisted-config
       attributes:
         label: Your `minimal.lua` config
-        description: Please paste your minimal.lua config here
+        description: Please paste your minimal.lua config from above, here
         placeholder: |
           ```lua
           -- Your minimal.lua config here
@@ -98,7 +99,7 @@ body:
       id: bug
       attributes:
         label: Describe the bug
-        description: Please describe the bug and include any screenshots
+        description: Please describe what you expect to happen and what is actually happening. Screenshots may be useful
         placeholder: |
           ### What I expect to happen
           [Your text here]
@@ -112,7 +113,7 @@ body:
       id: reproduce
       attributes:
         label: Reproduce the bug
-        description: Please include the steps to reproduce the bug
+        description: Please include the steps so I can reproduce the bug
         placeholder: |
           Steps to reproduce:
           1.
