@@ -4,10 +4,14 @@ local utils = require("persisted.utils")
 describe("Directory utilities:", function()
   it("can match directories", function()
     local cwd = "~/Code/Neovim/persisted.nvim"
-    local allowed_dirs = { "~/Code" }
 
+    local allowed_dirs = { "~/Code" }
     local match = utils.dirs_match(cwd, allowed_dirs)
     assert.equals(true, match)
+
+    allowed_dirs = { "~/.dotfiles" }
+    match = utils.dirs_match(cwd, allowed_dirs)
+    assert.equals(false, match)
   end)
 
   it("can work with exact directories", function()
