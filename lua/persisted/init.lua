@@ -12,12 +12,18 @@ function M.fire(event)
   vim.api.nvim_exec_autocmds("User", { pattern = "Persisted" .. event })
 end
 
----Get the current session for the cwd and git branch
+---Get the current working directory
+---@return string
+function M.cwd()
+  return utils.sanitize_dir(vim.fn.getcwd())
+end
+
+---Get the current session for the current working directory and git branch
 ---@param opts? {branch?: boolean}
 ---@return string
 function M.current(opts)
   opts = opts or {}
-  local name = vim.fn.getcwd():gsub("[\\/:]+", "%%")
+  local name = M.cwd()
 
   if config.use_git_branch and opts.branch ~= false then
     local branch = M.branch()
@@ -120,12 +126,10 @@ function M.delete(opts)
 
   if session and uv.fs_stat(session) ~= 0 then
     M.fire("DeletePre")
-
     vim.schedule(function()
       M.stop()
       vim.fn.system("rm " .. e(session))
     end)
-
     M.fire("DeletePost")
   end
 end
@@ -142,15 +146,12 @@ end
 ---Determines whether to load, start or stop a session
 function M.toggle()
   M.fire("Toggle")
-
   if vim.g.persisting == nil then
     return M.load()
   end
-
   if vim.g.persisting then
     return M.stop()
   end
-
   return M.start()
 end
 
@@ -163,7 +164,7 @@ function M.allowed_dir(opts)
   end
 
   opts = opts or {}
-  local dir = opts.dir or vim.fn.getcwd()
+  local dir = opts.dir or M.cwd()
 
   return utils.dirs_match(dir, config.allowed_dirs) and not utils.dirs_match(dir, config.ignored_dirs)
 end

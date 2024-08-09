@@ -1,5 +1,11 @@
 local M = {}
 
+--- Escape special pattern matching characters in a string
+---@param dir string
+function M.sanitize_dir(dir)
+  return dir:gsub("[\\/:]+", "%%")
+end
+
 ---Get the directory pattern based on OS
 ---@return string
 function M.dir_pattern()
@@ -8,19 +14,6 @@ function M.dir_pattern()
     pattern = "[\\:]"
   end
   return pattern
-end
-
---- Escape special pattern matching characters in a string
----@param input string
----@return string
-function M.escape_dir_pattern(input)
-  local magic_chars = { "%", "(", ")", "+", "-", "*", "?", "[", "^", "$" }
-
-  for _, char in ipairs(magic_chars) do
-    input = input:gsub("%" .. char, "%%" .. char)
-  end
-
-  return input
 end
 
 ---Check if a directory is a subdirectory of another
@@ -36,17 +29,17 @@ end
 ---@param dirs table The table of directories to search in
 ---@return boolean
 function M.dirs_match(dir, dirs)
-  dir = M.escape_dir_pattern(vim.fn.expand(dir))
+  dir = M.sanitize_dir(vim.fn.expand(dir))
 
   for _, search in ipairs(dirs) do
     if type(search) == "string" then
-      search = M.escape_dir_pattern(vim.fn.expand(search))
+      search = M.sanitize_dir(vim.fn.expand(search))
       if M.is_subdirectory(search, dir) then
         return true
       end
     elseif type(search) == "table" then
       if search.exact then
-        search = M.escape_dir_pattern(vim.fn.expand(search[1]))
+        search = M.sanitize_dir(vim.fn.expand(search[1]))
         if dir == search then
           return true
         end
