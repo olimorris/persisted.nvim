@@ -367,7 +367,7 @@ The plugin also comes with pre-defined highlight groups for the Telescope implem
 
 The plugin has been designed to be fully extensible. All of the functions in the [init.lua](https://github.com/olimorris/persisted.nvim/blob/main/lua/persisted/init.lua) and [utils.lua](https://github.com/olimorris/persisted.nvim/blob/main/lua/persisted/utils.lua) file are public.
 
-Consider a user who wishes to autoload a session if arguments are passed to Neovim. A custom autocmd can be created which forces the autoload:
+Consider a user who wishes to autoload a session if arguments are passed to Neovim. A custom autocmd can be created which forces the autoload (thanks to [neandrake](https://github.com/neandrake) for this solution):
 
 ```lua
 local persisted = require("persisted")
@@ -379,11 +379,25 @@ persisted.setup({
 vim.api.nvim_create_autocmd("VimEnter", {
   nested = true,
   callback = function()
-    -- Add more complex logic here
-    if vim.fn.argc() > 0 then
-      -- Leverage the plugin's ability to resolve allowed_dirs and ignored_dirs
-      require("persisted").autoload({ force = true })
+    if vim.g.started_with_stdin then
+      return
     end
+
+    local forceload = false
+    if vim.fn.argc() == 0 then
+      forceload = true
+    elseif vim.fn.argc() == 1 then
+      local dir = vim.fn.expand(vim.fn.argv(0))
+      if dir == '.' then
+        dir = vim.fn.getcwd()
+      end
+
+      if vim.fn.isdirectory(dir) ~= 0 then
+        forceload = true
+      end
+    end
+
+    persisted.autoload({ force = forceload })
   end,
 })
 ```
