@@ -17,12 +17,12 @@ end
 ---@return string
 function M.current(opts)
   opts = opts or {}
-  local name = utils.sanitize_dir(vim.fn.getcwd())
+  local name = utils.make_fs_safe(vim.fn.getcwd())
 
   if config.use_git_branch and opts.branch ~= false then
     local branch = M.branch()
     if branch then
-      branch = utils.sanitize_dir(branch)
+      branch = utils.make_fs_safe(branch)
       name = name .. "@@" .. branch
     end
   end

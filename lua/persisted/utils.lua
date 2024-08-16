@@ -1,9 +1,10 @@
 local M = {}
 
---- Escape special pattern matching characters in a string
----@param dir string
-function M.sanitize_dir(dir)
-  return dir:gsub("[\\/:]+", "%%")
+--- Escapes the given text to be safe for use in file-system paths/names,
+--- accounting for cross-platform use.
+---@param text string
+function M.make_fs_safe(text)
+  return text:gsub("[\\/:]+", "%%")
 end
 
 ---Get the directory pattern based on OS
@@ -29,17 +30,17 @@ end
 ---@param dirs table The table of directories to search in
 ---@return boolean
 function M.dirs_match(dir, dirs)
-  dir = M.sanitize_dir(vim.fn.expand(dir))
+  dir = M.make_fs_safe(vim.fn.expand(dir))
 
   for _, search in ipairs(dirs) do
     if type(search) == "string" then
-      search = M.sanitize_dir(vim.fn.expand(search))
+      search = M.make_fs_safe(vim.fn.expand(search))
       if M.is_subdirectory(search, dir) then
         return true
       end
     elseif type(search) == "table" then
       if search.exact then
-        search = M.sanitize_dir(vim.fn.expand(search[1]))
+        search = M.make_fs_safe(vim.fn.expand(search[1]))
         if dir == search then
           return true
         end
