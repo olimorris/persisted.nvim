@@ -22,7 +22,8 @@ function M.current(opts)
   if config.use_git_branch and opts.branch ~= false then
     local branch = M.branch()
     if branch then
-      name = name .. "@@" .. branch:gsub("[\\/:]+", "%%")
+      branch = utils.sanitize_dir(branch)
+      name = name .. "@@" .. branch
     end
   end
 
