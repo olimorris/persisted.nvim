@@ -12,18 +12,12 @@ function M.fire(event)
   vim.api.nvim_exec_autocmds("User", { pattern = "Persisted" .. event })
 end
 
----Get the current working directory
----@return string
-function M.cwd()
-  return utils.sanitize_dir(vim.fn.getcwd())
-end
-
 ---Get the current session for the current working directory and git branch
 ---@param opts? {branch?: boolean}
 ---@return string
 function M.current(opts)
   opts = opts or {}
-  local name = M.cwd()
+  local name = utils.sanitize_dir(vim.fn.getcwd())
 
   if config.use_git_branch and opts.branch ~= false then
     local branch = M.branch()
@@ -164,7 +158,7 @@ function M.allowed_dir(opts)
   end
 
   opts = opts or {}
-  local dir = opts.dir or M.cwd()
+  local dir = opts.dir or vim.fn.getcwd()
 
   return utils.dirs_match(dir, config.allowed_dirs) and not utils.dirs_match(dir, config.ignored_dirs)
 end
