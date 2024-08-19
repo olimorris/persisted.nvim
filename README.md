@@ -367,15 +367,21 @@ The plugin also comes with pre-defined highlight groups for the Telescope implem
 
 The plugin has been designed to be fully extensible. All of the functions in the [init.lua](https://github.com/olimorris/persisted.nvim/blob/main/lua/persisted/init.lua) and [utils.lua](https://github.com/olimorris/persisted.nvim/blob/main/lua/persisted/utils.lua) file are public.
 
-Consider a user who wishes to autoload a session if arguments are passed to Neovim. A custom autocmd can be created which forces the autoload (thanks to [neandrake](https://github.com/neandrake) for this solution):
+**Custom Autoloading** by [neandrake](https://github.com/neandrake)
+
+Autoloading a session if arguments are passed to Neovim:
 
 ```lua
+{
+  "olimorris/persisted.nvim",
+  lazy = false,
+  opts = {
+    autoload = true,
+  },
+}
+
+-- Somewhere in your config
 local persisted = require("persisted")
-
-persisted.setup({
-  autoload = true
-})
-
 vim.api.nvim_create_autocmd("VimEnter", {
   nested = true,
   callback = function()
@@ -402,23 +408,54 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 ```
 
-Or, a user who wishes to check whether the current branch is in a table of branches to be ignored:
+**Git Branching from directories that are not the CWD** by [mrloop](https://github.com/mrloop)
+
+As per [#149](https://github.com/olimorris/persisted.nvim/discussions/149), if you invoke Neovim from a sub-directory then the git branch will not be detected. The code below amends for this:
 
 ```lua
-local persisted = require("persisted")
-local utils = require("persisted.utils")
-
-persisted.setup({
-  autostart = false,
-  use_git_branch = true,
-})
-
-local ignored_branches = {
-  "feature_branch"
+{
+  "olimorris/persisted.nvim",
+  lazy = false,
+  opts = {
+    autoload = true,
+    autosave = true,
+    use_git_branch = true,
+  },
+  config = function(_, opts)
+    local persisted = require("persisted")
+    persisted.branch = function()
+      local branch = vim.fn.systemlist("git branch --show-current")[1]
+      return vim.v.shell_error == 0 and branch or nil
+    end
+    persisted.setup(opts)
+  end,
 }
+```
 
-if not utils.in_table(persisted.branch(), ignored_branches) then
-  persisted.load()
-  persisted.start()
-end
+**Ignore Branches**
+
+If you'd like to ignore certain branches from being saved as a session:
+
+```lua
+{
+  "olimorris/persisted.nvim",
+  lazy = false,
+  opts = {
+    autostart = true,
+    use_git_branch = true,
+  },
+  config = function(_, opts)
+    local persisted = require("persisted")
+    local utils = require("persisted.utils")
+    local ignored_branches = {
+      "feature_branch"
+    }
+
+    persisted.setup(opts)
+    if not utils.in_table(persisted.branch(), ignored_branches) then
+      persisted.load()
+      persisted.start()
+    end
+  end
+}
 ```
