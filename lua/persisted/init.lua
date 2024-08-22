@@ -138,6 +138,42 @@ function M.branch()
   end
 end
 
+---Select a session to load
+function M.select()
+  ---@type { session: string, dir: string, branch?: string }[]
+  local items = {}
+  local found = {} ---@type table<string, boolean>
+  for _, session in ipairs(M.list()) do
+    if uv.fs_stat(session) then
+      local file = session:sub(#M.config.save_dir + 1, -5)
+      local dir, branch = unpack(vim.split(file, "@@", { plain = true }))
+      dir = dir:gsub("%%", "/")
+      if jit.os:find("Windows") then
+        dir = dir:gsub("^(%w)/", "%1:/")
+      end
+      if not found[dir .. (branch or "")] then
+        found[dir .. (branch or "")] = true
+        items[#items + 1] = { session = session, dir = dir, branch = branch }
+      end
+    end
+  end
+  vim.ui.select(items, {
+    prompt = "Select a session: ",
+    format_item = function(item)
+      local name = vim.fn.fnamemodify(item.dir, ":p:~")
+      if item.branch then
+        name = name .. " (" .. item.branch .. ")"
+      end
+      return name
+    end,
+  }, function(item)
+    if item then
+      vim.fn.chdir(item.dir)
+      M.load()
+    end
+  end)
+end
+
 ---Determines whether to load, start or stop a session
 function M.toggle()
   M.fire("Toggle")

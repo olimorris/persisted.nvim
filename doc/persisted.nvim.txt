@@ -108,6 +108,7 @@ The plugin comes with a number of commands:
 - `:SessionStart` - Start recording a session. Useful if `autostart = false`
 - `:SessionStop` - Stop recording a session
 - `:SessionSave` - Save the current session
+- `:SessionSelect` - Load a session from the list (useful if you don’t wish to use the Telescope extension)
 - `:SessionLoad` - Load the session for the current directory and current branch (if `git_use_branch = true`)
 - `:SessionLoadLast` - Load the most recent session
 - `:SessionLoadFromFile` - Load a session from a given path

@@ -9,6 +9,7 @@ vim.cmd([[command! SessionLoad :lua require("persisted").load()]])
 vim.cmd([[command! SessionLoadLast :lua require("persisted").load({ last = true })]])
 vim.cmd([[command! SessionDelete :lua require("persisted").delete()]])
 vim.cmd([[command! SessionToggle :lua require("persisted").toggle()]])
+vim.cmd([[command! SessionSelect :lua require("persisted").select()]])
 
 local persisted = require("persisted")
 
