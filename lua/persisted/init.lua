@@ -193,18 +193,8 @@ function M.allowed_dir(opts)
   opts = opts or {}
   local dir = opts.dir or vim.fn.getcwd()
 
-  return
-    (
-      next(config.allowed_dirs)
-      and utils.dirs_match(dir, config.allowed_dirs)
-      or true
-    )
-    and not
-    (
-      next(config.ignored_dirs)
-      and utils.dirs_match(dir, config.ignored_dirs)
-      or false
-    )
+  return (next(config.allowed_dirs) and utils.dirs_match(dir, config.allowed_dirs) or true)
+    and not (next(config.ignored_dirs) and utils.dirs_match(dir, config.ignored_dirs) or false)
 end
 
 ---Get an ordered list of sessions, sorted by modified time
