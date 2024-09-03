@@ -123,7 +123,7 @@ function M.delete(opts)
     M.fire("DeletePre")
     vim.schedule(function()
       M.stop()
-      vim.fn.system("rm " .. e(session))
+      vim.fn.delete(vim.fn.expand(session))
     end)
     M.fire("DeletePost")
   end
