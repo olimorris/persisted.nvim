@@ -473,11 +473,13 @@ If you’d like to ignore certain branches from being saved as a session:
         local utils = require("persisted.utils")
         local ignored_branches = {
           "feature_branch"
+          "bug_fix_branch"
         }
     
         persisted.setup(opts)
+    
+        -- Only start the plugin if the branch isn't in the ignored list
         if not utils.in_table(persisted.branch(), ignored_branches) then
-          persisted.load()
           persisted.start()
         end
       end
