@@ -459,3 +459,11 @@ If you'd like to ignore certain branches from being saved as a session:
   end
 }
 ```
+
+<!-- panvimdoc-ignore-start -->
+
+## :clap: Acknowledgements
+
+- [persistence.nvim](https://github.com/folke/persistence.nvim) for the origin of this plugin and the continued good ideas that I implement
+
+<!-- panvimdoc-ignore-end -->

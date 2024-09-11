@@ -218,20 +218,6 @@ end
 ---Setup the plugin
 ---@param opts? table
 function M.setup(opts)
-  -- Account for old config options
-  if opts and opts.autosave then
-    opts.autostart = opts.autosave
-  end
-  if opts and opts.should_autosave then
-    opts.should_save = opts.should_autosave
-  end
-  if opts and opts.allowed_dirs == nil then
-    opts.allowed_dirs = {}
-  end
-  if opts and opts.ignored_dirs == nil then
-    opts.ignored_dirs = {}
-  end
-
   config = vim.tbl_deep_extend("force", require("persisted.config"), opts or {})
   M.config = config
 
