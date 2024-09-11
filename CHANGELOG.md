@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/olimorris/persisted.nvim/compare/v1.1.1...v2.0.0) (2024-09-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove support for old config
+
+### Code Refactoring
+
+* remove support for old config ([f0f02a9](https://github.com/olimorris/persisted.nvim/commit/f0f02a990c3df2a97dfea9636f719137867d0a52))
+
 ## [1.1.1](https://github.com/olimorris/persisted.nvim/compare/v1.1.0...v1.1.1) (2024-09-03)
 
 
