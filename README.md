@@ -408,7 +408,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 ```
 
-**Git Branching from directories that are not the CWD** by [mrloop](https://github.com/mrloop)
+**Git Branching and Sub-directories** by [mrloop](https://github.com/mrloop)
 
 As per [#149](https://github.com/olimorris/persisted.nvim/discussions/149), if you invoke Neovim from a sub-directory then the git branch will not be detected. The code below amends for this:
 
@@ -432,7 +432,7 @@ As per [#149](https://github.com/olimorris/persisted.nvim/discussions/149), if y
 }
 ```
 
-**Ignore Branches**
+**Ignore Certain Branches**
 
 If you'd like to ignore certain branches from being saved as a session:
 
@@ -459,6 +459,31 @@ If you'd like to ignore certain branches from being saved as a session:
       persisted.start()
     end
   end
+}
+```
+
+**Only Save Certain Sessions**
+
+You may wish to only save a session if the current working directory is in a table of allowed directories:
+
+```lua
+{
+  "olimorris/persisted.nvim",
+  lazy = false,
+  config = function()
+    local persisted = require("persisted")
+    local utils = require("persisted.utils")
+    local allowed_dirs = {
+      "~/code",
+      "~/notes/api"
+    }
+
+    persisted.setup({
+      should_save = function()
+        return utils.dirs_match(vim.fn.getcwd(), allowed_dirs)
+      end,
+    })
+  end,
 }
 ```
 
