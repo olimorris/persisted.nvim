@@ -355,6 +355,21 @@ vim.api.nvim_create_autocmd("User", {
 })
 ```
 
+Or, to ensure that certain filetypes are removed from the session before it's saved:
+
+```lua
+vim.api.nvim_create_autocmd("User", {
+  pattern = "PersistedSavePre",
+  callback = function()
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.bo[buf].filetype == "codecompanion" then
+        vim.api.nvim_buf_delete(buf, { force = true })
+      end
+    end
+  end,
+})
+```
+
 **Highlights**
 
 The plugin also comes with pre-defined highlight groups for the Telescope implementation:
