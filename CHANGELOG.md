@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/olimorris/persisted.nvim/compare/v2.0.0...v2.0.1) (2024-10-17)
+
+
+### Bug Fixes
+
+* do not autostart the plugin if nvim is passed args ([e65093d](https://github.com/olimorris/persisted.nvim/commit/e65093de393bad9e2bb13348895aaba6319b9ad1))
+
 ## [2.0.0](https://github.com/olimorris/persisted.nvim/compare/v1.1.1...v2.0.0) (2024-09-11)
 
 
