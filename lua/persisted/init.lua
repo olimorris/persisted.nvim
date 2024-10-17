@@ -3,6 +3,8 @@ local utils = require("persisted.utils")
 local M = {}
 
 local config
+local start_args = vim.fn.argc() > 0 or vim.g.started_with_stdin
+
 local e = vim.fn.fnameescape
 local uv = vim.uv or vim.loop
 
@@ -35,7 +37,7 @@ end
 function M.autoload(opts)
   opts = opts or {}
 
-  if not opts.force and (vim.fn.argc() > 0 or vim.g.started_with_stdin) then
+  if not opts.force and start_args then
     return
   end
 
@@ -72,7 +74,7 @@ function M.load(opts)
     config.on_autoload_no_session()
   end
 
-  if config.autostart and M.allowed_dir() then
+  if config.autostart and M.allowed_dir() and not start_args then
     M.start()
   end
 end
@@ -223,7 +225,7 @@ function M.setup(opts)
 
   vim.fn.mkdir(config.save_dir, "p")
 
-  if config.autostart and M.allowed_dir() and vim.g.persisting == nil then
+  if config.autostart and M.allowed_dir() and vim.g.persisting == nil and not start_args then
     M.start()
   end
 end
