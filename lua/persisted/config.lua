@@ -1,4 +1,4 @@
-return {
+local defaults = {
   autostart = true, -- Automatically start the plugin on load?
 
   -- Function to determine if a session should be saved
@@ -33,3 +33,22 @@ return {
     },
   },
 }
+
+local M = {
+  config = vim.deepcopy(defaults),
+}
+
+---@param opts? table
+M.setup = function(opts)
+  opts = opts or {}
+  M.config = vim.tbl_deep_extend("force", vim.deepcopy(defaults), opts)
+end
+
+return setmetatable(M, {
+  __index = function(_, key)
+    if key == "setup" then
+      return M.setup
+    end
+    return rawget(M.config, key)
+  end,
+})

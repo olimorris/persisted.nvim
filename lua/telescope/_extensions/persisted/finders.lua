@@ -1,4 +1,4 @@
-local config = require("persisted").config
+local config = require("persisted.config")
 local finders = require("telescope.finders")
 
 local M = {}

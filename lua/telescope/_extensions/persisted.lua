@@ -7,9 +7,8 @@ local _actions = require("telescope._extensions.persisted.actions")
 local _finders = require("telescope._extensions.persisted.finders")
 
 local persisted = require("persisted")
+local config = require("persisted.config")
 local utils = require("persisted.utils")
-
-local config = persisted.config
 
 local telescope_opts = {}
 

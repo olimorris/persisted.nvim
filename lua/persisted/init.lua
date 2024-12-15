@@ -1,8 +1,8 @@
+local config = require("persisted.config")
 local utils = require("persisted.utils")
 
 local M = {}
 
-local config
 local start_args = vim.fn.argc() > 0 or vim.g.started_with_stdin
 
 local e = vim.fn.fnameescape
@@ -220,8 +220,7 @@ end
 ---Setup the plugin
 ---@param opts? table
 function M.setup(opts)
-  config = vim.tbl_deep_extend("force", require("persisted.config"), opts or {})
-  M.config = config
+  config.setup(opts)
 
   vim.fn.mkdir(config.save_dir, "p")
 

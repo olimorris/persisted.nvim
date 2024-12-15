@@ -2,7 +2,7 @@ local actions_state = require("telescope.actions.state")
 local transform_mod = require("telescope.actions.mt").transform_mod
 
 local persisted = require("persisted")
-local config = persisted.config
+local config = require("persisted.config")
 
 local M = {}
 
