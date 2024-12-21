@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/olimorris/persisted.nvim/compare/v2.0.1...v2.0.2) (2024-12-21)
+
+
+### Bug Fixes
+
+* correct "M.config" with config ([#167](https://github.com/olimorris/persisted.nvim/issues/167)) ([1d50876](https://github.com/olimorris/persisted.nvim/commit/1d508760e74f0fdfbfb225f7c227cafc54628e51))
+
 ## [2.0.1](https://github.com/olimorris/persisted.nvim/compare/v2.0.0...v2.0.1) (2024-10-17)
 
 
