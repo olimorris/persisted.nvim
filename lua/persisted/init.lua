@@ -147,7 +147,7 @@ function M.select()
   local found = {} ---@type table<string, boolean>
   for _, session in ipairs(M.list()) do
     if uv.fs_stat(session) then
-      local file = session:sub(#M.config.save_dir + 1, -5)
+      local file = session:sub(#config.save_dir + 1, -5)
       local dir, branch = unpack(vim.split(file, "@@", { plain = true }))
       dir = dir:gsub("%%", "/")
       if jit.os:find("Windows") then
