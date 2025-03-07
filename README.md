@@ -384,7 +384,7 @@ The plugin also comes with pre-defined highlight groups for the Telescope implem
 
 The plugin has been designed to be fully extensible. All of the functions in the [init.lua](https://github.com/olimorris/persisted.nvim/blob/main/lua/persisted/init.lua) and [utils.lua](https://github.com/olimorris/persisted.nvim/blob/main/lua/persisted/utils.lua) file are public.
 
-**Custom Autoloading** by [neandrake](https://github.com/neandrake)
+**Custom autoloading** by [neandrake](https://github.com/neandrake)
 
 Autoloading a session if arguments are passed to Neovim:
 
@@ -425,7 +425,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 ```
 
-**Git Branching and Sub-directories** by [mrloop](https://github.com/mrloop)
+**Git branching and sub-directories** by [mrloop](https://github.com/mrloop)
 
 As per [#149](https://github.com/olimorris/persisted.nvim/discussions/149), if you invoke Neovim from a sub-directory then the git branch will not be detected. The code below amends for this:
 
@@ -449,7 +449,7 @@ As per [#149](https://github.com/olimorris/persisted.nvim/discussions/149), if y
 }
 ```
 
-**Ignore Certain Branches**
+**Ignore certain branches**
 
 If you'd like to ignore certain branches from being saved as a session:
 
@@ -479,7 +479,34 @@ If you'd like to ignore certain branches from being saved as a session:
 }
 ```
 
-**Only Save Certain Sessions**
+**Only save session if a minimum number of buffers are present**
+
+```lua
+{
+  "olimorris/persisted.nvim",
+  lazy = false,
+  config = function()
+    local persisted = require("persisted")
+    persisted.setup({
+      should_save = function()
+        -- Ref: https://github.com/folke/persistence.nvim/blob/166a79a55bfa7a4db3e26fc031b4d92af71d0b51/lua/persistence/init.lua#L46
+        local bufs = vim.tbl_filter(function(b)
+          if vim.bo[b].buftype ~= "" or vim.tbl_contains({ "gitcommit", "gitrebase", "jj" }, vim.bo[b].filetype) then
+            return false
+          end
+          return vim.api.nvim_buf_get_name(b) ~= ""
+        end, vim.api.nvim_list_bufs())
+        if #bufs < 1 then
+          return false
+        end
+        return true
+      end,
+    })
+  end,
+}
+```
+
+**Only save a session in a certain dir**
 
 You may wish to only save a session if the current working directory is in a table of allowed directories:
 

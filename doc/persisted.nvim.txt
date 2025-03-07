@@ -338,17 +338,19 @@ their default setting (ignoring all listed directory and its children), however
 
 The plugin fires events at various points during its lifecycle:
 
-- `PersistedLoadPre` - For _before_ a session is loaded
-- `PersistedLoadPost` - For _after_ a session is loaded
-- `PersistedTelescopeLoadPre` - For _before_ a session is loaded via Telescope
-- `PersistedTelescopeLoadPost` - For _after_ a session is loaded via Telescope
-- `PersistedSavePre` - For _before_ a session is saved
-- `PersistedSavePost` - For _after_ a session is saved
 - `PersistedDeletePre` - For _before_ a session is deleted
 - `PersistedDeletePost` - For _after_ a session is deleted
+- `PersistedLoadPre` - For _before_ a session is loaded
+- `PersistedLoadPost` - For _after_ a session is loaded
+- `PersistedSavePre` - For _before_ a session is saved
+- `PersistedSavePost` - For _after_ a session is saved
+- `PersistedSelectPre` - For _before_ a session is selected (via `:SessionSelect`)
+- `PersistedSelectPost` - For _after_ a session is selected
 - `PersistedStart` - For when a session has _started_
 - `PersistedStop` - For when a session has _stopped_
 - `PersistedToggle` - For when a session is toggled
+- `PersistedTelescopeLoadPre` - For _before_ a session is loaded via Telescope
+- `PersistedTelescopeLoadPost` - For _after_ a session is loaded via Telescope
 
 These events can be consumed anywhere within your configuration by utilising
 the `vim.api.nvim_create_autocmd` function.
@@ -360,7 +362,7 @@ session, saving the current session before clearing all of the open buffers:
     vim.api.nvim_create_autocmd("User", {
       pattern = "PersistedTelescopeLoadPre",
       callback = function(session)
-        -- Save the currently loaded session using the global variable
+        -- Save the currently loaded session passing in the path to the current session
         require("persisted").save({ session = vim.g.persisted_loaded_session })
     
         -- Delete all of the open buffers
@@ -404,7 +406,7 @@ and utils.lua
 <https://github.com/olimorris/persisted.nvim/blob/main/lua/persisted/utils.lua>
 file are public.
 
-**Custom Autoloading** by neandrake <https://github.com/neandrake>
+**Custom autoloading** by neandrake <https://github.com/neandrake>
 
 Autoloading a session if arguments are passed to Neovim:
 
@@ -445,7 +447,7 @@ Autoloading a session if arguments are passed to Neovim:
     })
 <
 
-**Git Branching and Sub-directories** by mrloop <https://github.com/mrloop>
+**Git branching and sub-directories** by mrloop <https://github.com/mrloop>
 
 As per #149 <https://github.com/olimorris/persisted.nvim/discussions/149>, if
 you invoke Neovim from a sub-directory then the git branch will not be
@@ -471,7 +473,7 @@ detected. The code below amends for this:
     }
 <
 
-**Ignore Certain Branches**
+**Ignore certain branches**
 
 If you’d like to ignore certain branches from being saved as a session:
 
@@ -501,7 +503,34 @@ If you’d like to ignore certain branches from being saved as a session:
     }
 <
 
-**Only Save Certain Sessions**
+**Only save session if a minimum number of buffers are present**
+
+>lua
+    {
+      "olimorris/persisted.nvim",
+      lazy = false,
+      config = function()
+        local persisted = require("persisted")
+        persisted.setup({
+          should_save = function()
+            -- Ref: https://github.com/folke/persistence.nvim/blob/166a79a55bfa7a4db3e26fc031b4d92af71d0b51/lua/persistence/init.lua#L46
+            local bufs = vim.tbl_filter(function(b)
+              if vim.bo[b].buftype ~= "" or vim.tbl_contains({ "gitcommit", "gitrebase", "jj" }, vim.bo[b].filetype) then
+                return false
+              end
+              return vim.api.nvim_buf_get_name(b) ~= ""
+            end, vim.api.nvim_list_bufs())
+            if #bufs < 1 then
+              return false
+            end
+            return true
+          end,
+        })
+      end,
+    }
+<
+
+**Only save a session in a certain dir**
 
 You may wish to only save a session if the current working directory is in a
 table of allowed directories:
