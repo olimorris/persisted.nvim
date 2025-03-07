@@ -10,6 +10,7 @@ local uv = vim.uv or vim.loop
 
 ---Fire an event
 ---@param event string
+---@return nil
 function M.fire(event)
   vim.api.nvim_exec_autocmds("User", { pattern = "Persisted" .. event })
 end
@@ -34,6 +35,7 @@ end
 
 ---Automatically load the session for the current dir
 ---@param opts? { force?: boolean }
+---@return nil
 function M.autoload(opts)
   opts = opts or {}
 
@@ -48,6 +50,7 @@ end
 
 ---Load a session
 ---@param opts? { last?: boolean, autoload?: boolean, session?: string }
+---@return nil
 function M.load(opts)
   opts = opts or {}
 
@@ -80,6 +83,7 @@ function M.load(opts)
 end
 
 ---Start a session
+---@return nil
 function M.start()
   vim.api.nvim_create_autocmd("VimLeavePre", {
     group = vim.api.nvim_create_augroup("Persisted", { clear = true }),
@@ -93,6 +97,7 @@ function M.start()
 end
 
 ---Stop a session
+---@return nil
 function M.stop()
   vim.g.persisting = false
   pcall(vim.api.nvim_del_augroup_by_name, "Persisted")
@@ -101,6 +106,7 @@ end
 
 ---Save the session
 ---@param opts? { force?: boolean, session?: string }
+---@return nil
 function M.save(opts)
   opts = opts or {}
 
@@ -115,11 +121,12 @@ function M.save(opts)
   M.fire("SavePost")
 end
 
----Delete the current session
----@param opts? { session?: string }
+---Delete a session
+---@param opts? { path?: string }
+---@return nil
 function M.delete(opts)
   opts = opts or {}
-  local session = opts.session or M.current()
+  local session = opts.path or M.current()
 
   if session and uv.fs_stat(session) ~= 0 then
     M.fire("DeletePre")
@@ -141,9 +148,9 @@ function M.branch()
 end
 
 ---Select a session to load
+---@return nil
 function M.select()
-  ---@type { session: string, dir: string, branch?: string }[]
-  local items = {}
+  local items = {} ---@type { session: string, dir: string, branch?: string }[]
   local found = {} ---@type table<string, boolean>
   for _, session in ipairs(M.list()) do
     if uv.fs_stat(session) then
@@ -160,7 +167,7 @@ function M.select()
     end
   end
   vim.ui.select(items, {
-    prompt = "Select a session: ",
+    prompt = "Load a session: ",
     format_item = function(item)
       local name = vim.fn.fnamemodify(item.dir, ":p:~")
       if item.branch then
@@ -170,13 +177,16 @@ function M.select()
     end,
   }, function(item)
     if item then
+      M.fire("SelectPre")
       vim.fn.chdir(item.dir)
       M.load()
+      M.fire("SelectPost")
     end
   end)
 end
 
 ---Determines whether to load, start or stop a session
+---@return nil
 function M.toggle()
   M.fire("Toggle")
   if vim.g.persisting == nil then
@@ -219,6 +229,7 @@ end
 
 ---Setup the plugin
 ---@param opts? table
+---@return nil
 function M.setup(opts)
   config.setup(opts)
 

@@ -326,17 +326,19 @@ In this setup, `~/.config` and `~/.local/nvim` are still going to behave in thei
 
 The plugin fires events at various points during its lifecycle:
 
-- `PersistedLoadPre` - For _before_ a session is loaded
-- `PersistedLoadPost` - For _after_ a session is loaded
-- `PersistedTelescopeLoadPre` - For _before_ a session is loaded via Telescope
-- `PersistedTelescopeLoadPost` - For _after_ a session is loaded via Telescope
-- `PersistedSavePre` - For _before_ a session is saved
-- `PersistedSavePost` - For _after_ a session is saved
 - `PersistedDeletePre` - For _before_ a session is deleted
 - `PersistedDeletePost` - For _after_ a session is deleted
+- `PersistedLoadPre` - For _before_ a session is loaded
+- `PersistedLoadPost` - For _after_ a session is loaded
+- `PersistedSavePre` - For _before_ a session is saved
+- `PersistedSavePost` - For _after_ a session is saved
+- `PersistedSelectPre` - For _before_ a session is selected (via `:SessionSelect`)
+- `PersistedSelectPost` - For _after_ a session is selected
 - `PersistedStart` - For when a session has _started_
 - `PersistedStop` - For when a session has _stopped_
 - `PersistedToggle` - For when a session is toggled
+- `PersistedTelescopeLoadPre` - For _before_ a session is loaded via Telescope
+- `PersistedTelescopeLoadPost` - For _after_ a session is loaded via Telescope
 
 These events can be consumed anywhere within your configuration by utilising the `vim.api.nvim_create_autocmd` function.
 
@@ -346,7 +348,7 @@ A commonly requested example is to use the Telescope extension to load a session
 vim.api.nvim_create_autocmd("User", {
   pattern = "PersistedTelescopeLoadPre",
   callback = function(session)
-    -- Save the currently loaded session using the global variable
+    -- Save the currently loaded session passing in the path to the current session
     require("persisted").save({ session = vim.g.persisted_loaded_session })
 
     -- Delete all of the open buffers
