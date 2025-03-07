@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/olimorris/persisted.nvim/compare/v2.0.2...v2.1.0) (2025-03-07)
+
+
+### Features
+
+* **events:** add `SelectPre` and `SelectPost` events ([#172](https://github.com/olimorris/persisted.nvim/issues/172)) ([562fe01](https://github.com/olimorris/persisted.nvim/commit/562fe01d9739b9c37b32113d4d70c3cfad3c5ec5))
+
 ## [2.0.2](https://github.com/olimorris/persisted.nvim/compare/v2.0.1...v2.0.2) (2024-12-21)
 
 
