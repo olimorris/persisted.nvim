@@ -42,13 +42,12 @@ Install and configure the plugin with your preferred package manager:
 -- Lua
 {
   "olimorris/persisted.nvim",
-  lazy = false, -- make sure the plugin is always loaded at startup
-  config = true
+  event = "BufReadPre", -- Ensure the plugin loads only when a buffer has been loaded
+  opts = {
+    -- Your config goes here ...
+  },
 }
 ```
-
-> [!NOTE]
-> Setting `lazy = true` option may be useful if you use a dashboard
 
 **[Packer](https://github.com/wbthomason/packer.nvim)**
 
@@ -77,11 +76,9 @@ lua << EOF
 EOF
 ```
 
-If you wish to use session _autoloading_ alongside a dashboard plugin, it is recommended that you give this plugin a greater loading priority. With **Packer** the `after` config option can be used and in **Lazy.nvim**, the `priority` property.
-
 **Telescope extension**
 
-Ensure that the telescope extension is loaded with:
+Ensure that the Telescope extension is loaded with:
 
 ```lua
 require("telescope").load_extension("persisted")
@@ -199,9 +196,9 @@ As the plugin uses Vim's `:mksession` command then you may change the `vim.o.ses
 The location of the session files may be changed by altering the `save_dir` configuration option. For example:
 
 ```lua
-require("persisted").setup({
+{
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- Resolves to ~/.local/share/nvim/sessions/
-})
+}
 ```
 
 > [!NOTE]
@@ -212,9 +209,9 @@ require("persisted").setup({
 One of the plugin's core features is the ability to have multiple session files for a given project, by using git branches. To enable git branching:
 
 ```lua
-require("persisted").setup({
+{
   use_git_branch = true,
-})
+}
 ```
 
 **Autostart**
@@ -222,9 +219,9 @@ require("persisted").setup({
 By default, the plugin will automatically start when the setup function is called. This results in a Neovim session being saved to disk when the `VimLeavePre` event is triggered. This can be disabled by:
 
 ```lua
-require("persisted").setup({
+{
   autostart = false,
-})
+}
 ```
 
 Autostarting can be further controlled for certain directories by specifying `allowed_dirs` and `ignored_dirs`.
@@ -234,7 +231,7 @@ Autostarting can be further controlled for certain directories by specifying `al
 There may be occasions when you do not wish to save the session; perhaps when a dashboard or a certain filetype is present. To handle this, the `should_save` function may be used which should return a boolean value.
 
 ```lua
-require("persisted").setup({
+{
   ---@return bool
   should_save = function()
     -- Do not save if the alpha dashboard is the current filetype
@@ -243,7 +240,7 @@ require("persisted").setup({
     end
     return true
   end,
-})
+}
 ```
 
 Of course, if you wish to manually save the session the `:SessionSave` command can be used.
@@ -253,20 +250,20 @@ Of course, if you wish to manually save the session the `:SessionSave` command c
 The plugin can be enabled to automatically load sessions when Neovim is started. Whilst off by default, this can be turned on by:
 
 ```lua
-require("persisted").setup({
+{
   autoload = true,
-})
+}
 ```
 
 You can also provide a function to run when `autoload = true` and there is no session to load:
 
 ```lua
-require("persisted").setup({
+{
   autoload = true,
   on_autoload_no_session = function()
     vim.notify("No existing session to load.")
   end
-})
+}
 ```
 
 Autoloading can be further controlled for directories in the `allowed_dirs` and `ignored_dirs` config tables.
@@ -279,12 +276,12 @@ Autoloading can be further controlled for directories in the `allowed_dirs` and 
 You may specify a table of directories for which the plugin will start and/or autoload from. For example:
 
 ```lua
-require("persisted").setup({
+{
   allowed_dirs = {
     "~/.dotfiles",
     "~/Code",
   },
-})
+}
 ```
 
 Specifying `~/Code` will start and autoload from that directory as well as all its sub-directories.
@@ -297,12 +294,12 @@ Specifying `~/Code` will start and autoload from that directory as well as all i
 You may specify a table of directories for which the plugin will **never** start and autoload from. For example:
 
 ```lua
-require("persisted").setup({
+{
   ignored_dirs = {
     "~/.config",
     "~/.local/nvim"
   },
-})
+}
 ```
 
 Specifying `~/.config` will prevent any autosaving and autoloading from that directory as well as all its sub-directories.
@@ -310,14 +307,14 @@ Specifying `~/.config` will prevent any autosaving and autoloading from that dir
 You can also specify exact directory matches to ignore. In this case, unlike the default behavior which ignores all children of the ignored directory, this will ignore only the specified child. For example:
 
 ```lua
-require("persisted").setup({
+{
   ignored_dirs = {
     "~/.config",
     "~/.local/nvim",
     { "/", exact = true },
     { "/tmp", exact = true }
   },
-})
+}
 ```
 
 In this setup, `~/.config` and `~/.local/nvim` are still going to behave in their default setting (ignoring all listed directory and its children), however `/` and `/tmp` will only ignore those directories exactly.
