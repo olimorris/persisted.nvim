@@ -21,13 +21,11 @@ end
 ---Load the selected session
 ---@param session table
 function M.load_session(session)
+  fire("TelescopeLoadPre")
   vim.schedule(function()
-    fire("TelescopeLoadPre")
-    vim.schedule(function()
-      persisted.load({ session = session.file_path })
-      fire("TelescopeLoadPost")
-    end)
+    persisted.load({ session = session.file_path })
   end)
+  fire("TelescopeLoadPost")
 end
 
 ---Delete the selected session from disk
