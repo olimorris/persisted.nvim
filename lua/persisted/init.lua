@@ -70,9 +70,11 @@ function M.load(opts)
   if session and vim.fn.filereadable(session) ~= 0 then
     vim.g.persisting_session = not config.follow_cwd and session or nil
     vim.g.persisted_loaded_session = session
-    M.fire("LoadPre")
-    vim.cmd("silent! source " .. e(session))
-    M.fire("LoadPost")
+    vim.schedule(function()
+      M.fire("LoadPre")
+      vim.cmd("silent! source " .. e(session))
+      M.fire("LoadPost")
+    end)
   elseif opts.autoload and type(config.on_autoload_no_session) == "function" then
     config.on_autoload_no_session()
   end
