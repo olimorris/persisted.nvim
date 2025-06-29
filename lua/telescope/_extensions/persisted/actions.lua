@@ -23,8 +23,10 @@ end
 function M.load_session(session)
   vim.schedule(function()
     fire("TelescopeLoadPre")
-    persisted.load({ session = session.file_path })
-    fire("TelescopeLoadPost")
+    vim.schedule(function()
+      persisted.load({ session = session.file_path })
+      fire("TelescopeLoadPost")
+    end)
   end)
 end
 
