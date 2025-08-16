@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/olimorris/persisted.nvim/compare/v2.1.0...v2.1.1) (2025-08-16)
+
+
+### Bug Fixes
+
+* loading of sessions via select ([#178](https://github.com/olimorris/persisted.nvim/issues/178)) ([d35efcc](https://github.com/olimorris/persisted.nvim/commit/d35efcc5c03d6d5777e0a47d2e541d9e53464392))
+
 ## [2.1.0](https://github.com/olimorris/persisted.nvim/compare/v2.0.2...v2.1.0) (2025-03-07)
 
 
