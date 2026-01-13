@@ -6,10 +6,11 @@ local child = MiniTest.new_child_neovim()
 local setup_child = function()
   child.restart({ "-u", "scripts/minimal_init.lua" })
   child.lua([[
-    session_dir = vim.fn.tempname() .. "/tests/dummy_data/"
-    vim.fn.mkdir(session_dir, "p")
+    local tmp = vim.fn.tempname()
+    session_dir = tmp.. "/tests/dummy_data/"
     vim.fn.delete(session_dir, "rf")
     vim.fn.mkdir(session_dir, "p")
+
     require("persisted").setup({
       save_dir = session_dir,
       autoload = true,
