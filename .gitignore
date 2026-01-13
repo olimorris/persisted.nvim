@@ -1,4 +1,5 @@
 misc/
+deps/
 !tests/**/*
 .luarc.json
 todo.md
