@@ -7,7 +7,7 @@ local setup_child = function(follow_cwd)
   child.restart({ "-u", "scripts/minimal_init.lua" })
   child.lua(string.format(
     [[
-      local session_dir = vim.fn.getcwd() .. "/tests/dummy_data/"
+      session_dir = vim.fn.tempname() .. "/tests/dummy_data/"
       vim.fn.delete(session_dir, "rf")
       vim.fn.mkdir(session_dir, "p")
       require("persisted").setup({
@@ -30,7 +30,6 @@ T["follow_cwd true creates two sessions"] = function()
 
   local result = child.lua_get([[
     (function()
-      local session_dir = vim.fn.getcwd() .. "/tests/dummy_data/"
       local root = vim.fn.getcwd()
       vim.cmd("e tests/stubs/test_autoload.txt")
       vim.cmd("w")
@@ -58,7 +57,6 @@ T["follow_cwd false keeps single session"] = function()
 
   local result = child.lua_get([[
     (function()
-      local session_dir = vim.fn.getcwd() .. "/tests/dummy_data/"
       local root = vim.fn.getcwd()
       vim.cmd("e tests/stubs/test_autoload.txt")
       vim.cmd("w")

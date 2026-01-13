@@ -6,7 +6,7 @@ local child = MiniTest.new_child_neovim()
 local setup_child = function()
   child.restart({ "-u", "scripts/minimal_init.lua" })
   child.lua([[
-    local session_dir = vim.fn.getcwd() .. "/tests/git_branch_data/"
+    session_dir = vim.fn.tempname() .. "/tests/git_branch_data/"
     vim.fn.delete(session_dir, "rf")
     vim.fn.mkdir(session_dir, "p")
     require("persisted").setup({
@@ -18,9 +18,9 @@ end
 
 local create_session = function()
   child.lua([[
-    vim.fn.system("cd tests/git_branch_data && git init")
+    vim.fn.system(string.format("cd %s && git init", session_dir))
     vim.cmd("e tests/stubs/test_git_branching.txt")
-    vim.cmd("w tests/git_branch_data/test_git_branching.txt")
+    vim.cmd(string.format("w %s/test_git_branching.txt", session_dir))
     require("persisted").save()
   ]])
 end
@@ -35,14 +35,13 @@ local T = new_set({
 T["creates a session"] = function()
   create_session()
 
-  eq(child.fn.system("ls tests/git_branch_data | wc -l"):gsub("%s+", ""), "2")
+  eq(child.fn.system(string.format("ls %s | wc -l", child.lua_get([[session_dir]]))):gsub("%s+", ""), "2")
 end
 
 T["ensures the session has the branch name in"] = function()
   create_session()
 
   child.lua([[
-    local session_dir = vim.fn.getcwd() .. "/tests/git_branch_data/"
     local branch_name = require("persisted").branch()
     if not branch_name then
       branch_name = ""
