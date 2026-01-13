@@ -10,9 +10,11 @@ local uv = vim.uv or vim.loop
 
 ---Fire an event
 ---@param event string
+---@param data? table
 ---@return nil
-function M.fire(event)
-  vim.api.nvim_exec_autocmds("User", { pattern = "Persisted" .. event })
+function M.fire(event, data)
+  data = data or {}
+  vim.api.nvim_exec_autocmds("User", { pattern = "Persisted" .. event, data = data })
 end
 
 ---Get the current session for the current working directory and git branch
@@ -126,17 +128,17 @@ end
 ---Delete a session
 ---@param opts? { path?: string }
 ---@return nil
-function M.delete(opts)
+function M.delete_current(opts)
   opts = opts or {}
   local session = opts.path or M.current()
 
   if session and uv.fs_stat(session) ~= 0 then
-    M.fire("DeletePre")
+    M.fire("DeletePre", { path = session })
     vim.schedule(function()
       M.stop()
       vim.fn.delete(vim.fn.expand(session))
     end)
-    M.fire("DeletePost")
+    M.fire("DeletePost", { path = session })
   end
 end
 
@@ -149,9 +151,11 @@ function M.branch()
   end
 end
 
----Select a session to load
+---Handle the vim.ui.select behaviour
+---@param opts { prompt: string, handler: function}
 ---@return nil
-function M.select()
+function M.handle_selected(opts)
+  ---@type { session: string, dir: string, branch?: string }[]
   local items = {} ---@type { session: string, dir: string, branch?: string }[]
   local found = {} ---@type table<string, boolean>
   for _, session in ipairs(M.list()) do
@@ -169,7 +173,7 @@ function M.select()
     end
   end
   vim.ui.select(items, {
-    prompt = "Load a session: ",
+    prompt = opts.prompt,
     format_item = function(item)
       local name = vim.fn.fnamemodify(item.dir, ":p:~")
       if item.branch then
@@ -179,12 +183,34 @@ function M.select()
     end,
   }, function(item)
     if item then
+      opts.handler(item)
+    end
+  end)
+end
+
+---Load a session from the list
+---@return nil
+function M.select()
+  M.handle_selected({
+    prompt = "Load a session: ",
+    handler = function(item)
       M.fire("SelectPre")
       vim.fn.chdir(item.dir)
       M.load()
       M.fire("SelectPost")
-    end
-  end)
+    end,
+  })
+end
+
+---Delete a session from the list
+---@return nil
+function M.delete()
+  M.handle_selected({
+    prompt = "Delete a session: ",
+    handler = function(item)
+      M.delete_current({ path = item.session })
+    end,
+  })
 end
 
 ---Determines whether to load, start or stop a session
