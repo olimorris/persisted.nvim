@@ -6,7 +6,7 @@ local child = MiniTest.new_child_neovim()
 local setup_child = function()
   child.restart({ "-u", "scripts/minimal_init.lua" })
   child.lua([[
-    local session_dir = vim.fn.getcwd() .. "/tests/default_data/"
+    session_dir = vim.fn.tempname() .. "/tests/default_data/"
     vim.fn.delete(session_dir, "rf")
     vim.fn.mkdir(session_dir, "p")
     require("persisted").setup({ save_dir = session_dir })
@@ -32,12 +32,12 @@ local T = new_set({
 })
 
 T["saves a session"] = function()
-  eq(child.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""), "0")
+  eq(child.fn.system(string.format("ls %s | wc -l", child.lua_get([[session_dir]]))):gsub("%s+", ""), "0")
 
   create_session()
 
   eq(child.lua_get("vim.g.persisting"), true)
-  eq(child.fn.system("ls tests/default_data | wc -l"):gsub("%s+", ""), "1")
+  eq(child.fn.system(string.format("ls %s | wc -l", child.lua_get([[session_dir]]))):gsub("%s+", ""), "1")
 end
 
 T["loads a session"] = function()
