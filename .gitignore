@@ -1,4 +1,3 @@
-misc/
 deps/
 !tests/**/*
 .luarc.json
