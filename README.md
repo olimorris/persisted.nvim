@@ -103,17 +103,17 @@ require('telescope').setup({
 
 **Commands**
 
-The plugin comes with a number of commands:
+The plugin has a number of commands:
 
-- `:SessionToggle` - Determines whether to load, start or stop a session
-- `:SessionStart` - Start recording a session. Useful if `autostart = false`
-- `:SessionStop` - Stop recording a session
-- `:SessionSave` - Save the current session
-- `:SessionSelect` - Load a session from the list (useful if you don't wish to use the Telescope extension)
-- `:SessionLoad` - Load the session for the current directory and current branch (if `git_use_branch = true`)
-- `:SessionLoadLast` - Load the most recent session
-- `:SessionLoadFromFile` - Load a session from a given path
-- `:SessionDelete` - Delete the current session
+- `:Persisted toggle` - Determines whether to load, start or stop a session
+- `:Persisted start` - Start recording a session. Useful if `autostart = false`
+- `:Persisted stop` - Stop recording a session
+- `:Persisted save` - Save the current session
+- `:Persisted select` - Load a session from a list (useful if you don't wish to use the Telescope extension)
+- `:Persisted load` - Load the session for the current directory and current branch (if `git_use_branch = true`)
+- `:Persisted load_last` - Load the most recent session
+- `:Persisted delete` - Delete a session from a list
+- `:Persisted delete_current` - Delete the current session
 
 **Telescope extension**
 
@@ -522,6 +522,27 @@ You may wish to only save a session if the current working directory is in a tab
     persisted.setup({
       should_save = function()
         return utils.dirs_match(vim.fn.getcwd(), allowed_dirs)
+      end,
+    })
+  end,
+}
+```
+
+**Notifying when a session has been deleted**
+
+When you delete a session, it can be helpful to have a notification appear confirming the deletion:
+
+```lua
+{
+  "olimorris/persisted.nvim",
+  lazy = false,
+  config = function()
+    local persisted = require("persisted").setup()
+
+    vim.api.nvim_create_autocmd("User", {
+      pattern = "PersistedDeletePost",
+      callback = function(event)
+        vim.notify("Session `" .. event.data.path .. "` deleted")
       end,
     })
   end,
