@@ -1,44 +1,45 @@
-PANVIMDOC_DIR = misc/panvimdoc
-PANVIMDOC_URL = https://github.com/kdheepak/panvimdoc
-PLENARY_DIR = misc/plenary
-PLENARY_URL = https://github.com/nvim-lua/plenary.nvim
+all: format docs test
 
-all: format test docs
-
-docs: $(PANVIMDOC_DIR)
-	@cd $(PANVIMDOC_DIR) && \
-	pandoc \
+docs: deps/panvimdoc
+	@echo Generating Docs...
+	@LUA_PATH="deps/panvimdoc/?.lua;;" pandoc \
+		README.md \
 		--metadata="project:persisted.nvim" \
 		--metadata="description:Simple session management for Neovim" \
+		--metadata="titledatepattern:%Y %B %d" \
 		--metadata="toc:true" \
 		--metadata="incrementheadinglevelby:0" \
 		--metadata="treesitter:true" \
-		--lua-filter scripts/skip-blocks.lua \
-		--lua-filter scripts/include-files.lua \
-		--lua-filter scripts/remove-emojis.lua \
-		-t scripts/panvimdoc.lua \
-		../../README.md \
-		-o ../../doc/persisted.nvim.txt
-
-$(PANVIMDOC_DIR):
-	git clone --depth=1 --no-single-branch $(PANVIMDOC_URL) $(PANVIMDOC_DIR)
-	@rm -rf doc/panvimdoc/.git
-
-check:
-	stylua --check lua/ tests/ -f ./stylua.toml
+		--metadata="dedupsubheadings:true" \
+		--metadata="ignorerawblocks:true" \
+		--metadata="docmapping:false" \
+		--metadata="docmappingproject:true" \
+		--lua-filter deps/panvimdoc/scripts/include-files.lua \
+		--lua-filter deps/panvimdoc/scripts/skip-blocks.lua \
+		--lua-filter deps/panvimdoc/scripts/remove-emojis.lua \
+		-t deps/panvimdoc/scripts/panvimdoc.lua \
+		-o doc/persisted.nvim.txt
 
 format:
-	stylua lua/ tests/ -f ./stylua.toml
+	@echo Formatting...
+	@stylua tests/ lua/ -f ./stylua.toml
 
-test: $(PLENARY_DIR)
-	nvim --headless --noplugin -u tests/minimal.vim +Setup
-	# nvim --headless --noplugin -u tests/minimal.vim +TestAutoloading
-	nvim --headless --noplugin -u tests/minimal.vim +TestGitBranching
-	nvim --headless --noplugin -u tests/minimal.vim +TestFollowCwd
-	nvim --headless --noplugin -u tests/minimal.vim +TestDefaults
-	nvim --headless --noplugin -u tests/minimal.vim +TestDirs
-	nvim --headless --noplugin -u tests/minimal.vim +TearDown
+test: deps
+	@echo Testing...
+	nvim --headless --noplugin -u ./scripts/minimal_init.lua -c "lua MiniTest.run()"
 
-$(PLENARY_DIR):
-	git clone --depth=1 --branch v0.1.3 $(PLENARY_URL) $(PLENARY_DIR)
-	@rm -rf $(PLENARY_DIR)/.git
+test_file: deps
+	@echo Testing File...
+	nvim --headless --noplugin -u ./scripts/minimal_init.lua -c "lua MiniTest.run_file('$(FILE)')"
+
+deps: deps/mini.nvim deps/panvimdoc
+	@echo Pulling...
+
+deps/mini.nvim:
+	@mkdir -p deps
+	git clone --filter=blob:none https://github.com/echasnovski/mini.nvim $@
+
+deps/panvimdoc:
+	@mkdir -p deps
+	git clone --filter=blob:none https://github.com/kdheepak/panvimdoc $@
+
