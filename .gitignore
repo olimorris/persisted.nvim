@@ -1,6 +1,5 @@
 deps/
 !tests/**/*
-.luarc.json
 todo.md
 
 tests/.DS_Store
