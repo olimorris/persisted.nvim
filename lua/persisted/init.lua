@@ -141,7 +141,7 @@ function M.save(opts)
   if type(config.before_save) == "function" then
     config.before_save({ auto = opts.auto == true })
   end
-  
+
   local session = opts.session or (opts.name and M.named(opts.name)) or vim.g.persisting_session or M.current()
 
   M.fire("SavePre")
