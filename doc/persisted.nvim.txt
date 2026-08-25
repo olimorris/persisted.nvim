@@ -59,7 +59,7 @@ Install and configure the plugin with your preferred package manager:
 >vim
     " Vim Script
     Plug 'olimorris/persisted.nvim'
-
+    
     lua << EOF
       require("persisted").setup {
         -- your configuration comes here
@@ -108,6 +108,7 @@ The plugin has a number of commands:
 - `:Persisted load_last` - Load the most recent session
 - `:Persisted delete` - Delete a session from a list
 - `:Persisted delete_current` - Delete the current session
+- `:Persisted clean` - Deletes orphaned sessions
 
 **Telescope extension**
 
@@ -137,26 +138,30 @@ The plugin comes with the following defaults:
 >lua
     {
       autostart = true, -- Automatically start the plugin on load?
-
+    
       -- Function to determine if a session should be saved
       ---@type fun(): boolean
       should_save = function()
         return true
       end,
-
+    
+      -- Function to run before a session is saved to disk
+      ---@type fun(opts: { auto: boolean }): any
+      before_save = function() end,
+    
       save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- Directory where session files are saved
-
+    
       follow_cwd = true, -- Change the session file to match any change in the cwd?
       use_git_branch = false, -- Include the git branch in the session file name?
       autoload = false, -- Automatically load the session for the cwd on Neovim startup?
-
+    
       -- Function to run when `autoload = true` but there is no session to load
       ---@type fun(): any
       on_autoload_no_session = function() end,
-
+    
       allowed_dirs = {}, -- Table of dirs that the plugin will start and autoload from
       ignored_dirs = {}, -- Table of dirs that are ignored for starting and autoloading
-
+    
       telescope = {
         mappings = { -- Mappings for managing sessions in Telescope
           copy_session = "<C-c>",
@@ -243,6 +248,46 @@ function may be used which should return a boolean value.
 Of course, if you wish to manually save the session the `:SessionSave` command
 can be used.
 
+**before_save**
+
+A common complaint with `:mksession` is that scratch buffers, such as
+terminals, end up in the session. The `before_save` function runs immediately
+before the session is written to disk, allowing such buffers to be closed:
+
+>lua
+    {
+      before_save = function()
+        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+          if vim.bo[buf].buftype == "terminal" then
+            vim.api.nvim_buf_delete(buf, { force = true })
+          end
+        end
+      end,
+    }
+<
+
+The function is called on _every_ save, which also includes `:Persisted save`.
+Taking the example above, this would have damaging consequences if you were
+still intending to work in Neovim (you’d lose all your terminals!). To
+workaround this, the `opts.auto` parameter can be used in the function to
+determine if the plugin is automatically saving the session, or you are:
+
+>lua
+    {
+      before_save = function(opts)
+        -- If the session is being saved manually, then do nothing
+        if not opts.auto then
+          return
+        end
+        -- Otherwise, close those terminal buffers
+      end,
+    }
+<
+
+
+  [!NOTE] `before_save` runs after `should_save` and before the
+  `PersistedSavePre` event. It must be synchronous, as `vim.schedule` will not
+  run when Neovim is exiting
 **Autoloading**
 
 The plugin can be enabled to automatically load sessions when Neovim is
@@ -333,6 +378,8 @@ their default setting (ignoring all listed directory and its children), however
 
 The plugin fires events at various points during its lifecycle:
 
+- `PersistedCleanPre` - For _before_ orphaned sessions are cleaned
+- `PersistedCleanPost` - For _after_ orphaned sessions are cleaned
 - `PersistedDeletePre` - For _before_ a session is deleted
 - `PersistedDeletePost` - For _after_ a session is deleted
 - `PersistedLoadPre` - For _before_ a session is loaded
@@ -359,7 +406,7 @@ session, saving the current session before clearing all of the open buffers:
       callback = function(session)
         -- Save the currently loaded session passing in the path to the current session
         require("persisted").save({ session = vim.g.persisted_loaded_session })
-
+    
         -- Delete all of the open buffers
         vim.api.nvim_input("<ESC>:%bd!<CR>")
       end,
@@ -413,7 +460,7 @@ Autoloading a session if arguments are passed to Neovim:
         autoload = true,
       },
     }
-
+    
     -- Somewhere in your config
     local persisted = require("persisted")
     vim.api.nvim_create_autocmd("VimEnter", {
@@ -422,7 +469,7 @@ Autoloading a session if arguments are passed to Neovim:
         if vim.g.started_with_stdin then
           return
         end
-
+    
         local forceload = false
         if vim.fn.argc() == 0 then
           forceload = true
@@ -431,12 +478,12 @@ Autoloading a session if arguments are passed to Neovim:
           if dir == '.' then
             dir = vim.fn.getcwd()
           end
-
+    
           if vim.fn.isdirectory(dir) ~= 0 then
             forceload = true
           end
         end
-
+    
         persisted.autoload({ force = forceload })
       end,
     })
@@ -487,9 +534,9 @@ If you’d like to ignore certain branches from being saved as a session:
           "feature_branch"
           "bug_fix_branch"
         }
-
+    
         persisted.setup(opts)
-
+    
         -- Only start the plugin if the branch isn't in the ignored list
         if not utils.in_table(persisted.branch(), ignored_branches) then
           persisted.start()
@@ -541,7 +588,7 @@ table of allowed directories:
           "~/code",
           "~/notes/api"
         }
-
+    
         persisted.setup({
           should_save = function()
             return utils.dirs_match(vim.fn.getcwd(), allowed_dirs)
@@ -562,7 +609,7 @@ confirming the deletion:
       lazy = false,
       config = function()
         local persisted = require("persisted").setup()
-
+    
         vim.api.nvim_create_autocmd("User", {
           pattern = "PersistedDeletePost",
           callback = function(event)

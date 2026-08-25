@@ -7,6 +7,10 @@ local defaults = {
     return true
   end,
 
+  -- Function to run before a session is saved to disk
+  ---@type fun(opts: { auto: boolean }): any
+  before_save = function() end,
+
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- Directory where session files are saved
 
   follow_cwd = true, -- Change the session file to match any change in the cwd?

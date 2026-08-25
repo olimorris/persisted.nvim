@@ -157,6 +157,10 @@ The plugin comes with the following defaults:
     return true
   end,
 
+  -- Function to run before a session is saved to disk
+  ---@type fun(opts: { auto: boolean }): any
+  before_save = function() end,
+
   save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- Directory where session files are saved
 
   follow_cwd = true, -- Change the session file to match any change in the cwd?
@@ -245,6 +249,39 @@ There may be occasions when you do not wish to save the session; perhaps when a 
 ```
 
 Of course, if you wish to manually save the session the `:SessionSave` command can be used.
+
+**`before_save`**
+
+A common complaint with `:mksession` is that scratch buffers, such as terminals, end up in the session. The `before_save` function runs immediately before the session is written to disk, allowing such buffers to be closed:
+
+```lua
+{
+  before_save = function()
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.bo[buf].buftype == "terminal" then
+        vim.api.nvim_buf_delete(buf, { force = true })
+      end
+    end
+  end,
+}
+```
+
+The function is called on _every_ save, which also includes `:Persisted save`. Taking the example above, this would have damaging consequences if you were still intending to work in Neovim (you'd lose all your terminals!). To workaround this, the `opts.auto` parameter can be used in the function to determine if the plugin is automatically saving the session, or you are:
+
+```lua
+{
+  before_save = function(opts)
+    -- If the session is being saved manually, then do nothing
+    if not opts.auto then
+      return
+    end
+    -- Otherwise, close those terminal buffers
+  end,
+}
+```
+
+> [!NOTE]
+> `before_save` runs after `should_save` and before the `PersistedSavePre` event. It must be synchronous, as `vim.schedule` will not run when Neovim is exiting
 
 **Autoloading**
 
