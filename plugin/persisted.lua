@@ -18,6 +18,7 @@ local subcommands = {
   select = persisted.select,
   delete = persisted.delete,
   delete_current = persisted.delete_current,
+  clean = persisted.clean,
 }
 
 vim.api.nvim_create_user_command("Persisted", function(opts)

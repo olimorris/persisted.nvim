@@ -151,24 +151,32 @@ function M.branch()
   end
 end
 
+---Get the directory and Git branch which a session file relates to
+---@param session string The path to the session file
+---@return { session: string, dir: string, branch?: string }
+function M.session_info(session)
+  local file = session:sub(#config.save_dir + 1, -5)
+  local dir, branch = unpack(vim.split(file, "@@", { plain = true }))
+  dir = dir:gsub("%%", "/")
+  if jit.os:find("Windows") then
+    dir = dir:gsub("^(%w)/", "%1:/")
+  end
+
+  return { session = session, dir = dir, branch = branch }
+end
+
 ---Handle the vim.ui.select behaviour
 ---@param opts { prompt: string, handler: function}
 ---@return nil
 function M.handle_selected(opts)
-  ---@type { session: string, dir: string, branch?: string }[]
-  local items = {} ---@type { session: string, dir: string, branch?: string }[]
+  local items = {} ---@type table[]
   local found = {} ---@type table<string, boolean>
   for _, session in ipairs(M.list()) do
     if uv.fs_stat(session) then
-      local file = session:sub(#config.save_dir + 1, -5)
-      local dir, branch = unpack(vim.split(file, "@@", { plain = true }))
-      dir = dir:gsub("%%", "/")
-      if jit.os:find("Windows") then
-        dir = dir:gsub("^(%w)/", "%1:/")
-      end
-      if not found[dir .. (branch or "")] then
-        found[dir .. (branch or "")] = true
-        items[#items + 1] = { session = session, dir = dir, branch = branch }
+      local item = M.session_info(session)
+      if not found[item.dir .. (item.branch or "")] then
+        found[item.dir .. (item.branch or "")] = true
+        items[#items + 1] = item
       end
     end
   end
@@ -211,6 +219,76 @@ function M.delete()
       M.delete_current({ path = item.session })
     end,
   })
+end
+
+---Delete the given sessions
+---@param sessions table[]
+---@return table[] deleted
+local function delete_sessions(sessions)
+  M.fire("CleanPre", { sessions = sessions })
+  for _, item in ipairs(sessions) do
+    vim.fn.delete(item.session)
+  end
+  M.fire("CleanPost", { sessions = sessions })
+
+  vim.notify(
+    string.format("Deleted %d orphaned session%s", #sessions, #sessions == 1 and "" or "s"),
+    vim.log.levels.INFO,
+    { title = "persisted.nvim" }
+  )
+
+  return sessions
+end
+
+---Delete any sessions whose directory, or Git branch, no longer exists
+---@param opts? { confirm?: boolean, branches?: boolean }
+---@return table[] deleted Empty whilst awaiting confirmation from the user
+function M.clean(opts)
+  opts = vim.tbl_extend("keep", opts or {}, { confirm = true, branches = true })
+
+  local branches = {} ---@type table<string, string[]|false>
+  local orphaned = {} ---@type table[]
+
+  for _, session in ipairs(M.list()) do
+    local item = M.session_info(session) ---@type table
+
+    -- Ignore any files in the save_dir which the plugin didn't create
+    if utils.is_absolute(item.dir) then
+      if vim.fn.isdirectory(item.dir) == 0 then
+        item.reason = "directory no longer exists"
+      elseif opts.branches and item.branch then
+        if branches[item.dir] == nil then
+          branches[item.dir] = utils.branches(item.dir) or false
+        end
+        if branches[item.dir] and not utils.in_table(item.branch, branches[item.dir]) then
+          item.reason = "branch no longer exists"
+        end
+      end
+
+      if item.reason then
+        orphaned[#orphaned + 1] = item
+      end
+    end
+  end
+
+  if not next(orphaned) then
+    vim.notify("There are no sessions to clean", vim.log.levels.INFO, { title = "persisted.nvim" })
+    return {}
+  end
+
+  if not opts.confirm then
+    return delete_sessions(orphaned)
+  end
+
+  vim.ui.select({ "Yes", "No" }, {
+    prompt = string.format("Delete %d orphaned session%s?", #orphaned, #orphaned == 1 and "" or "s"),
+  }, function(choice)
+    if choice == "Yes" then
+      delete_sessions(orphaned)
+    end
+  end)
+
+  return {}
 end
 
 ---Determines whether to load, start or stop a session

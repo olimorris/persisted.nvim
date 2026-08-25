@@ -1,5 +1,7 @@
 local M = {}
 
+local uv = vim.uv or vim.loop
+
 --- Escapes the given text to be safe for use in file-system paths/names,
 --- accounting for cross-platform use.
 ---@param text string
@@ -15,6 +17,40 @@ function M.dir_pattern()
     pattern = "[\\:]"
   end
   return pattern
+end
+
+---Get the Git branches for a given directory
+---@param dir string
+---@return string[]? branches Nil if the directory isn't a Git repository
+function M.branches(dir)
+  if not uv.fs_stat(dir .. "/.git") then
+    return nil
+  end
+
+  local branches = vim.fn.systemlist({ "git", "-C", dir, "branch", "--format=%(refname:short)" })
+  if vim.v.shell_error ~= 0 then
+    return nil
+  end
+
+  -- An unborn branch (a new repository with no commits) has no ref to list
+  local current = vim.fn.systemlist({ "git", "-C", dir, "branch", "--show-current" })[1]
+  if current then
+    branches[#branches + 1] = current
+  end
+
+  return vim.tbl_map(function(branch)
+    return M.make_fs_safe(branch)
+  end, branches)
+end
+
+---Check if a path is absolute, accounting for cross-platform use
+---@param path string
+---@return boolean
+function M.is_absolute(path)
+  if vim.fn.has("win32") == 1 then
+    return path:match("^%a:[\\/]") ~= nil
+  end
+  return vim.startswith(path, "/")
 end
 
 ---Check if a directory is a subdirectory of another

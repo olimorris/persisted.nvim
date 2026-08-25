@@ -114,6 +114,7 @@ The plugin has a number of commands:
 - `:Persisted load_last` - Load the most recent session
 - `:Persisted delete` - Delete a session from a list
 - `:Persisted delete_current` - Delete the current session
+- `:Persisted clean` - Deletes orphaned sessions
 
 **Telescope extension**
 
@@ -323,6 +324,8 @@ In this setup, `~/.config` and `~/.local/nvim` are still going to behave in thei
 
 The plugin fires events at various points during its lifecycle:
 
+- `PersistedCleanPre` - For _before_ orphaned sessions are cleaned
+- `PersistedCleanPost` - For _after_ orphaned sessions are cleaned
 - `PersistedDeletePre` - For _before_ a session is deleted
 - `PersistedDeletePost` - For _after_ a session is deleted
 - `PersistedLoadPre` - For _before_ a session is loaded

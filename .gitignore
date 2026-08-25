@@ -1,6 +1,7 @@
 deps/
+media/
+memories/
 !tests/**/*
 todo.md
-
 tests/.DS_Store
 tests/dummy_data/
