@@ -6,7 +6,15 @@ local M = {}
 local start_args = vim.fn.argc() > 0 or vim.g.started_with_stdin
 
 local e = vim.fn.fnameescape
+local fmt = string.format
 local uv = vim.uv or vim.loop
+
+---Warn the user that a named session doesn't exist
+---@param name string
+---@return nil
+local function no_session(name)
+  vim.notify(fmt("There is no session named `%s`", name), vim.log.levels.WARN, { title = "persisted.nvim" })
+end
 
 ---Fire an event
 ---@param event string
@@ -35,6 +43,13 @@ function M.current(opts)
   return config.save_dir .. name .. ".vim"
 end
 
+---Get the session for a given name
+---@param name string
+---@return string
+function M.named(name)
+  return config.save_dir .. utils.make_fs_safe(name) .. ".vim"
+end
+
 ---Automatically load the session for the current dir
 ---@param opts? { force?: boolean }
 ---@return nil
@@ -51,7 +66,7 @@ function M.autoload(opts)
 end
 
 ---Load a session
----@param opts? { last?: boolean, autoload?: boolean, session?: string }
+---@param opts? { autoload?: boolean, last?: boolean, name?: string, session?: string }
 ---@return nil
 function M.load(opts)
   opts = opts or {}
@@ -60,6 +75,8 @@ function M.load(opts)
 
   if opts.last then
     session = M.last()
+  elseif opts.name then
+    session = M.named(opts.name)
   elseif opts.session then
     session = opts.session
   else
@@ -77,6 +94,8 @@ function M.load(opts)
       vim.cmd("silent! source " .. e(session))
       M.fire("LoadPost")
     end)
+  elseif opts.name then
+    no_session(opts.name)
   elseif opts.autoload and type(config.on_autoload_no_session) == "function" then
     config.on_autoload_no_session()
   end
@@ -109,7 +128,7 @@ function M.stop()
 end
 
 ---Save the session
----@param opts? { force?: boolean, session?: string }
+---@param opts? { force?: boolean, name?: string, session?: string }
 ---@return nil
 function M.save(opts)
   opts = opts or {}
@@ -119,26 +138,33 @@ function M.save(opts)
     return
   end
 
+  local session = opts.session or (opts.name and M.named(opts.name)) or vim.g.persisting_session or M.current()
+
   M.fire("SavePre")
-  vim.cmd("mks! " .. e(opts.session or vim.g.persisting_session or M.current()))
+  vim.cmd("mks! " .. e(session))
   vim.cmd("sleep 10m")
   M.fire("SavePost")
 end
 
 ---Delete a session
----@param opts? { path?: string }
+---@param opts? { name?: string, path?: string }
 ---@return nil
 function M.delete_current(opts)
   opts = opts or {}
-  local session = opts.path or M.current()
+  local session = opts.path or (opts.name and M.named(opts.name)) or M.current()
 
-  if session and uv.fs_stat(session) ~= 0 then
+  if session and uv.fs_stat(session) then
     M.fire("DeletePre", { path = session })
     vim.schedule(function()
-      M.stop()
+      -- Only stop if we've deleted the session which is currently being persisted
+      if session == (vim.g.persisting_session or M.current()) then
+        M.stop()
+      end
       vim.fn.delete(vim.fn.expand(session))
     end)
     M.fire("DeletePost", { path = session })
+  elseif opts.name then
+    no_session(opts.name)
   end
 end
 
@@ -153,7 +179,7 @@ end
 
 ---Get the directory and Git branch which a session file relates to
 ---@param session string The path to the session file
----@return { session: string, dir: string, branch?: string }
+---@return { branch?: string, dir: string, name?: string, session: string }
 function M.session_info(session)
   local file = session:sub(#config.save_dir + 1, -5)
   local dir, branch = unpack(vim.split(file, "@@", { plain = true }))
@@ -162,7 +188,10 @@ function M.session_info(session)
     dir = dir:gsub("^(%w)/", "%1:/")
   end
 
-  return { session = session, dir = dir, branch = branch }
+  -- Sessions which aren't keyed by a directory were saved with a name
+  local name = not utils.is_absolute(dir) and file or nil
+
+  return { branch = branch, dir = dir, name = name, session = session }
 end
 
 ---Handle the vim.ui.select behaviour
@@ -183,6 +212,10 @@ function M.handle_selected(opts)
   vim.ui.select(items, {
     prompt = opts.prompt,
     format_item = function(item)
+      if item.name then
+        return item.name
+      end
+
       local name = vim.fn.fnamemodify(item.dir, ":p:~")
       if item.branch then
         name = name .. " (" .. item.branch .. ")"
@@ -203,8 +236,12 @@ function M.select()
     prompt = "Load a session: ",
     handler = function(item)
       M.fire("SelectPre")
-      vim.fn.chdir(item.dir)
-      M.load()
+      if item.name then
+        M.load({ session = item.session })
+      else
+        vim.fn.chdir(item.dir)
+        M.load()
+      end
       M.fire("SelectPost")
     end,
   })
@@ -232,7 +269,7 @@ local function delete_sessions(sessions)
   M.fire("CleanPost", { sessions = sessions })
 
   vim.notify(
-    string.format("Deleted %d orphaned session%s", #sessions, #sessions == 1 and "" or "s"),
+    fmt("Deleted %d orphaned session%s", #sessions, #sessions == 1 and "" or "s"),
     vim.log.levels.INFO,
     { title = "persisted.nvim" }
   )
@@ -281,7 +318,7 @@ function M.clean(opts)
   end
 
   vim.ui.select({ "Yes", "No" }, {
-    prompt = string.format("Delete %d orphaned session%s?", #orphaned, #orphaned == 1 and "" or "s"),
+    prompt = fmt("Delete %d orphaned session%s?", #orphaned, #orphaned == 1 and "" or "s"),
   }, function(choice)
     if choice == "Yes" then
       delete_sessions(orphaned)

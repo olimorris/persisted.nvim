@@ -109,12 +109,15 @@ The plugin has a number of commands:
 - `:Persisted start` - Start recording a session. Useful if `autostart = false`
 - `:Persisted stop` - Stop recording a session
 - `:Persisted save` - Save the current session
+- `:Persisted save TestSession` - Save the current session as *TestSession*
 - `:Persisted select` - Load a session from a list (useful if you don't wish to use the Telescope extension)
 - `:Persisted load` - Load the session for the current directory and current branch (if `git_use_branch = true`)
+- `:Persisted load TestSession` - Load the session named *TestSession*
 - `:Persisted load_last` - Load the most recent session
 - `:Persisted delete` - Delete a session from a list
+- `:Persisted delete TestSession` - Delete the session named *TestSession*
 - `:Persisted delete_current` - Delete the current session
-- `:Persisted clean` - Deletes orphaned sessions
+- `:Persisted clean` - Deletes orphaned sessions (excludes named sessions)
 
 **Telescope extension**
 
