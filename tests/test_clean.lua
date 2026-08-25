@@ -47,7 +47,7 @@ T["deletes sessions whose directory no longer exists"] = function()
   ]])
 
   eq(child.lua_get("#deleted"), 1)
-  eq(child.lua_get("deleted[1].reason"), "directory no longer exists")
+  eq(child.lua_get("deleted[1].dir"), "/tmp/persisted_does_not_exist")
   eq(child.lua_get("#sessions()"), 1)
 end
 
@@ -58,14 +58,45 @@ T["deletes sessions whose git branch no longer exists"] = function()
   ]])
 
   eq(child.lua_get("#deleted"), 1)
-  eq(child.lua_get("deleted[1].reason"), "branch no longer exists")
+  eq(child.lua_get("deleted[1].branch"), "persisted_does_not_exist")
   eq(child.lua_get("sessions()"), {})
+end
+
+T["deletes branch sessions whose directory is no longer a git repository"] = function()
+  child.lua([[
+    not_a_repo = vim.fn.tempname()
+    vim.fn.mkdir(not_a_repo, "p")
+
+    create_session(not_a_repo, "some_branch")
+    create_session(not_a_repo)
+
+    deleted = require("persisted").clean({ confirm = false })
+  ]])
+
+  eq(child.lua_get("#deleted"), 1)
+  eq(child.lua_get("deleted[1].branch"), "some_branch")
+  eq(child.lua_get("#sessions()"), 1)
 end
 
 T["keeps sessions whose git branch still exists"] = function()
   child.lua([[
     local branch = require("persisted").branch()
     create_session(vim.fn.getcwd(), branch)
+    deleted = require("persisted").clean({ confirm = false })
+  ]])
+
+  eq(child.lua_get("#deleted"), 0)
+  eq(child.lua_get("#sessions()"), 1)
+end
+
+T["keeps sessions whose git branch contains a path separator"] = function()
+  child.lua([[
+    repo = vim.fn.tempname()
+    vim.fn.mkdir(repo, "p")
+    vim.fn.system({ "git", "-C", repo, "init" })
+    vim.fn.system({ "git", "-C", repo, "checkout", "-b", "feat/file-filters" })
+
+    create_session(repo, "feat/file-filters")
     deleted = require("persisted").clean({ confirm = false })
   ]])
 

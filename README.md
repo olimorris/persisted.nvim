@@ -222,6 +222,8 @@ One of the plugin's core features is the ability to have multiple session files 
 }
 ```
 
+Git worktrees need no additional configuration. Because sessions are keyed by the current working directory, each worktree gets its own session file, with its checked out branch detected as normal.
+
 **Autostart**
 
 By default, the plugin will automatically start when the setup function is called. This results in a Neovim session being saved to disk when the `VimLeavePre` event is triggered. This can be disabled by:

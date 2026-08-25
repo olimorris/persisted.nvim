@@ -9,6 +9,12 @@ function M.make_fs_safe(text)
   return text:gsub("[\\/:]+", "%%")
 end
 
+---@param text string
+---@return string
+function M.replace_separators(text)
+  return (text:gsub("%%", "/"))
+end
+
 ---Get the directory pattern based on OS
 ---@return string
 function M.dir_pattern()
@@ -19,11 +25,18 @@ function M.dir_pattern()
   return pattern
 end
 
+---Check if a directory is a Git repository
+---@param dir string
+---@return boolean
+function M.is_git_repo(dir)
+  return uv.fs_stat(dir .. "/.git") ~= nil
+end
+
 ---Get the Git branches for a given directory
 ---@param dir string
----@return string[]? branches Nil if the directory isn't a Git repository
+---@return string[]? branches Nil if the branches could not be determined
 function M.branches(dir)
-  if not uv.fs_stat(dir .. "/.git") then
+  if not M.is_git_repo(dir) then
     return nil
   end
 
@@ -41,6 +54,37 @@ function M.branches(dir)
   return vim.tbl_map(function(branch)
     return M.make_fs_safe(branch)
   end, branches)
+end
+
+---Has the directory or Git branch created an orphaned session?
+---@param args { item: table, branches: table<string, string[]|false>, check_branches: boolean }
+---@return boolean
+function M.is_orphaned(args)
+  local item, branches = args.item, args.branches
+
+  if vim.fn.isdirectory(item.dir) == 0 then
+    return true
+  end
+
+  if not args.check_branches or not item.branch then
+    return false
+  end
+
+  -- A branch keyed session can't be valid if the directory isn't a repository anymore
+  if not M.is_git_repo(item.dir) then
+    return true
+  end
+
+  if branches[item.dir] == nil then
+    branches[item.dir] = M.branches(item.dir) or false
+  end
+
+  -- Git couldn't tell us the branches, so leave the session alone
+  if not branches[item.dir] then
+    return false
+  end
+
+  return not M.in_table(item.branch, branches[item.dir])
 end
 
 ---Check if a path is absolute, accounting for cross-platform use

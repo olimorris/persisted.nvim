@@ -187,7 +187,7 @@ end
 function M.session_info(session)
   local file = session:sub(#config.save_dir + 1, -5)
   local dir, branch = unpack(vim.split(file, "@@", { plain = true }))
-  dir = dir:gsub("%%", "/")
+  dir = utils.replace_separators(dir)
   if jit.os:find("Windows") then
     dir = dir:gsub("^(%w)/", "%1:/")
   end
@@ -222,7 +222,7 @@ function M.handle_selected(opts)
 
       local name = vim.fn.fnamemodify(item.dir, ":p:~")
       if item.branch then
-        name = name .. " (" .. item.branch .. ")"
+        name = name .. " (" .. utils.replace_separators(item.branch) .. ")"
       end
       return name
     end,
@@ -294,21 +294,11 @@ function M.clean(opts)
     local item = M.session_info(session) ---@type table
 
     -- Ignore any files in the save_dir which the plugin didn't create
-    if utils.is_absolute(item.dir) then
-      if vim.fn.isdirectory(item.dir) == 0 then
-        item.reason = "directory no longer exists"
-      elseif opts.branches and item.branch then
-        if branches[item.dir] == nil then
-          branches[item.dir] = utils.branches(item.dir) or false
-        end
-        if branches[item.dir] and not utils.in_table(item.branch, branches[item.dir]) then
-          item.reason = "branch no longer exists"
-        end
-      end
-
-      if item.reason then
-        orphaned[#orphaned + 1] = item
-      end
+    if
+      utils.is_absolute(item.dir)
+      and utils.is_orphaned({ item = item, branches = branches, check_branches = opts.branches })
+    then
+      orphaned[#orphaned + 1] = item
     end
   end
 
