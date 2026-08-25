@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.1.0](https://github.com/olimorris/persisted.nvim/compare/v3.0.0...v3.1.0) (2026-08-25)
+
+
+### Features
+
+* add `before_save` callback ([#196](https://github.com/olimorris/persisted.nvim/issues/196)) ([d205c4d](https://github.com/olimorris/persisted.nvim/commit/d205c4d78657b83e50b4a54541f58f17036e5178))
+* clean orphaned sessions ([#193](https://github.com/olimorris/persisted.nvim/issues/193)) ([3beef15](https://github.com/olimorris/persisted.nvim/commit/3beef15a616dbb99bc9051140e829a716932a2ae))
+* cleaner git branching ([#197](https://github.com/olimorris/persisted.nvim/issues/197)) ([e905ec1](https://github.com/olimorris/persisted.nvim/commit/e905ec1ff731518afaa834304a536c4b43722473))
+* manually name sessions ([#195](https://github.com/olimorris/persisted.nvim/issues/195)) ([969a026](https://github.com/olimorris/persisted.nvim/commit/969a026af2de5c054b85ccca31b809292a47f265))
+
 ## [3.0.0](https://github.com/olimorris/persisted.nvim/compare/v2.1.1...v3.0.0) (2026-01-14)
 
 
