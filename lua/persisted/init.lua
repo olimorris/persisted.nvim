@@ -240,12 +240,10 @@ function M.select()
     prompt = "Load a session: ",
     handler = function(item)
       M.fire("SelectPre")
-      if item.name then
-        M.load({ session = item.session })
-      else
+      if not item.name then
         vim.fn.chdir(item.dir)
-        M.load()
       end
+      M.load({ session = item.session })
       M.fire("SelectPost")
     end,
   })

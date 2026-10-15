@@ -64,4 +64,39 @@ T["shows named sessions by their name"] = function()
   eq(child.lua_get("items"), { "TestSession" })
 end
 
+T["loads the session of the chosen git branch"] = function()
+  child.lua([[
+    require("persisted").setup({
+      save_dir = session_dir,
+      use_git_branch = true,
+    })
+
+    -- Sessions for this directory on two branches, each recording which branch it belongs to
+    local utils = require("persisted.utils")
+    for _, branch in ipairs({ "main", "feature" }) do
+      local name = utils.make_fs_safe(vim.fn.getcwd()) .. "@@" .. utils.make_fs_safe(branch)
+      vim.fn.writefile({ "let g:session_branch = '" .. branch .. "'" }, session_dir .. name .. ".vim")
+    end
+
+    -- The current branch is main; choose the session saved on feature
+    require("persisted").branch = function()
+      return "main"
+    end
+    vim.ui.select = function(items, _, on_choice)
+      for _, item in ipairs(items) do
+        if item.branch == "feature" then
+          return on_choice(item)
+        end
+      end
+    end
+
+    require("persisted").select()
+    vim.wait(1000, function()
+      return vim.g.session_branch ~= nil
+    end)
+  ]])
+
+  eq(child.lua_get("vim.g.session_branch"), "feature")
+end
+
 return T
