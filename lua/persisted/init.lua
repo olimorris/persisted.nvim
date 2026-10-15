@@ -243,7 +243,6 @@ function M.select()
       if not item.name then
         vim.fn.chdir(item.dir)
       end
-      -- Load the chosen file: the current session can belong to another git branch
       M.load({ session = item.session })
       M.fire("SelectPost")
     end,
